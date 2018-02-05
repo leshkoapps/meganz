@@ -88,7 +88,11 @@ CONFIG(USE_LIBUV) {
 }
 
 CONFIG(USE_MEDIAINFO) {
-    DEFINES += USE_MEDIAINFO UNICODE
+    DEFINES += USE_MEDIAINFO 
+    
+    macx|win32 {
+        DEFINES += UNICODE
+    }
 
     win32 {
         LIBS += -lMediaInfo -lZenLib -lzlibstat
