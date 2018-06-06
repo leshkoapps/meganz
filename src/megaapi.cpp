@@ -183,6 +183,23 @@ int MegaUserList::size()
     return 0;
 }
 
+MegaUserAlertList::~MegaUserAlertList() { }
+
+MegaUserAlertList *MegaUserAlertList::copy() const
+{
+    return NULL;
+}
+
+MegaUserAlert *MegaUserAlertList::get(int) const
+{
+    return NULL;
+}
+
+int MegaUserAlertList::size() const
+{
+    return 0;
+}
+
 MegaShareList::~MegaShareList() { }
 
 MegaShare *MegaShareList::get(int)
@@ -433,7 +450,7 @@ MegaNode *MegaNode::unserialize(const char *d)
 
     string data;
     data.resize(strlen(d) * 3 / 4 + 3);
-    data.resize(Base64::atob(d, (byte*)data.data(), data.size()));
+    data.resize(Base64::atob(d, (byte*)data.data(), (int)data.size()));
 
     return MegaNodePrivate::unserialize(&data);
 }
@@ -491,6 +508,80 @@ int MegaUser::isOwnChange()
 {
     return 0;
 }
+
+MegaUserAlert::~MegaUserAlert() { }
+
+MegaUserAlert *MegaUserAlert::copy() const
+{
+    return NULL;
+}
+
+unsigned MegaUserAlert::getId() const
+{
+    return (unsigned)-1;
+}
+
+bool MegaUserAlert::getSeen() const
+{
+    return false;
+}
+
+bool MegaUserAlert::getRelevant() const
+{
+    return false;
+}
+
+MegaUserAlert::Type MegaUserAlert::getType() const
+{
+    return (Type)-1;
+}
+
+const char *MegaUserAlert::getTypeString() const
+{
+    return NULL;
+}
+
+MegaHandle MegaUserAlert::getUserHandle() const
+{
+    return UNDEF;
+}
+
+MegaHandle MegaUserAlert::getNodeHandle() const
+{
+    return UNDEF;
+}
+
+const char* MegaUserAlert::getEmail() const
+{
+    return NULL;
+}
+
+const char* MegaUserAlert::getPath() const
+{
+    return false;
+}
+
+void MegaUserAlert::getText(const char ** heading, const char** title) const
+{
+    *heading = NULL;
+    *title = NULL;
+}
+
+int64_t MegaUserAlert::getNumber(unsigned) const
+{
+    return -1;
+}
+
+int64_t MegaUserAlert::getTimestamp(unsigned) const
+{
+    return -1;
+}
+
+const char* MegaUserAlert::getString(unsigned) const
+{
+    return NULL;
+}
+
 
 MegaShare::~MegaShare() { }
 
@@ -1268,6 +1359,8 @@ void MegaListener::onTransferTemporaryError(MegaApi *, MegaTransfer *, MegaError
 { }
 void MegaListener::onUsersUpdate(MegaApi *, MegaUserList *)
 { }
+void MegaListener::onUserAlertsUpdate(MegaApi *, MegaUserAlertList *)
+{ }
 void MegaListener::onNodesUpdate(MegaApi *, MegaNodeList *)
 { }
 void MegaListener::onAccountUpdate(MegaApi *)
@@ -1356,6 +1449,11 @@ void MegaApi::contactLinkDelete(MegaHandle handle, MegaRequestListener *listener
 void MegaApi::keepMeAlive(int type, bool enable, MegaRequestListener *listener)
 {
     pImpl->keepMeAlive(type, enable, listener);
+}
+
+void MegaApi::acknowledgeUserAlerts(MegaRequestListener *listener)
+{
+    pImpl->acknowledgeUserAlerts(listener);
 }
 
 char *MegaApi::getMyEmail()
@@ -2575,6 +2673,11 @@ MegaUser* MegaApi::getContact(const char* user)
     return pImpl->getContact(user);
 }
 
+MegaUserAlertList* MegaApi::getUserAlerts()
+{
+    return pImpl->getUserAlerts();
+}
+
 MegaNodeList* MegaApi::getInShares(MegaUser *megaUser)
 {
     return pImpl->getInShares(megaUser);
@@ -2814,7 +2917,7 @@ char *MegaApi::base64ToBase32(const char *base64)
         return NULL;
     }
 
-    unsigned binarylen = strlen(base64) * 3/4 + 4;
+    int binarylen = int(strlen(base64) * 3/4 + 4);
     byte *binary = new byte[binarylen];
     binarylen = Base64::atob(base64, binary, binarylen);
 
@@ -2832,7 +2935,7 @@ char *MegaApi::base32ToBase64(const char *base32)
         return NULL;
     }
 
-    unsigned binarylen = strlen(base32) * 5/8 + 8;
+    unsigned binarylen = unsigned(strlen(base32) * 5/8 + 8);
     byte *binary = new byte[binarylen];
     binarylen = Base32::atob(base32, binary, binarylen);
 
@@ -3978,7 +4081,7 @@ char* MegaApi::strdup(const char* buffer)
 {
     if(!buffer)
         return NULL;
-    int tam = strlen(buffer)+1;
+    size_t tam = strlen(buffer)+1;
     char *newbuffer = new char[tam];
     memcpy(newbuffer, buffer, tam);
     return newbuffer;
@@ -4000,7 +4103,7 @@ void MegaApi::utf16ToUtf8(const wchar_t* utf16data, int utf16size, string* utf8s
     utf8string->resize(WideCharToMultiByte(CP_UTF8, 0, utf16data,
         utf16size,
         (char*)utf8string->data(),
-        utf8string->size() + 1,
+        int(utf8string->size() + 1),
         NULL, NULL));
 }
 
@@ -4013,14 +4116,14 @@ void MegaApi::utf8ToUtf16(const char* utf8data, string* utf16string)
         return;
     }
 
-    int size = strlen(utf8data) + 1;
+    int size = int(strlen(utf8data) + 1);
 
     // make space for the worst case
     utf16string->resize(size * sizeof(wchar_t));
 
     // resize to actual result
     utf16string->resize(sizeof(wchar_t) * MultiByteToWideChar(CP_UTF8, 0, utf8data, size, (wchar_t*)utf16string->data(),
-                                                              utf16string->size() / sizeof(wchar_t) + 1));
+                                                              int(utf16string->size() / sizeof(wchar_t) + 1)));
     if (utf16string->size())
     {
         utf16string->resize(utf16string->size() - 1);

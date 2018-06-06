@@ -955,6 +955,7 @@ public:
     CommandContactLinkDelete(MegaClient*, handle);
 };
 
+
 class MEGA_API CommandKeepMeAlive : public Command
 {
 public:
@@ -962,6 +963,15 @@ public:
 
     CommandKeepMeAlive(MegaClient*, int, bool = true);
 };
+
+class MEGA_API CommandSetLastAcknowledged: public Command
+{
+public:
+    void procresult();
+
+    CommandSetLastAcknowledged(MegaClient*);
+};
+
 
 } // namespace
 

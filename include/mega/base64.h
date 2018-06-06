@@ -39,7 +39,32 @@ public:
 
     static void itoa(int64_t, string *);
     static int64_t atoi(string *);
+};
 
+template <unsigned BINARYSIZE>
+struct Base64Str 
+{
+    // provides a way to build the C string on the stack efficiently, using minimal space
+    char chars[(BINARYSIZE * 4 + 2) / 3 + 1];
+    Base64Str(const byte* b)
+    {
+        int n = Base64::btoa(b, BINARYSIZE, chars);
+        assert(n + 1 == sizeof(chars));
+    }
+    Base64Str(const byte* b, int size)
+    {
+        int n = Base64::btoa(b, size, chars);
+        assert(n + 1 <= sizeof(chars));
+    }
+    Base64Str(handle& h)
+    {
+        int n = Base64::btoa((byte*)&h, BINARYSIZE, chars);
+        assert(n + 1 == sizeof(chars));
+    }
+    operator char* ()
+    {
+        return chars;
+    }
 };
 
 // lowercase base32 encoding

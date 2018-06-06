@@ -252,6 +252,7 @@ add_library(Mega STATIC
             ${MegaDir}/src/transferslot.cpp 
             ${MegaDir}/src/treeproc.cpp 
             ${MegaDir}/src/user.cpp 
+            ${MegaDir}/src/useralerts.cpp 
             ${MegaDir}/src/utils.cpp 
             ${MegaDir}/src/waiterbase.cpp 
             ${Mega_PlatformSpecificFiles} ${Mega_CryptoFiles} ${Mega_DbFiles} ${Mega_GfxFiles}  )
