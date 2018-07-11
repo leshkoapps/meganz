@@ -2739,7 +2739,7 @@ public:
      *
      * @return Number relative to this event
      */
-    virtual const int getNumber() const;
+    virtual int getNumber() const;
 };
 
 /**

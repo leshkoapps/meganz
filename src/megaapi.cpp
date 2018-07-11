@@ -5135,7 +5135,7 @@ const char *MegaEvent::getText() const
     return NULL;
 }
 
-const int MegaEvent::getNumber() const
+int MegaEvent::getNumber() const
 {
     return 0;
 }
