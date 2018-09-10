@@ -40,7 +40,7 @@ void DelegateMEGARequestListener::onRequestStart(MegaApi *api, MegaRequest *requ
         MegaRequest *tempRequest = request->copy();
         MEGASdk *tempMegaSDK = this->megaSDK;
         id<MEGARequestDelegate> tempListener = this->listener;
-        dispatch_async(dispatch_get_main_queue(), ^{
+        dispatch_async([MEGASdk callBackQueue], ^{
             [tempListener onRequestStart:tempMegaSDK request:[[MEGARequest alloc] initWithMegaRequest:tempRequest cMemoryOwn:YES]];
         });
     }
@@ -53,7 +53,7 @@ void DelegateMEGARequestListener::onRequestFinish(MegaApi *api, MegaRequest *req
         MEGASdk *tempMegaSDK = this->megaSDK;
         id<MEGARequestDelegate> tempListener = this->listener;
         bool tempSingleListener = singleListener;
-        dispatch_async(dispatch_get_main_queue(), ^{
+        dispatch_async([MEGASdk callBackQueue], ^{
             [tempListener onRequestFinish:tempMegaSDK request:[[MEGARequest alloc] initWithMegaRequest:tempRequest cMemoryOwn:YES] error:[[MEGAError alloc] initWithMegaError:tempError cMemoryOwn:YES]];
             if (tempSingleListener) {
                 [megaSDK freeRequestListener:this];
@@ -67,7 +67,7 @@ void DelegateMEGARequestListener::onRequestUpdate(MegaApi *api, MegaRequest *req
         MegaRequest *tempRequest = request->copy();
         MEGASdk *tempMegaSDK = this->megaSDK;
         id<MEGARequestDelegate> tempListener = this->listener;
-        dispatch_async(dispatch_get_main_queue(), ^{
+        dispatch_async([MEGASdk callBackQueue], ^{
             [tempListener onRequestUpdate:tempMegaSDK request:[[MEGARequest alloc] initWithMegaRequest:tempRequest cMemoryOwn:YES]];
         });
     }
@@ -79,7 +79,7 @@ void DelegateMEGARequestListener::onRequestTemporaryError(MegaApi *api, MegaRequ
         MegaError *tempError = e->copy();
         MEGASdk *tempMegaSDK = this->megaSDK;
         id<MEGARequestDelegate> tempListener = this->listener;
-        dispatch_async(dispatch_get_main_queue(), ^{
+        dispatch_async([MEGASdk callBackQueue], ^{
             [tempListener onRequestTemporaryError:tempMegaSDK request:[[MEGARequest alloc] initWithMegaRequest:tempRequest cMemoryOwn:YES] error:[[MEGAError alloc] initWithMegaError:tempError cMemoryOwn:YES]];
         });
     }

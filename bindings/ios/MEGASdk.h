@@ -317,6 +317,8 @@ typedef NS_ENUM(NSInteger, KeepMeAlive) {
  */
 @property (readonly, nonatomic) NSString *myFingerprint;
 
++ (dispatch_queue_t)callBackQueue;
+    
 #endif
 
 #pragma mark - Init

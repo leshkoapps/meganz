@@ -399,6 +399,15 @@ using namespace mega;
     self.megaApi->retryPendingConnections(true, true);
 }
 
++ (dispatch_queue_t)callBackQueue{
+    static dispatch_once_t onceToken;
+    static  dispatch_queue_t _callBackQueue;
+    dispatch_once(&onceToken, ^{
+        _callBackQueue = dispatch_queue_create("com.mega.sdk.callback.queue", DISPATCH_QUEUE_SERIAL);
+    });
+    return _callBackQueue;
+}
+
 #pragma mark - Login Requests
 
 - (void)multiFactorAuthCheckWithEmail:(NSString *)email delegate:(id<MEGARequestDelegate>)delegate {
