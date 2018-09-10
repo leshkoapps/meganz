@@ -3,8 +3,9 @@
 /curl*
 /openssl*
 /libsodium*
-/include
-/lib
+#/include
+#/lib
 /karere-native
-/webrtc
+#/webrtc
+.*
 
