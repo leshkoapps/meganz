@@ -36,7 +36,7 @@ public:
     bool onTransferData(mega::MegaApi *api, mega::MegaTransfer *transfer, char *buffer, size_t size);
 
 private:
-    __weak MEGASdk *megaSDK;
-    __weak id<MEGATransferDelegate>listener;
+    MEGASdk *megaSDK;
+    id<MEGATransferDelegate>listener;
     bool singleListener;
 };

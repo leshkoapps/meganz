@@ -36,6 +36,6 @@ public:
     void onEvent(mega::MegaApi* api, mega::MegaEvent *event);
     
 private:
-    __weak MEGASdk *megaSDK;
-    __weak id<MEGAGlobalDelegate> listener;
+    MEGASdk *megaSDK;
+    id<MEGAGlobalDelegate> listener;
 };

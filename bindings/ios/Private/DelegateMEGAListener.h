@@ -48,6 +48,6 @@ public:
     void onEvent(mega::MegaApi* api, mega::MegaEvent *event);
     
 private:
-    __weak MEGASdk *megaSDK;
-    __weak id<MEGADelegate> listener;
+    MEGASdk *megaSDK;
+    id<MEGADelegate> listener;
 };
