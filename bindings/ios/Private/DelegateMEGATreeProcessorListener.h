@@ -30,5 +30,5 @@ public:
     bool processMegaNode(mega::MegaNode *node);
     
 private:
-    id<MEGATreeProcessorDelegate>listener;
+    __weak id<MEGATreeProcessorDelegate>listener;
 };

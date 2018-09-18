@@ -35,7 +35,7 @@ public:
     void onRequestTemporaryError(mega::MegaApi *api, mega::MegaRequest *request, mega::MegaError *e);
     
 private:
-    MEGASdk *megaSDK;
-    id<MEGARequestDelegate>listener;
+    __weak MEGASdk *megaSDK;
+    __weak id<MEGARequestDelegate>listener;
     bool singleListener;
 };

@@ -30,6 +30,6 @@ public:
     void log(const char *time, int logLevel, const char *source, const char *message);
     
 private:
-    MEGASdk *megaSDK;
-    id<MEGALoggerDelegate> listener;
+    __weak MEGASdk *megaSDK;
+    __weak id<MEGALoggerDelegate> listener;
 };
