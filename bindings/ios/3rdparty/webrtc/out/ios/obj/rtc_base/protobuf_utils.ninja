@@ -1,0 +1,8 @@
+defines = -DV8_DEPRECATION_WARNINGS -DNO_TCMALLOC -DCHROMIUM_BUILD -DFIELDTRIAL_TESTING_ENABLED -DCR_XCODE_VERSION=0901 -DCR_CLANG_REVISION=\"313786-1\" -D__STDC_CONSTANT_MACROS -D__STDC_FORMAT_MACROS -D_DEBUG -DDYNAMIC_ANNOTATIONS_ENABLED=1 -DWTF_USE_DYNAMIC_ANNOTATIONS=1 -DGOOGLE_PROTOBUF_NO_RTTI -DGOOGLE_PROTOBUF_NO_STATIC_INITIALIZER -DHAVE_PTHREAD
+include_dirs = -I../.. -Igen -I../../third_party/protobuf/src
+label_name = protobuf_utils
+target_out_dir = obj/rtc_base
+target_output_name = protobuf_utils
+
+
+build obj/rtc_base/protobuf_utils.stamp: stamp || obj/third_party/protobuf/libprotobuf_lite.a

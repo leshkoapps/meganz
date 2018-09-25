@@ -1,0 +1,39 @@
+defines = -DFEATURE_ENABLE_VOICEMAIL -DFEATURE_ENABLE_PSTN -DV8_DEPRECATION_WARNINGS -DNO_TCMALLOC -DCHROMIUM_BUILD -DFIELDTRIAL_TESTING_ENABLED -DCR_XCODE_VERSION=0901 -DCR_CLANG_REVISION=\"313786-1\" -D__STDC_CONSTANT_MACROS -D__STDC_FORMAT_MACROS -D_DEBUG -DDYNAMIC_ANNOTATIONS_ENABLED=1 -DWTF_USE_DYNAMIC_ANNOTATIONS=1 -DWEBRTC_ENABLE_PROTOBUF=1 -DWEBRTC_INCLUDE_INTERNAL_AUDIO_DEVICE -DHAVE_SCTP -DWEBRTC_ARCH_ARM64 -DWEBRTC_HAS_NEON -DWEBRTC_NON_STATIC_TRACE_EVENT_HANDLERS=1 -DWEBRTC_POSIX -DWEBRTC_MAC -DWEBRTC_IOS -DFEATURE_ENABLE_VOICEMAIL
+include_dirs = -I../.. -Igen
+cflags = -fno-strict-aliasing --param=ssp-buffer-size=4 -fstack-protector -Wno-builtin-macro-redefined -D__DATE__= -D__TIME__= -D__TIMESTAMP__= -fcolor-diagnostics -no-canonical-prefixes -arch arm64 -Wall -Werror -Wextra -Wundeclared-selector -Wno-missing-field-initializers -Wno-unused-parameter -Wno-c++11-narrowing -Wno-covered-switch-default -Wno-unneeded-internal-declaration -Wno-inconsistent-missing-override -Wno-undefined-var-template -Wno-nonportable-include-path -Wno-address-of-packed-member -Wno-unused-lambda-capture -Wno-user-defined-warnings -Wno-enum-compare-switch -Wno-tautological-unsigned-zero-compare -Wno-null-pointer-arithmetic -Wno-tautological-unsigned-enum-zero-compare -O0 -fno-omit-frame-pointer -gdwarf-2 -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS11.0.sdk -stdlib=libc++ -miphoneos-version-min=9.0 -fvisibility=hidden -Wheader-hygiene -Wstring-conversion -Wtautological-overlap-compare -Wextra -Wno-unused-parameter -Wno-missing-field-initializers -Wno-strict-overflow -Wc++11-narrowing -Wimplicit-fallthrough -Wthread-safety -Winconsistent-missing-override -Wundef -Wunused-lambda-capture
+cflags_cc = -Wno-undefined-bool-conversion -Wno-tautological-undefined-compare -std=c++11 -fno-rtti -fno-exceptions -fvisibility-inlines-hidden -Wnon-virtual-dtor -Woverloaded-virtual
+label_name = rtc_p2p
+target_out_dir = obj/p2p
+target_output_name = librtc_p2p
+
+build obj/p2p/rtc_p2p/asyncstuntcpsocket.o: cxx ../../p2p/base/asyncstuntcpsocket.cc
+build obj/p2p/rtc_p2p/basicpacketsocketfactory.o: cxx ../../p2p/base/basicpacketsocketfactory.cc
+build obj/p2p/rtc_p2p/dtlstransport.o: cxx ../../p2p/base/dtlstransport.cc
+build obj/p2p/rtc_p2p/jseptransport.o: cxx ../../p2p/base/jseptransport.cc
+build obj/p2p/rtc_p2p/p2pconstants.o: cxx ../../p2p/base/p2pconstants.cc
+build obj/p2p/rtc_p2p/p2ptransportchannel.o: cxx ../../p2p/base/p2ptransportchannel.cc
+build obj/p2p/rtc_p2p/packetlossestimator.o: cxx ../../p2p/base/packetlossestimator.cc
+build obj/p2p/rtc_p2p/port.o: cxx ../../p2p/base/port.cc
+build obj/p2p/rtc_p2p/portallocator.o: cxx ../../p2p/base/portallocator.cc
+build obj/p2p/rtc_p2p/pseudotcp.o: cxx ../../p2p/base/pseudotcp.cc
+build obj/p2p/rtc_p2p/relayport.o: cxx ../../p2p/base/relayport.cc
+build obj/p2p/rtc_p2p/session.o: cxx ../../p2p/base/session.cc
+build obj/p2p/rtc_p2p/sessiondescription.o: cxx ../../p2p/base/sessiondescription.cc
+build obj/p2p/rtc_p2p/stun.o: cxx ../../p2p/base/stun.cc
+build obj/p2p/rtc_p2p/stunport.o: cxx ../../p2p/base/stunport.cc
+build obj/p2p/rtc_p2p/stunrequest.o: cxx ../../p2p/base/stunrequest.cc
+build obj/p2p/rtc_p2p/tcpport.o: cxx ../../p2p/base/tcpport.cc
+build obj/p2p/rtc_p2p/transportdescription.o: cxx ../../p2p/base/transportdescription.cc
+build obj/p2p/rtc_p2p/transportdescriptionfactory.o: cxx ../../p2p/base/transportdescriptionfactory.cc
+build obj/p2p/rtc_p2p/turnport.o: cxx ../../p2p/base/turnport.cc
+build obj/p2p/rtc_p2p/udptransport.o: cxx ../../p2p/base/udptransport.cc
+build obj/p2p/rtc_p2p/basicportallocator.o: cxx ../../p2p/client/basicportallocator.cc
+build obj/p2p/rtc_p2p/socketmonitor.o: cxx ../../p2p/client/socketmonitor.cc
+build obj/p2p/rtc_p2p/relayserver.o: cxx ../../p2p/base/relayserver.cc
+build obj/p2p/rtc_p2p/stunserver.o: cxx ../../p2p/base/stunserver.cc
+build obj/p2p/rtc_p2p/turnserver.o: cxx ../../p2p/base/turnserver.cc
+
+build obj/p2p/librtc_p2p.a: alink obj/p2p/rtc_p2p/asyncstuntcpsocket.o obj/p2p/rtc_p2p/basicpacketsocketfactory.o obj/p2p/rtc_p2p/dtlstransport.o obj/p2p/rtc_p2p/jseptransport.o obj/p2p/rtc_p2p/p2pconstants.o obj/p2p/rtc_p2p/p2ptransportchannel.o obj/p2p/rtc_p2p/packetlossestimator.o obj/p2p/rtc_p2p/port.o obj/p2p/rtc_p2p/portallocator.o obj/p2p/rtc_p2p/pseudotcp.o obj/p2p/rtc_p2p/relayport.o obj/p2p/rtc_p2p/session.o obj/p2p/rtc_p2p/sessiondescription.o obj/p2p/rtc_p2p/stun.o obj/p2p/rtc_p2p/stunport.o obj/p2p/rtc_p2p/stunrequest.o obj/p2p/rtc_p2p/tcpport.o obj/p2p/rtc_p2p/transportdescription.o obj/p2p/rtc_p2p/transportdescriptionfactory.o obj/p2p/rtc_p2p/turnport.o obj/p2p/rtc_p2p/udptransport.o obj/p2p/rtc_p2p/basicportallocator.o obj/p2p/rtc_p2p/socketmonitor.o obj/p2p/rtc_p2p/relayserver.o obj/p2p/rtc_p2p/stunserver.o obj/p2p/rtc_p2p/turnserver.o || obj/api/libjingle_peerconnection_api.a obj/api/optional.stamp obj/api/ortc_api.stamp obj/rtc_base/librtc_base.a obj/system_wrappers/field_trial_api.stamp obj/api/libjingle_api_deprecated_headers.stamp obj/api/mediastream_interface_and_implicit_video_frame_api.stamp obj/api/peerconnection_and_implicit_call_api.stamp obj/api/array_view.stamp obj/rtc_base/rtc_base_approved.stamp obj/rtc_base/rtc_base_approved_generic.stamp obj/libwebrtc_common.a obj/api/rtc_stats_api.stamp obj/rtc_base/librtc_base_generic.a obj/third_party/boringssl/libboringssl.a obj/third_party/boringssl/boringssl_asm.stamp obj/rtc_base/rtc_base_objc.stamp obj/api/audio_codecs/audio_codecs_api.stamp
+  arflags =
+  output_extension = .a
+  output_dir = obj/p2p

@@ -1,0 +1,2451 @@
+ninja_required_version = 1.7.2
+
+rule gn
+  command = /Users/jn/Developer/webrtc/src/buildtools/mac/gn --root=/Users/jn/Developer/webrtc/src -q --ide=xcode gen .
+  description = Regenerating ninja files
+
+build build.ninja: gn
+  generator = 1
+  depfile = build.ninja.d
+
+pool build_toolchain_link_pool
+  depth = 2
+
+pool build_toolchain_mac_bundle_pool
+  depth = 2
+
+subninja toolchain.ninja
+subninja clang_x64/toolchain.ninja
+
+build default: phony obj/default.stamp
+build rtc_unittests: phony obj/rtc_unittests.stamp
+build rtc_unittests_arch_executable: phony obj/arm64/rtc_unittests
+build rtc_unittests_arch_executable_sources: phony obj/rtc_unittests_arch_executable_sources.stamp
+build rtc_unittests_bundle_data_pkg_info: phony obj/rtc_unittests_bundle_data_pkg_info.stamp
+build rtc_unittests_executable: phony obj/rtc_unittests_executable.stamp
+build rtc_unittests_gen_entitlements: phony obj/rtc_unittests_gen_entitlements.stamp
+build rtc_unittests_generate_info_plist: phony obj/rtc_unittests_generate_info_plist.stamp
+build rtc_unittests_generate_info_plist_merge: phony obj/rtc_unittests_generate_info_plist_merge.stamp
+build rtc_unittests_pkg_info: phony obj/rtc_unittests_pkg_info.stamp
+build rtc_unittests_resources_bundle_data: phony obj/rtc_unittests_resources_bundle_data.stamp
+build video_engine_tests: phony obj/video_engine_tests.stamp
+build video_engine_tests_arch_executable: phony obj/arm64/video_engine_tests
+build video_engine_tests_arch_executable_sources: phony obj/video_engine_tests_arch_executable_sources.stamp
+build video_engine_tests_bundle_data: phony obj/video_engine_tests_bundle_data.stamp
+build video_engine_tests_bundle_data_pkg_info: phony obj/video_engine_tests_bundle_data_pkg_info.stamp
+build video_engine_tests_executable: phony obj/video_engine_tests_executable.stamp
+build video_engine_tests_gen_entitlements: phony obj/video_engine_tests_gen_entitlements.stamp
+build video_engine_tests_generate_info_plist: phony obj/video_engine_tests_generate_info_plist.stamp
+build video_engine_tests_generate_info_plist_merge: phony obj/video_engine_tests_generate_info_plist_merge.stamp
+build video_engine_tests_pkg_info: phony obj/video_engine_tests_pkg_info.stamp
+build video_engine_tests_resources_bundle_data: phony obj/video_engine_tests_resources_bundle_data.stamp
+build webrtc: phony obj/libwebrtc.a
+build webrtc_common: phony obj/libwebrtc_common.a
+build webrtc_nonparallel_tests: phony obj/webrtc_nonparallel_tests.stamp
+build webrtc_nonparallel_tests_arch_executable: phony obj/arm64/webrtc_nonparallel_tests
+build webrtc_nonparallel_tests_arch_executable_sources: phony obj/webrtc_nonparallel_tests_arch_executable_sources.stamp
+build webrtc_nonparallel_tests_bundle_data_pkg_info: phony obj/webrtc_nonparallel_tests_bundle_data_pkg_info.stamp
+build webrtc_nonparallel_tests_executable: phony obj/webrtc_nonparallel_tests_executable.stamp
+build webrtc_nonparallel_tests_gen_entitlements: phony obj/webrtc_nonparallel_tests_gen_entitlements.stamp
+build webrtc_nonparallel_tests_generate_info_plist: phony obj/webrtc_nonparallel_tests_generate_info_plist.stamp
+build webrtc_nonparallel_tests_generate_info_plist_merge: phony obj/webrtc_nonparallel_tests_generate_info_plist_merge.stamp
+build webrtc_nonparallel_tests_pkg_info: phony obj/webrtc_nonparallel_tests_pkg_info.stamp
+build webrtc_nonparallel_tests_resources_bundle_data: phony obj/webrtc_nonparallel_tests_resources_bundle_data.stamp
+build webrtc_perf_tests: phony obj/webrtc_perf_tests.stamp
+build webrtc_perf_tests_arch_executable: phony obj/arm64/webrtc_perf_tests
+build webrtc_perf_tests_arch_executable_sources: phony obj/webrtc_perf_tests_arch_executable_sources.stamp
+build webrtc_perf_tests_bundle_data: phony obj/webrtc_perf_tests_bundle_data.stamp
+build webrtc_perf_tests_bundle_data_pkg_info: phony obj/webrtc_perf_tests_bundle_data_pkg_info.stamp
+build webrtc_perf_tests_executable: phony obj/webrtc_perf_tests_executable.stamp
+build webrtc_perf_tests_gen_entitlements: phony obj/webrtc_perf_tests_gen_entitlements.stamp
+build webrtc_perf_tests_generate_info_plist: phony obj/webrtc_perf_tests_generate_info_plist.stamp
+build webrtc_perf_tests_generate_info_plist_merge: phony obj/webrtc_perf_tests_generate_info_plist_merge.stamp
+build webrtc_perf_tests_pkg_info: phony obj/webrtc_perf_tests_pkg_info.stamp
+build webrtc_perf_tests_resources_bundle_data: phony obj/webrtc_perf_tests_resources_bundle_data.stamp
+build api: phony obj/api/api.stamp
+build audio: phony obj/audio/libaudio.a
+build call: phony obj/call/libcall.a
+build common_audio: phony obj/common_audio/libcommon_audio.a
+build common_video: phony obj/common_video/libcommon_video.a
+build examples: phony obj/examples/examples.stamp
+build logging: phony obj/logging/logging.stamp
+build media: phony obj/media/media.stamp
+build modules: phony obj/modules/modules.stamp
+build ortc: phony obj/ortc/libortc.a
+build p2p: phony obj/p2p/p2p.stamp
+build pc: phony obj/pc/pc.stamp
+build rtc_base: phony obj/rtc_base/librtc_base.a
+build rtc_tools: phony obj/rtc_tools/rtc_tools.stamp
+build sdk: phony obj/sdk/sdk.stamp
+build stats: phony obj/stats/stats.stamp
+build system_wrappers: phony obj/system_wrappers/libsystem_wrappers.a
+build test: phony obj/test/test.stamp
+build video: phony obj/video/libvideo.a
+build voice_engine: phony obj/voice_engine/libvoice_engine.a
+build AppRTCMobile_arch_executable: phony obj/examples/arm64/AppRTCMobile
+build apprtcmobile_tests_arch_executable: phony obj/examples/arm64/apprtcmobile_tests
+build audio_codec_speed_tests_arch_executable: phony obj/modules/audio_coding/arm64/audio_codec_speed_tests
+build audio_decoder_unittests_arch_executable: phony obj/modules/audio_coding/arm64/audio_decoder_unittests
+build boringssl_crypto_tests_arch_executable: phony obj/third_party/boringssl/arm64/boringssl_crypto_tests
+build boringssl_ssl_tests_arch_executable: phony obj/third_party/boringssl/arm64/boringssl_ssl_tests
+build bwe_simulations_tests_arch_executable: phony obj/modules/remote_bitrate_estimator/arm64/bwe_simulations_tests
+build common_audio_unittests_arch_executable: phony obj/common_audio/arm64/common_audio_unittests
+build common_video_unittests_arch_executable: phony obj/common_video/arm64/common_video_unittests
+build fake_polqa: phony ./py_quality_assessment/quality_assessment/fake_polqa
+build libyuv_unittest_arch_executable: phony obj/third_party/libyuv/arm64/libyuv_unittest
+build low_bandwidth_audio_test_arch_executable: phony obj/audio/arm64/low_bandwidth_audio_test
+build modules_tests_arch_executable: phony obj/modules/arm64/modules_tests
+build modules_unittests_arch_executable: phony obj/modules/arm64/modules_unittests
+build neteq_rtpplay_arch_executable: phony obj/modules/audio_coding/arm64/neteq_rtpplay
+build ortc_unittests_arch_executable: phony obj/ortc/arm64/ortc_unittests
+build peerconnection_unittests_arch_executable: phony obj/pc/arm64/peerconnection_unittests
+build rtc_event_log2rtp_dump_arch_executable: phony obj/logging/arm64/rtc_event_log2rtp_dump
+build rtc_media_unittests_arch_executable: phony obj/media/arm64/rtc_media_unittests
+build rtc_pc_unittests_arch_executable: phony obj/pc/arm64/rtc_pc_unittests
+build rtc_stats_unittests_arch_executable: phony obj/stats/arm64/rtc_stats_unittests
+build sdk_unittests_arch_executable: phony obj/sdk/arm64/sdk_unittests
+build system_wrappers_unittests_arch_executable: phony obj/system_wrappers/arm64/system_wrappers_unittests
+build test_opus_api_arch_executable: phony obj/third_party/opus/arm64/test_opus_api
+build test_opus_decode_arch_executable: phony obj/third_party/opus/arm64/test_opus_decode
+build test_opus_encode_arch_executable: phony obj/third_party/opus/arm64/test_opus_encode
+build test_opus_padding_arch_executable: phony obj/third_party/opus/arm64/test_opus_padding
+build test_support_unittests_arch_executable: phony obj/test/arm64/test_support_unittests
+build tools_unittests_arch_executable: phony obj/rtc_tools/arm64/tools_unittests
+build video_capture_tests_arch_executable: phony obj/modules/video_capture/arm64/video_capture_tests
+build voice_engine_unittests_arch_executable: phony obj/voice_engine/arm64/voice_engine_unittests
+build AppRTCMobile: phony obj/examples/AppRTCMobile.stamp
+build AppRTCMobile_arch_executable_sources: phony obj/examples/AppRTCMobile_arch_executable_sources.stamp
+build AppRTCMobile_bundle_data_pkg_info: phony obj/examples/AppRTCMobile_bundle_data_pkg_info.stamp
+build AppRTCMobile_executable: phony obj/examples/AppRTCMobile_executable.stamp
+build AppRTCMobile_gen_entitlements: phony obj/examples/AppRTCMobile_gen_entitlements.stamp
+build AppRTCMobile_generate_info_plist: phony obj/examples/AppRTCMobile_generate_info_plist.stamp
+build AppRTCMobile_generate_info_plist_merge: phony obj/examples/AppRTCMobile_generate_info_plist_merge.stamp
+build AppRTCMobile_ios_bundle_data: phony obj/examples/AppRTCMobile_ios_bundle_data.stamp
+build AppRTCMobile_ios_frameworks: phony obj/examples/AppRTCMobile_ios_frameworks.stamp
+build AppRTCMobile_lib: phony obj/examples/libAppRTCMobile_lib.a
+build AppRTCMobile_pkg_info: phony obj/examples/AppRTCMobile_pkg_info.stamp
+build acm_receive_test: phony obj/modules/audio_coding/acm_receive_test.stamp
+build acm_send_test: phony obj/modules/audio_coding/acm_send_test.stamp
+build aec_dump: phony obj/modules/audio_processing/aec_dump/aec_dump.stamp
+build aec_dump_impl: phony obj/modules/audio_processing/aec_dump/aec_dump_impl.stamp
+build aec_dump_interface: phony obj/modules/audio_processing/aec_dump_interface.stamp
+build aec_dump_unittests: phony obj/modules/audio_processing/aec_dump/aec_dump_unittests.stamp
+build ana_config_proto: phony obj/modules/audio_coding/libana_config_proto.a
+build ana_config_proto_gen: phony obj/modules/audio_coding/ana_config_proto_gen.stamp
+build ana_debug_dump_proto: phony obj/modules/audio_coding/libana_debug_dump_proto.a
+build ana_debug_dump_proto_gen: phony obj/modules/audio_coding/ana_debug_dump_proto_gen.stamp
+build analog_mic_simulation: phony obj/modules/audio_processing/analog_mic_simulation.stamp
+build apm_configs: phony obj/modules/audio_processing/test/py_quality_assessment/apm_configs.stamp
+build apprtc_common: phony obj/examples/libapprtc_common.a
+build apprtc_signaling: phony obj/examples/libapprtc_signaling.a
+build apprtcmobile_test_sources: phony obj/examples/apprtcmobile_test_sources.stamp
+build apprtcmobile_tests: phony obj/examples/apprtcmobile_tests.stamp
+build apprtcmobile_tests_arch_executable_sources: phony obj/examples/apprtcmobile_tests_arch_executable_sources.stamp
+build apprtcmobile_tests_bundle_data_pkg_info: phony obj/examples/apprtcmobile_tests_bundle_data_pkg_info.stamp
+build apprtcmobile_tests_executable: phony obj/examples/apprtcmobile_tests_executable.stamp
+build apprtcmobile_tests_gen_entitlements: phony obj/examples/apprtcmobile_tests_gen_entitlements.stamp
+build apprtcmobile_tests_generate_info_plist: phony obj/examples/apprtcmobile_tests_generate_info_plist.stamp
+build apprtcmobile_tests_generate_info_plist_merge: phony obj/examples/apprtcmobile_tests_generate_info_plist_merge.stamp
+build apprtcmobile_tests_module: phony obj/examples/apprtcmobile_tests_module.stamp
+build apprtcmobile_tests_module_arch_loadable_module: phony obj/examples/arm64/apprtcmobile_tests_module
+build apprtcmobile_tests_module_arch_loadable_module_source: phony obj/examples/apprtcmobile_tests_module_arch_loadable_module_source.stamp
+build apprtcmobile_tests_module_bundle: phony obj/examples/apprtcmobile_tests_module_bundle.stamp
+build apprtcmobile_tests_module_info_plist: phony obj/examples/apprtcmobile_tests_module_info_plist.stamp
+build apprtcmobile_tests_module_info_plist_bundle: phony obj/examples/apprtcmobile_tests_module_info_plist_bundle.stamp
+build apprtcmobile_tests_module_info_plist_merge: phony obj/examples/apprtcmobile_tests_module_info_plist_merge.stamp
+build apprtcmobile_tests_module_loadable_module: phony obj/examples/apprtcmobile_tests_module_loadable_module.stamp
+build apprtcmobile_tests_moduleshell_source: phony obj/examples/apprtcmobile_tests_moduleshell_source.stamp
+build apprtcmobile_tests_pkg_info: phony obj/examples/apprtcmobile_tests_pkg_info.stamp
+build array_view: phony obj/api/array_view.stamp
+build asm_defines: phony obj/system_wrappers/asm_defines.stamp
+build audio_codec_mocks: phony obj/test/audio_codec_mocks.stamp
+build audio_codec_speed_tests: phony obj/modules/audio_coding/audio_codec_speed_tests.stamp
+build audio_codec_speed_tests_arch_executable_sources: phony obj/modules/audio_coding/audio_codec_speed_tests_arch_executable_sources.stamp
+build audio_codec_speed_tests_bundle_data_pkg_info: phony obj/modules/audio_coding/audio_codec_speed_tests_bundle_data_pkg_info.stamp
+build audio_codec_speed_tests_data: phony obj/modules/audio_coding/audio_codec_speed_tests_data.stamp
+build audio_codec_speed_tests_executable: phony obj/modules/audio_coding/audio_codec_speed_tests_executable.stamp
+build audio_codec_speed_tests_gen_entitlements: phony obj/modules/audio_coding/audio_codec_speed_tests_gen_entitlements.stamp
+build audio_codec_speed_tests_generate_info_plist: phony obj/modules/audio_coding/audio_codec_speed_tests_generate_info_plist.stamp
+build audio_codec_speed_tests_generate_info_plist_merge: phony obj/modules/audio_coding/audio_codec_speed_tests_generate_info_plist_merge.stamp
+build audio_codec_speed_tests_pkg_info: phony obj/modules/audio_coding/audio_codec_speed_tests_pkg_info.stamp
+build audio_codec_speed_tests_resources_bundle_data: phony obj/modules/audio_coding/audio_codec_speed_tests_resources_bundle_data.stamp
+build audio_codecs_api: phony obj/api/audio_codecs/audio_codecs_api.stamp
+build audio_codecs_api_unittests: phony obj/api/audio_codecs/test/audio_codecs_api_unittests.stamp
+build audio_coding: phony obj/modules/audio_coding/libaudio_coding.a
+build audio_coding_module_typedefs: phony obj/modules/audio_coding/audio_coding_module_typedefs.stamp
+build audio_coding_modules_tests: phony obj/modules/audio_coding/audio_coding_modules_tests.stamp
+build audio_coding_perf_tests: phony obj/modules/audio_coding/audio_coding_perf_tests.stamp
+build audio_coding_tests: phony obj/modules/audio_coding/audio_coding_tests.stamp
+build audio_coding_unittests: phony obj/modules/audio_coding/audio_coding_unittests.stamp
+build audio_decoder_L16: phony obj/api/audio_codecs/L16/libaudio_decoder_L16.a
+build audio_decoder_g711: phony obj/api/audio_codecs/g711/libaudio_decoder_g711.a
+build audio_decoder_g722: phony obj/api/audio_codecs/g722/libaudio_decoder_g722.a
+build audio_decoder_ilbc: phony obj/api/audio_codecs/ilbc/libaudio_decoder_ilbc.a
+build audio_decoder_interface: phony obj/modules/audio_coding/audio_decoder_interface.stamp
+build audio_decoder_isac: phony obj/api/audio_codecs/isac/audio_decoder_isac.stamp
+build audio_decoder_isac_fix: phony obj/api/audio_codecs/isac/libaudio_decoder_isac_fix.a
+build audio_decoder_isac_float: phony obj/api/audio_codecs/isac/libaudio_decoder_isac_float.a
+build audio_decoder_opus: phony obj/api/audio_codecs/opus/libaudio_decoder_opus.a
+build audio_decoder_unittests: phony obj/modules/audio_coding/audio_decoder_unittests.stamp
+build audio_decoder_unittests_arch_executable_sources: phony obj/modules/audio_coding/audio_decoder_unittests_arch_executable_sources.stamp
+build audio_decoder_unittests_bundle_data: phony obj/modules/audio_coding/audio_decoder_unittests_bundle_data.stamp
+build audio_decoder_unittests_bundle_data_pkg_info: phony obj/modules/audio_coding/audio_decoder_unittests_bundle_data_pkg_info.stamp
+build audio_decoder_unittests_executable: phony obj/modules/audio_coding/audio_decoder_unittests_executable.stamp
+build audio_decoder_unittests_gen_entitlements: phony obj/modules/audio_coding/audio_decoder_unittests_gen_entitlements.stamp
+build audio_decoder_unittests_generate_info_plist: phony obj/modules/audio_coding/audio_decoder_unittests_generate_info_plist.stamp
+build audio_decoder_unittests_generate_info_plist_merge: phony obj/modules/audio_coding/audio_decoder_unittests_generate_info_plist_merge.stamp
+build audio_decoder_unittests_pkg_info: phony obj/modules/audio_coding/audio_decoder_unittests_pkg_info.stamp
+build audio_decoder_unittests_resources_bundle_data: phony obj/modules/audio_coding/audio_decoder_unittests_resources_bundle_data.stamp
+build audio_device: phony obj/modules/audio_device/audio_device.stamp
+build audio_device_generic: phony obj/modules/audio_device/audio_device_generic.stamp
+build audio_device_ios_objc: phony obj/modules/audio_device/audio_device_ios_objc.stamp
+build audio_device_ios_objc_unittests: phony obj/modules/audio_device/audio_device_ios_objc_unittests.stamp
+build audio_device_unittests: phony obj/modules/audio_device/audio_device_unittests.stamp
+build audio_encoder_L16: phony obj/api/audio_codecs/L16/libaudio_encoder_L16.a
+build audio_encoder_g711: phony obj/api/audio_codecs/g711/libaudio_encoder_g711.a
+build audio_encoder_g722: phony obj/api/audio_codecs/g722/libaudio_encoder_g722.a
+build audio_encoder_g722_config: phony obj/api/audio_codecs/g722/audio_encoder_g722_config.stamp
+build audio_encoder_ilbc: phony obj/api/audio_codecs/ilbc/libaudio_encoder_ilbc.a
+build audio_encoder_ilbc_config: phony obj/api/audio_codecs/ilbc/audio_encoder_ilbc_config.stamp
+build audio_encoder_interface: phony obj/modules/audio_coding/audio_encoder_interface.stamp
+build audio_encoder_isac: phony obj/api/audio_codecs/isac/audio_encoder_isac.stamp
+build audio_encoder_isac_fix: phony obj/api/audio_codecs/isac/libaudio_encoder_isac_fix.a
+build audio_encoder_isac_float: phony obj/api/audio_codecs/isac/libaudio_encoder_isac_float.a
+build audio_encoder_opus: phony obj/api/audio_codecs/opus/audio_encoder_opus.stamp
+build audio_encoder_opus_config: phony obj/api/audio_codecs/opus/libaudio_encoder_opus_config.a
+build audio_end_to_end_test: phony obj/audio/audio_end_to_end_test.stamp
+build audio_format_conversion: phony obj/modules/audio_coding/libaudio_format_conversion.a
+build audio_frame_manipulator: phony obj/modules/audio_mixer/libaudio_frame_manipulator.a
+build audio_frame_operations: phony obj/audio/utility/libaudio_frame_operations.a
+build audio_level: phony obj/voice_engine/libaudio_level.a
+build audio_mixer: phony obj/modules/audio_mixer/audio_mixer.stamp
+build audio_mixer_api: phony obj/api/audio_mixer_api.stamp
+build audio_mixer_impl: phony obj/modules/audio_mixer/libaudio_mixer_impl.a
+build audio_mixer_unittests: phony obj/modules/audio_mixer/audio_mixer_unittests.stamp
+build audio_network_adaptor: phony obj/modules/audio_coding/libaudio_network_adaptor.a
+build audio_network_adaptor_config: phony obj/modules/audio_coding/libaudio_network_adaptor_config.a
+build audio_objc: phony obj/sdk/libaudio_objc.a
+build audio_perf_tests: phony obj/audio/audio_perf_tests.stamp
+build audio_processing: phony obj/modules/audio_processing/libaudio_processing.a
+build audio_processing_c: phony obj/modules/audio_processing/audio_processing_c.stamp
+build audio_processing_neon: phony obj/modules/audio_processing/libaudio_processing_neon.a
+build audio_processing_neon_c: phony obj/modules/audio_processing/libaudio_processing_neon_c.a
+build audio_processing_perf_tests: phony obj/modules/audio_processing/audio_processing_perf_tests.stamp
+build audio_processing_tests: phony obj/modules/audio_processing/audio_processing_tests.stamp
+build audio_processing_unittests: phony obj/modules/audio_processing/audio_processing_unittests.stamp
+build audio_tests: phony obj/audio/audio_tests.stamp
+build audioproc_debug_proto: phony obj/modules/audio_processing/libaudioproc_debug_proto.a
+build audioproc_debug_proto_gen: phony obj/modules/audio_processing/audioproc_debug_proto_gen.stamp
+build audioproc_protobuf_utils: phony obj/modules/audio_processing/libaudioproc_protobuf_utils.a
+build audioproc_test_utils: phony obj/modules/audio_processing/audioproc_test_utils.stamp
+build audioproc_unittest_proto: phony obj/modules/audio_processing/libaudioproc_unittest_proto.a
+build audioproc_unittest_proto_gen: phony obj/modules/audio_processing/audioproc_unittest_proto_gen.stamp
+build base: phony obj/rtc_base/base.stamp
+build bitrate_allocator: phony obj/call/bitrate_allocator.stamp
+build bitrate_controller: phony obj/modules/bitrate_controller/libbitrate_controller.a
+build bitrate_controller_unittests: phony obj/modules/bitrate_controller/bitrate_controller_unittests.stamp
+build boringssl: phony obj/third_party/boringssl/libboringssl.a
+build boringssl_asm: phony obj/third_party/boringssl/boringssl_asm.stamp
+build boringssl_crypto_tests: phony obj/third_party/boringssl/boringssl_crypto_tests.stamp
+build boringssl_crypto_tests_arch_executable_sources: phony obj/third_party/boringssl/boringssl_crypto_tests_arch_executable_sources.stamp
+build boringssl_crypto_tests_bundle_data_pkg_info: phony obj/third_party/boringssl/boringssl_crypto_tests_bundle_data_pkg_info.stamp
+build boringssl_crypto_tests_executable: phony obj/third_party/boringssl/boringssl_crypto_tests_executable.stamp
+build boringssl_crypto_tests_gen_entitlements: phony obj/third_party/boringssl/boringssl_crypto_tests_gen_entitlements.stamp
+build boringssl_crypto_tests_generate_info_plist: phony obj/third_party/boringssl/boringssl_crypto_tests_generate_info_plist.stamp
+build boringssl_crypto_tests_generate_info_plist_merge: phony obj/third_party/boringssl/boringssl_crypto_tests_generate_info_plist_merge.stamp
+build boringssl_crypto_tests_pkg_info: phony obj/third_party/boringssl/boringssl_crypto_tests_pkg_info.stamp
+build boringssl_crypto_tests_resources_bundle_data: phony obj/third_party/boringssl/boringssl_crypto_tests_resources_bundle_data.stamp
+build boringssl_ssl_tests: phony obj/third_party/boringssl/boringssl_ssl_tests.stamp
+build boringssl_ssl_tests_arch_executable_sources: phony obj/third_party/boringssl/boringssl_ssl_tests_arch_executable_sources.stamp
+build boringssl_ssl_tests_bundle_data_pkg_info: phony obj/third_party/boringssl/boringssl_ssl_tests_bundle_data_pkg_info.stamp
+build boringssl_ssl_tests_executable: phony obj/third_party/boringssl/boringssl_ssl_tests_executable.stamp
+build boringssl_ssl_tests_gen_entitlements: phony obj/third_party/boringssl/boringssl_ssl_tests_gen_entitlements.stamp
+build boringssl_ssl_tests_generate_info_plist: phony obj/third_party/boringssl/boringssl_ssl_tests_generate_info_plist.stamp
+build boringssl_ssl_tests_generate_info_plist_merge: phony obj/third_party/boringssl/boringssl_ssl_tests_generate_info_plist_merge.stamp
+build boringssl_ssl_tests_pkg_info: phony obj/third_party/boringssl/boringssl_ssl_tests_pkg_info.stamp
+build boringssl_ssl_tests_resources_bundle_data: phony obj/third_party/boringssl/boringssl_ssl_tests_resources_bundle_data.stamp
+build bwe_rtp: phony obj/modules/remote_bitrate_estimator/bwe_rtp.stamp
+build bwe_simulations_tests: phony obj/modules/remote_bitrate_estimator/bwe_simulations_tests.stamp
+build bwe_simulations_tests_arch_executable_sources: phony obj/modules/remote_bitrate_estimator/bwe_simulations_tests_arch_executable_sources.stamp
+build bwe_simulations_tests_bundle_data_pkg_info: phony obj/modules/remote_bitrate_estimator/bwe_simulations_tests_bundle_data_pkg_info.stamp
+build bwe_simulations_tests_executable: phony obj/modules/remote_bitrate_estimator/bwe_simulations_tests_executable.stamp
+build bwe_simulations_tests_gen_entitlements: phony obj/modules/remote_bitrate_estimator/bwe_simulations_tests_gen_entitlements.stamp
+build bwe_simulations_tests_generate_info_plist: phony obj/modules/remote_bitrate_estimator/bwe_simulations_tests_generate_info_plist.stamp
+build bwe_simulations_tests_generate_info_plist_merge: phony obj/modules/remote_bitrate_estimator/bwe_simulations_tests_generate_info_plist_merge.stamp
+build bwe_simulations_tests_pkg_info: phony obj/modules/remote_bitrate_estimator/bwe_simulations_tests_pkg_info.stamp
+build bwe_simulations_tests_resources_bundle_data: phony obj/modules/remote_bitrate_estimator/bwe_simulations_tests_resources_bundle_data.stamp
+build bwe_simulator_lib: phony obj/modules/remote_bitrate_estimator/libbwe_simulator_lib.a
+build call_api: phony obj/api/call_api.stamp
+build call_interfaces: phony obj/call/call_interfaces.stamp
+build call_perf_tests: phony obj/call/call_perf_tests.stamp
+build call_tests: phony obj/call/call_tests.stamp
+build chart_proto: phony obj/rtc_tools/libchart_proto.a
+build chart_proto_gen: phony obj/rtc_tools/chart_proto_gen.stamp
+build cng: phony obj/modules/audio_coding/libcng.a
+build codec_globals_headers: phony obj/modules/video_coding/codec_globals_headers.stamp
+build codec_test_objc: phony obj/modules/video_coding/libcodec_test_objc.a
+build command_line_parser: phony obj/rtc_tools/libcommand_line_parser.a
+build common_audio_c: phony obj/common_audio/common_audio_c.stamp
+build common_audio_c_arm_asm: phony obj/common_audio/common_audio_c_arm_asm.stamp
+build common_audio_cc: phony obj/common_audio/common_audio_cc.stamp
+build common_audio_neon: phony obj/common_audio/libcommon_audio_neon.a
+build common_audio_neon_c: phony obj/common_audio/common_audio_neon_c.stamp
+build common_audio_unittests: phony obj/common_audio/common_audio_unittests.stamp
+build common_audio_unittests_arch_executable_sources: phony obj/common_audio/common_audio_unittests_arch_executable_sources.stamp
+build common_audio_unittests_bundle_data_pkg_info: phony obj/common_audio/common_audio_unittests_bundle_data_pkg_info.stamp
+build common_audio_unittests_executable: phony obj/common_audio/common_audio_unittests_executable.stamp
+build common_audio_unittests_gen_entitlements: phony obj/common_audio/common_audio_unittests_gen_entitlements.stamp
+build common_audio_unittests_generate_info_plist: phony obj/common_audio/common_audio_unittests_generate_info_plist.stamp
+build common_audio_unittests_generate_info_plist_merge: phony obj/common_audio/common_audio_unittests_generate_info_plist_merge.stamp
+build common_audio_unittests_pkg_info: phony obj/common_audio/common_audio_unittests_pkg_info.stamp
+build common_audio_unittests_resources_bundle_data: phony obj/common_audio/common_audio_unittests_resources_bundle_data.stamp
+build common_objc: phony obj/sdk/libcommon_objc.a
+build common_video_unittests: phony obj/common_video/common_video_unittests.stamp
+build common_video_unittests_arch_executable_sources: phony obj/common_video/common_video_unittests_arch_executable_sources.stamp
+build common_video_unittests_bundle_data: phony obj/common_video/common_video_unittests_bundle_data.stamp
+build common_video_unittests_bundle_data_pkg_info: phony obj/common_video/common_video_unittests_bundle_data_pkg_info.stamp
+build common_video_unittests_executable: phony obj/common_video/common_video_unittests_executable.stamp
+build common_video_unittests_gen_entitlements: phony obj/common_video/common_video_unittests_gen_entitlements.stamp
+build common_video_unittests_generate_info_plist: phony obj/common_video/common_video_unittests_generate_info_plist.stamp
+build common_video_unittests_generate_info_plist_merge: phony obj/common_video/common_video_unittests_generate_info_plist_merge.stamp
+build common_video_unittests_pkg_info: phony obj/common_video/common_video_unittests_pkg_info.stamp
+build common_video_unittests_resources_bundle_data: phony obj/common_video/common_video_unittests_resources_bundle_data.stamp
+build compile_assert_c: phony obj/rtc_base/compile_assert_c.stamp
+build congestion_controller: phony obj/modules/congestion_controller/libcongestion_controller.a
+build congestion_controller_unittests: phony obj/modules/congestion_controller/congestion_controller_unittests.stamp
+build conversational_speech: phony obj/modules/audio_processing/test/conversational_speech/conversational_speech.stamp
+build copy_google: phony obj/third_party/protobuf/copy_google.stamp
+build copy_google_protobuf: phony obj/third_party/protobuf/copy_google_protobuf.stamp
+build copy_google_protobuf_internal: phony obj/third_party/protobuf/copy_google_protobuf_internal.stamp
+build copy_six: phony obj/third_party/protobuf/copy_six.stamp
+build corevideoframebuffer_objc: phony obj/sdk/libcorevideoframebuffer_objc.a
+build cpu_features_api: phony obj/system_wrappers/cpu_features_api.stamp
+build create_pc_factory: phony obj/pc/libcreate_pc_factory.a
+build default_exe_manifest: phony obj/build/win/default_exe_manifest.stamp
+build denoiser_filter: phony obj/modules/video_processing/denoiser_filter.stamp
+build deps: phony obj/build/config/sanitizers/deps.stamp
+build desktop_capture: phony obj/modules/desktop_capture/desktop_capture.stamp
+build desktop_capture_generic: phony obj/modules/desktop_capture/libdesktop_capture_generic.a
+build desktop_capture_mock: phony obj/modules/desktop_capture/desktop_capture_mock.stamp
+build desktop_capture_modules_tests: phony obj/modules/desktop_capture/desktop_capture_modules_tests.stamp
+build desktop_capture_unittests: phony obj/modules/desktop_capture/desktop_capture_unittests.stamp
+build direct_transport: phony obj/test/direct_transport.stamp
+build event_log_visualizer_utils: phony obj/rtc_tools/libevent_log_visualizer_utils.a
+build exe_and_shlib_deps: phony obj/build/config/exe_and_shlib_deps.stamp
+build fake_audio_device: phony obj/test/fake_audio_device.stamp
+build fakemetricsobserver: phony obj/api/fakemetricsobserver.stamp
+build fec_test_helper: phony obj/modules/rtp_rtcp/fec_test_helper.stamp
+build field_trial: phony obj/test/field_trial.stamp
+build field_trial_api: phony obj/system_wrappers/field_trial_api.stamp
+build field_trial_default: phony obj/system_wrappers/libfield_trial_default.a
+build fileutils: phony obj/test/fileutils.stamp
+build fileutils_objc: phony obj/test/fileutils_objc.stamp
+build fileutils_unittests: phony obj/test/fileutils_unittests.stamp
+build frame_editing_lib: phony obj/rtc_tools/libframe_editing_lib.a
+build framework_objc: phony obj/sdk/framework_objc.stamp
+build framework_objc+bundle: phony obj/sdk/framework_objc+bundle.stamp
+build framework_objc+link: phony obj/sdk/framework_objc+link.stamp
+build framework_objc_arch_shared_library: phony obj/sdk/arm64/WebRTC.TOC
+build framework_objc_arch_shared_library_sources: phony obj/sdk/framework_objc_arch_shared_library_sources.stamp
+build framework_objc_compile_headers_map: phony obj/sdk/framework_objc_compile_headers_map.stamp
+build framework_objc_copy_public_headers: phony obj/sdk/framework_objc_copy_public_headers.stamp
+build framework_objc_framework_headers: phony obj/sdk/framework_objc_framework_headers.stamp
+build framework_objc_info_plist: phony obj/sdk/framework_objc_info_plist.stamp
+build framework_objc_info_plist_bundle: phony obj/sdk/framework_objc_info_plist_bundle.stamp
+build framework_objc_info_plist_merge: phony obj/sdk/framework_objc_info_plist_merge.stamp
+build framework_objc_module_map: phony obj/sdk/framework_objc_module_map.stamp
+build framework_objc_shared_library: phony obj/sdk/framework_objc_shared_library.stamp
+build g711: phony obj/modules/audio_coding/libg711.a
+build g711_c: phony obj/modules/audio_coding/g711_c.stamp
+build g722: phony obj/modules/audio_coding/libg722.a
+build g722_c: phony obj/modules/audio_coding/g722_c.stamp
+build gtest_prod: phony obj/rtc_base/gtest_prod.stamp
+build ilbc: phony obj/modules/audio_coding/libilbc.a
+build ilbc_c: phony obj/modules/audio_coding/ilbc_c.stamp
+build ios_enable_coverage: phony obj/testing/gtest/ios_enable_coverage.stamp
+build isac: phony obj/modules/audio_coding/libisac.a
+build isac_c: phony obj/modules/audio_coding/libisac_c.a
+build isac_common: phony obj/modules/audio_coding/libisac_common.a
+build isac_fix: phony obj/modules/audio_coding/libisac_fix.a
+build isac_fix_c: phony obj/modules/audio_coding/isac_fix_c.stamp
+build isac_fix_c_arm_asm: phony obj/modules/audio_coding/isac_fix_c_arm_asm.stamp
+build isac_fix_common: phony obj/modules/audio_coding/isac_fix_common.stamp
+build isac_neon: phony obj/modules/audio_coding/libisac_neon.a
+build isac_test_util: phony obj/modules/audio_coding/isac_test_util.stamp
+build jsoncpp: phony obj/third_party/jsoncpp/jsoncpp.stamp
+build legacy_encoded_audio_frame: phony obj/modules/audio_coding/liblegacy_encoded_audio_frame.a
+build lib_unit_tests: phony obj/modules/audio_processing/test/py_quality_assessment/lib_unit_tests.stamp
+build libjingle_api_deprecated_headers: phony obj/api/libjingle_api_deprecated_headers.stamp
+build libjingle_logging_api: phony obj/api/libjingle_logging_api.stamp
+build libjingle_peerconnection_api: phony obj/api/libjingle_peerconnection_api.a
+build libjingle_peerconnection_test_api: phony obj/api/libjingle_peerconnection_test_api.stamp
+build libsrtp: phony obj/third_party/libsrtp/libsrtp.a
+build libstunprober: phony obj/p2p/libstunprober.a
+build libstunprober_unittests: phony obj/p2p/libstunprober_unittests.stamp
+build libvpx: phony obj/third_party/libvpx/libvpx.a
+build libyuv: phony obj/third_party/libyuv/libyuv.stamp
+build libyuv_internal: phony obj/third_party/libyuv/libyuv_internal.a
+build libyuv_neon: phony obj/third_party/libyuv/libyuv_neon.a
+build libyuv_unittest: phony obj/third_party/libyuv/libyuv_unittest.stamp
+build libyuv_unittest_arch_executable_sources: phony obj/third_party/libyuv/libyuv_unittest_arch_executable_sources.stamp
+build libyuv_unittest_bundle_data_pkg_info: phony obj/third_party/libyuv/libyuv_unittest_bundle_data_pkg_info.stamp
+build libyuv_unittest_executable: phony obj/third_party/libyuv/libyuv_unittest_executable.stamp
+build libyuv_unittest_gen_entitlements: phony obj/third_party/libyuv/libyuv_unittest_gen_entitlements.stamp
+build libyuv_unittest_generate_info_plist: phony obj/third_party/libyuv/libyuv_unittest_generate_info_plist.stamp
+build libyuv_unittest_generate_info_plist_merge: phony obj/third_party/libyuv/libyuv_unittest_generate_info_plist_merge.stamp
+build libyuv_unittest_pkg_info: phony obj/third_party/libyuv/libyuv_unittest_pkg_info.stamp
+build libyuv_unittest_resources_bundle_data: phony obj/third_party/libyuv/libyuv_unittest_resources_bundle_data.stamp
+build low_bandwidth_audio_test: phony obj/audio/low_bandwidth_audio_test.stamp
+build low_bandwidth_audio_test_arch_executable_sources: phony obj/audio/low_bandwidth_audio_test_arch_executable_sources.stamp
+build low_bandwidth_audio_test_bundle_data_pkg_info: phony obj/audio/low_bandwidth_audio_test_bundle_data_pkg_info.stamp
+build low_bandwidth_audio_test_executable: phony obj/audio/low_bandwidth_audio_test_executable.stamp
+build low_bandwidth_audio_test_gen_entitlements: phony obj/audio/low_bandwidth_audio_test_gen_entitlements.stamp
+build low_bandwidth_audio_test_generate_info_plist: phony obj/audio/low_bandwidth_audio_test_generate_info_plist.stamp
+build low_bandwidth_audio_test_generate_info_plist_merge: phony obj/audio/low_bandwidth_audio_test_generate_info_plist_merge.stamp
+build low_bandwidth_audio_test_pkg_info: phony obj/audio/low_bandwidth_audio_test_pkg_info.stamp
+build low_bandwidth_audio_test_resources_bundle_data: phony obj/audio/low_bandwidth_audio_test_resources_bundle_data.stamp
+build mac_portaudio: phony obj/modules/audio_device/mac_portaudio.stamp
+build media_file: phony obj/modules/media_file/libmedia_file.a
+build media_file_unittests: phony obj/modules/media_file/media_file_unittests.stamp
+build mediastream_interface_and_implicit_video_frame_api: phony obj/api/mediastream_interface_and_implicit_video_frame_api.stamp
+build metal_objc: phony obj/sdk/libmetal_objc.a
+build metrics_api: phony obj/system_wrappers/metrics_api.stamp
+build metrics_default: phony obj/system_wrappers/libmetrics_default.a
+build mock_aec_dump: phony obj/modules/audio_processing/aec_dump/mock_aec_dump.stamp
+build mock_aec_dump_unittests: phony obj/modules/audio_processing/aec_dump/mock_aec_dump_unittests.stamp
+build mock_audio_device: phony obj/modules/audio_device/mock_audio_device.stamp
+build mock_audio_mixer: phony obj/api/mock_audio_mixer.stamp
+build mock_common_audio: phony obj/common_audio/mock_common_audio.stamp
+build mock_congestion_controller: phony obj/modules/congestion_controller/mock_congestion_controller.stamp
+build mock_headers: phony obj/modules/video_coding/mock_headers.stamp
+build mock_paced_sender: phony obj/modules/pacing/mock_paced_sender.stamp
+build mock_process_thread: phony obj/modules/utility/mock_process_thread.stamp
+build mock_rtp_interfaces: phony obj/call/mock_rtp_interfaces.stamp
+build mock_rtp_rtcp: phony obj/modules/rtp_rtcp/mock_rtp_rtcp.stamp
+build module_api: phony obj/modules/module_api.stamp
+build modules_tests: phony obj/modules/modules_tests.stamp
+build modules_tests_arch_executable_sources: phony obj/modules/modules_tests_arch_executable_sources.stamp
+build modules_tests_bundle_data: phony obj/modules/modules_tests_bundle_data.stamp
+build modules_tests_bundle_data_pkg_info: phony obj/modules/modules_tests_bundle_data_pkg_info.stamp
+build modules_tests_executable: phony obj/modules/modules_tests_executable.stamp
+build modules_tests_gen_entitlements: phony obj/modules/modules_tests_gen_entitlements.stamp
+build modules_tests_generate_info_plist: phony obj/modules/modules_tests_generate_info_plist.stamp
+build modules_tests_generate_info_plist_merge: phony obj/modules/modules_tests_generate_info_plist_merge.stamp
+build modules_tests_pkg_info: phony obj/modules/modules_tests_pkg_info.stamp
+build modules_tests_resources_bundle_data: phony obj/modules/modules_tests_resources_bundle_data.stamp
+build modules_unittests: phony obj/modules/modules_unittests.stamp
+build modules_unittests_arch_executable_sources: phony obj/modules/modules_unittests_arch_executable_sources.stamp
+build modules_unittests_bundle_data: phony obj/modules/modules_unittests_bundle_data.stamp
+build modules_unittests_bundle_data_pkg_info: phony obj/modules/modules_unittests_bundle_data_pkg_info.stamp
+build modules_unittests_executable: phony obj/modules/modules_unittests_executable.stamp
+build modules_unittests_gen_entitlements: phony obj/modules/modules_unittests_gen_entitlements.stamp
+build modules_unittests_generate_info_plist: phony obj/modules/modules_unittests_generate_info_plist.stamp
+build modules_unittests_generate_info_plist_merge: phony obj/modules/modules_unittests_generate_info_plist_merge.stamp
+build modules_unittests_pkg_info: phony obj/modules/modules_unittests_pkg_info.stamp
+build modules_unittests_resources_bundle_data: phony obj/modules/modules_unittests_resources_bundle_data.stamp
+build neteq: phony obj/modules/audio_coding/libneteq.a
+build neteq_decoder_enum: phony obj/modules/audio_coding/neteq_decoder_enum.stamp
+build neteq_input_audio_tools: phony obj/modules/audio_coding/neteq_input_audio_tools.stamp
+build neteq_quality_test_support: phony obj/modules/audio_coding/neteq_quality_test_support.stamp
+build neteq_rtpplay: phony obj/modules/audio_coding/neteq_rtpplay.stamp
+build neteq_rtpplay_arch_executable_sources: phony obj/modules/audio_coding/neteq_rtpplay_arch_executable_sources.stamp
+build neteq_rtpplay_bundle_data_pkg_info: phony obj/modules/audio_coding/neteq_rtpplay_bundle_data_pkg_info.stamp
+build neteq_rtpplay_executable: phony obj/modules/audio_coding/neteq_rtpplay_executable.stamp
+build neteq_rtpplay_gen_entitlements: phony obj/modules/audio_coding/neteq_rtpplay_gen_entitlements.stamp
+build neteq_rtpplay_generate_info_plist: phony obj/modules/audio_coding/neteq_rtpplay_generate_info_plist.stamp
+build neteq_rtpplay_generate_info_plist_merge: phony obj/modules/audio_coding/neteq_rtpplay_generate_info_plist_merge.stamp
+build neteq_rtpplay_pkg_info: phony obj/modules/audio_coding/neteq_rtpplay_pkg_info.stamp
+build neteq_rtpplay_resources_bundle_data: phony obj/modules/audio_coding/neteq_rtpplay_resources_bundle_data.stamp
+build neteq_test_support: phony obj/modules/audio_coding/neteq_test_support.stamp
+build neteq_test_tools: phony obj/modules/audio_coding/neteq_test_tools.stamp
+build neteq_test_tools_deprecated: phony obj/modules/audio_coding/neteq_test_tools_deprecated.stamp
+build neteq_tools: phony obj/modules/audio_coding/neteq_tools.stamp
+build neteq_tools_minimal: phony obj/modules/audio_coding/neteq_tools_minimal.stamp
+build neteq_unittest_proto: phony obj/modules/audio_coding/libneteq_unittest_proto.a
+build neteq_unittest_proto_gen: phony obj/modules/audio_coding/neteq_unittest_proto_gen.stamp
+build network_tester: phony obj/rtc_tools/network_tester/libnetwork_tester.a
+build network_tester_config_proto: phony obj/rtc_tools/network_tester/libnetwork_tester_config_proto.a
+build network_tester_config_proto_gen: phony obj/rtc_tools/network_tester/network_tester_config_proto_gen.stamp
+build network_tester_packet_proto: phony obj/rtc_tools/network_tester/libnetwork_tester_packet_proto.a
+build network_tester_packet_proto_gen: phony obj/rtc_tools/network_tester/network_tester_packet_proto_gen.stamp
+build network_tester_unittests: phony obj/rtc_tools/network_tester/network_tester_unittests.stamp
+build network_tester_unittests_bundle_data: phony obj/rtc_tools/network_tester/network_tester_unittests_bundle_data.stamp
+build noise_tracks: phony obj/resources/audio_processing/test/py_quality_assessment/noise_tracks.stamp
+build null_aec_dump_factory: phony obj/modules/audio_processing/aec_dump/null_aec_dump_factory.stamp
+build ocmock: phony obj/third_party/ocmock/ocmock.stamp
+build optional: phony obj/api/optional.stamp
+build options_sources: phony obj/build/config/sanitizers/liboptions_sources.a
+build opus: phony obj/third_party/opus/libopus.a
+build ortc_api: phony obj/api/ortc_api.stamp
+build ortc_unittests: phony obj/ortc/ortc_unittests.stamp
+build ortc_unittests_arch_executable_sources: phony obj/ortc/ortc_unittests_arch_executable_sources.stamp
+build ortc_unittests_bundle_data_pkg_info: phony obj/ortc/ortc_unittests_bundle_data_pkg_info.stamp
+build ortc_unittests_executable: phony obj/ortc/ortc_unittests_executable.stamp
+build ortc_unittests_gen_entitlements: phony obj/ortc/ortc_unittests_gen_entitlements.stamp
+build ortc_unittests_generate_info_plist: phony obj/ortc/ortc_unittests_generate_info_plist.stamp
+build ortc_unittests_generate_info_plist_merge: phony obj/ortc/ortc_unittests_generate_info_plist_merge.stamp
+build ortc_unittests_pkg_info: phony obj/ortc/ortc_unittests_pkg_info.stamp
+build ortc_unittests_resources_bundle_data: phony obj/ortc/ortc_unittests_resources_bundle_data.stamp
+build output: phony obj/modules/audio_processing/test/py_quality_assessment/output.stamp
+build p2p_test_utils: phony obj/p2p/p2p_test_utils.stamp
+build pacing: phony obj/modules/pacing/libpacing.a
+build pacing_unittests: phony obj/modules/pacing/pacing_unittests.stamp
+build pc_test_utils: phony obj/pc/pc_test_utils.stamp
+build pcm16b: phony obj/modules/audio_coding/libpcm16b.a
+build pcm16b_c: phony obj/modules/audio_coding/pcm16b_c.stamp
+build peerconnection: phony obj/pc/libpeerconnection.a
+build peerconnection_and_implicit_call_api: phony obj/api/peerconnection_and_implicit_call_api.stamp
+build peerconnection_objc: phony obj/sdk/libpeerconnection_objc.a
+build peerconnection_unittests: phony obj/pc/peerconnection_unittests.stamp
+build peerconnection_unittests_arch_executable_sources: phony obj/pc/peerconnection_unittests_arch_executable_sources.stamp
+build peerconnection_unittests_bundle_data_pkg_info: phony obj/pc/peerconnection_unittests_bundle_data_pkg_info.stamp
+build peerconnection_unittests_executable: phony obj/pc/peerconnection_unittests_executable.stamp
+build peerconnection_unittests_gen_entitlements: phony obj/pc/peerconnection_unittests_gen_entitlements.stamp
+build peerconnection_unittests_generate_info_plist: phony obj/pc/peerconnection_unittests_generate_info_plist.stamp
+build peerconnection_unittests_generate_info_plist_merge: phony obj/pc/peerconnection_unittests_generate_info_plist_merge.stamp
+build peerconnection_unittests_pkg_info: phony obj/pc/peerconnection_unittests_pkg_info.stamp
+build peerconnection_unittests_resources_bundle_data: phony obj/pc/peerconnection_unittests_resources_bundle_data.stamp
+build peerconnectionfactory_base_objc: phony obj/sdk/libpeerconnectionfactory_base_objc.a
+build peerconnectionfactory_no_media_objc: phony obj/sdk/libpeerconnectionfactory_no_media_objc.a
+build peerconnectionfactory_objc: phony obj/sdk/libpeerconnectionfactory_objc.a
+build posix: phony obj/build/config/posix/posix.stamp
+build primitives: phony obj/modules/desktop_capture/libprimitives.a
+build probing_signals: phony obj/resources/audio_processing/test/py_quality_assessment/probing_signals.stamp
+build protobuf_full: phony obj/third_party/protobuf/libprotobuf_full.a
+build protobuf_lite: phony obj/third_party/protobuf/libprotobuf_lite.a
+build protobuf_utils: phony obj/rtc_base/protobuf_utils.stamp
+build py_proto: phony obj/third_party/protobuf/py_proto.stamp
+build py_quality_assessment: phony obj/modules/audio_processing/test/py_quality_assessment/py_quality_assessment.stamp
+build red: phony obj/modules/audio_coding/libred.a
+build reference_less_video_analysis_lib: phony obj/rtc_tools/libreference_less_video_analysis_lib.a
+build remote_bitrate_estimator: phony obj/modules/remote_bitrate_estimator/libremote_bitrate_estimator.a
+build remote_bitrate_estimator_perf_tests: phony obj/modules/remote_bitrate_estimator/remote_bitrate_estimator_perf_tests.stamp
+build remote_bitrate_estimator_unittests: phony obj/modules/remote_bitrate_estimator/remote_bitrate_estimator_unittests.stamp
+build rent_a_codec: phony obj/modules/audio_coding/librent_a_codec.a
+build rtc_api_unittests: phony obj/api/rtc_api_unittests.stamp
+build rtc_audio_video: phony obj/media/librtc_audio_video.a
+build rtc_base_approved: phony obj/rtc_base/rtc_base_approved.stamp
+build rtc_base_approved_generic: phony obj/rtc_base/rtc_base_approved_generic.stamp
+build rtc_base_approved_unittests: phony obj/rtc_base/rtc_base_approved_unittests.stamp
+build rtc_base_generic: phony obj/rtc_base/librtc_base_generic.a
+build rtc_base_nonparallel_tests: phony obj/rtc_base/rtc_base_nonparallel_tests.stamp
+build rtc_base_objc: phony obj/rtc_base/rtc_base_objc.stamp
+build rtc_base_tests_main: phony obj/rtc_base/rtc_base_tests_main.stamp
+build rtc_base_tests_utils: phony obj/rtc_base/rtc_base_tests_utils.stamp
+build rtc_base_unittests: phony obj/rtc_base/rtc_base_unittests.stamp
+build rtc_data: phony obj/media/librtc_data.a
+build rtc_event_log2rtp_dump: phony obj/logging/rtc_event_log2rtp_dump.stamp
+build rtc_event_log2rtp_dump_arch_executable_sources: phony obj/logging/rtc_event_log2rtp_dump_arch_executable_sources.stamp
+build rtc_event_log2rtp_dump_bundle_data_pkg_info: phony obj/logging/rtc_event_log2rtp_dump_bundle_data_pkg_info.stamp
+build rtc_event_log2rtp_dump_executable: phony obj/logging/rtc_event_log2rtp_dump_executable.stamp
+build rtc_event_log2rtp_dump_gen_entitlements: phony obj/logging/rtc_event_log2rtp_dump_gen_entitlements.stamp
+build rtc_event_log2rtp_dump_generate_info_plist: phony obj/logging/rtc_event_log2rtp_dump_generate_info_plist.stamp
+build rtc_event_log2rtp_dump_generate_info_plist_merge: phony obj/logging/rtc_event_log2rtp_dump_generate_info_plist_merge.stamp
+build rtc_event_log2rtp_dump_pkg_info: phony obj/logging/rtc_event_log2rtp_dump_pkg_info.stamp
+build rtc_event_log2rtp_dump_resources_bundle_data: phony obj/logging/rtc_event_log2rtp_dump_resources_bundle_data.stamp
+build rtc_event_log_api: phony obj/logging/rtc_event_log_api.stamp
+build rtc_event_log_impl: phony obj/logging/librtc_event_log_impl.a
+build rtc_event_log_parser: phony obj/logging/librtc_event_log_parser.a
+build rtc_event_log_proto: phony obj/logging/librtc_event_log_proto.a
+build rtc_event_log_proto_gen: phony obj/logging/rtc_event_log_proto_gen.stamp
+build rtc_event_log_source: phony obj/modules/audio_coding/librtc_event_log_source.a
+build rtc_event_log_tests: phony obj/logging/rtc_event_log_tests.stamp
+build rtc_h264_profile_id: phony obj/media/rtc_h264_profile_id.stamp
+build rtc_json: phony obj/rtc_base/rtc_json.stamp
+build rtc_media: phony obj/media/rtc_media.stamp
+build rtc_media_base: phony obj/media/librtc_media_base.a
+build rtc_media_tests_utils: phony obj/media/rtc_media_tests_utils.stamp
+build rtc_media_unittests: phony obj/media/rtc_media_unittests.stamp
+build rtc_media_unittests_arch_executable_sources: phony obj/media/rtc_media_unittests_arch_executable_sources.stamp
+build rtc_media_unittests_bundle_data: phony obj/media/rtc_media_unittests_bundle_data.stamp
+build rtc_media_unittests_bundle_data_pkg_info: phony obj/media/rtc_media_unittests_bundle_data_pkg_info.stamp
+build rtc_media_unittests_executable: phony obj/media/rtc_media_unittests_executable.stamp
+build rtc_media_unittests_gen_entitlements: phony obj/media/rtc_media_unittests_gen_entitlements.stamp
+build rtc_media_unittests_generate_info_plist: phony obj/media/rtc_media_unittests_generate_info_plist.stamp
+build rtc_media_unittests_generate_info_plist_merge: phony obj/media/rtc_media_unittests_generate_info_plist_merge.stamp
+build rtc_media_unittests_pkg_info: phony obj/media/rtc_media_unittests_pkg_info.stamp
+build rtc_media_unittests_resources_bundle_data: phony obj/media/rtc_media_unittests_resources_bundle_data.stamp
+build rtc_numerics: phony obj/rtc_base/librtc_numerics.a
+build rtc_numerics_unittests: phony obj/rtc_base/rtc_numerics_unittests.stamp
+build rtc_p2p: phony obj/p2p/librtc_p2p.a
+build rtc_p2p_unittests: phony obj/p2p/rtc_p2p_unittests.stamp
+build rtc_pc: phony obj/pc/rtc_pc.stamp
+build rtc_pc_base: phony obj/pc/librtc_pc_base.a
+build rtc_pc_unittests: phony obj/pc/rtc_pc_unittests.stamp
+build rtc_pc_unittests_arch_executable_sources: phony obj/pc/rtc_pc_unittests_arch_executable_sources.stamp
+build rtc_pc_unittests_bundle_data_pkg_info: phony obj/pc/rtc_pc_unittests_bundle_data_pkg_info.stamp
+build rtc_pc_unittests_executable: phony obj/pc/rtc_pc_unittests_executable.stamp
+build rtc_pc_unittests_gen_entitlements: phony obj/pc/rtc_pc_unittests_gen_entitlements.stamp
+build rtc_pc_unittests_generate_info_plist: phony obj/pc/rtc_pc_unittests_generate_info_plist.stamp
+build rtc_pc_unittests_generate_info_plist_merge: phony obj/pc/rtc_pc_unittests_generate_info_plist_merge.stamp
+build rtc_pc_unittests_pkg_info: phony obj/pc/rtc_pc_unittests_pkg_info.stamp
+build rtc_pc_unittests_resources_bundle_data: phony obj/pc/rtc_pc_unittests_resources_bundle_data.stamp
+build rtc_sdk_objc: phony obj/sdk/librtc_sdk_objc.a
+build rtc_stats: phony obj/stats/librtc_stats.a
+build rtc_stats_api: phony obj/api/rtc_stats_api.stamp
+build rtc_stats_test_utils: phony obj/stats/rtc_stats_test_utils.stamp
+build rtc_stats_unittests: phony obj/stats/rtc_stats_unittests.stamp
+build rtc_stats_unittests_arch_executable_sources: phony obj/stats/rtc_stats_unittests_arch_executable_sources.stamp
+build rtc_stats_unittests_bundle_data_pkg_info: phony obj/stats/rtc_stats_unittests_bundle_data_pkg_info.stamp
+build rtc_stats_unittests_executable: phony obj/stats/rtc_stats_unittests_executable.stamp
+build rtc_stats_unittests_gen_entitlements: phony obj/stats/rtc_stats_unittests_gen_entitlements.stamp
+build rtc_stats_unittests_generate_info_plist: phony obj/stats/rtc_stats_unittests_generate_info_plist.stamp
+build rtc_stats_unittests_generate_info_plist_merge: phony obj/stats/rtc_stats_unittests_generate_info_plist_merge.stamp
+build rtc_stats_unittests_pkg_info: phony obj/stats/rtc_stats_unittests_pkg_info.stamp
+build rtc_stats_unittests_resources_bundle_data: phony obj/stats/rtc_stats_unittests_resources_bundle_data.stamp
+build rtc_task_queue: phony obj/rtc_base/rtc_task_queue.stamp
+build rtc_task_queue_api: phony obj/rtc_base/rtc_task_queue_api.stamp
+build rtc_task_queue_impl: phony obj/rtc_base/rtc_task_queue_impl.stamp
+build rtc_task_queue_unittests: phony obj/rtc_base/rtc_task_queue_unittests.stamp
+build rtp_analyzer: phony obj/rtc_tools/rtp_analyzer.stamp
+build rtp_interfaces: phony obj/call/rtp_interfaces.stamp
+build rtp_receiver: phony obj/call/rtp_receiver.stamp
+build rtp_rtcp: phony obj/modules/rtp_rtcp/librtp_rtcp.a
+build rtp_rtcp_format: phony obj/modules/rtp_rtcp/rtp_rtcp_format.stamp
+build rtp_rtcp_modules_tests: phony obj/modules/rtp_rtcp/rtp_rtcp_modules_tests.stamp
+build rtp_rtcp_unittests: phony obj/modules/rtp_rtcp/rtp_rtcp_unittests.stamp
+build rtp_sender: phony obj/call/rtp_sender.stamp
+build rtp_test_utils: phony obj/test/rtp_test_utils.stamp
+build run_test: phony obj/test/run_test.stamp
+build run_test_generic: phony obj/test/run_test_generic.stamp
+build run_test_interface: phony obj/test/run_test_interface.stamp
+build screen_drawer: phony obj/modules/desktop_capture/screen_drawer.stamp
+build scripts: phony obj/modules/audio_processing/test/py_quality_assessment/scripts.stamp
+build scripts_unit_tests: phony obj/modules/audio_processing/test/py_quality_assessment/scripts_unit_tests.stamp
+build sdk_unittests: phony obj/sdk/sdk_unittests.stamp
+build sdk_unittests_arch_executable_sources: phony obj/sdk/sdk_unittests_arch_executable_sources.stamp
+build sdk_unittests_bundle_data_pkg_info: phony obj/sdk/sdk_unittests_bundle_data_pkg_info.stamp
+build sdk_unittests_executable: phony obj/sdk/sdk_unittests_executable.stamp
+build sdk_unittests_gen_entitlements: phony obj/sdk/sdk_unittests_gen_entitlements.stamp
+build sdk_unittests_generate_info_plist: phony obj/sdk/sdk_unittests_generate_info_plist.stamp
+build sdk_unittests_generate_info_plist_merge: phony obj/sdk/sdk_unittests_generate_info_plist_merge.stamp
+build sdk_unittests_module: phony obj/sdk/sdk_unittests_module.stamp
+build sdk_unittests_module_arch_loadable_module: phony obj/sdk/arm64/sdk_unittests_module
+build sdk_unittests_module_arch_loadable_module_source: phony obj/sdk/sdk_unittests_module_arch_loadable_module_source.stamp
+build sdk_unittests_module_bundle: phony obj/sdk/sdk_unittests_module_bundle.stamp
+build sdk_unittests_module_info_plist: phony obj/sdk/sdk_unittests_module_info_plist.stamp
+build sdk_unittests_module_info_plist_bundle: phony obj/sdk/sdk_unittests_module_info_plist_bundle.stamp
+build sdk_unittests_module_info_plist_merge: phony obj/sdk/sdk_unittests_module_info_plist_merge.stamp
+build sdk_unittests_module_loadable_module: phony obj/sdk/sdk_unittests_module_loadable_module.stamp
+build sdk_unittests_moduleshell_source: phony obj/sdk/sdk_unittests_moduleshell_source.stamp
+build sdk_unittests_objc: phony obj/sdk/sdk_unittests_objc.stamp
+build sdk_unittests_pkg_info: phony obj/sdk/sdk_unittests_pkg_info.stamp
+build sdk_unittests_sources: phony obj/sdk/sdk_unittests_sources.stamp
+build sequenced_task_checker: phony obj/rtc_base/libsequenced_task_checker.a
+build sequenced_task_checker_unittests: phony obj/rtc_base/sequenced_task_checker_unittests.stamp
+build simulcast_test_utility: phony obj/modules/video_coding/simulcast_test_utility.stamp
+build sinc_resampler: phony obj/common_audio/sinc_resampler.stamp
+build single_threaded_task_queue: phony obj/test/single_threaded_task_queue.stamp
+build socketrocket: phony obj/examples/libsocketrocket.a
+build system_wrappers_default: phony obj/system_wrappers/system_wrappers_default.stamp
+build system_wrappers_unittests: phony obj/system_wrappers/system_wrappers_unittests.stamp
+build system_wrappers_unittests_arch_executable_sources: phony obj/system_wrappers/system_wrappers_unittests_arch_executable_sources.stamp
+build system_wrappers_unittests_bundle_data_pkg_info: phony obj/system_wrappers/system_wrappers_unittests_bundle_data_pkg_info.stamp
+build system_wrappers_unittests_executable: phony obj/system_wrappers/system_wrappers_unittests_executable.stamp
+build system_wrappers_unittests_gen_entitlements: phony obj/system_wrappers/system_wrappers_unittests_gen_entitlements.stamp
+build system_wrappers_unittests_generate_info_plist: phony obj/system_wrappers/system_wrappers_unittests_generate_info_plist.stamp
+build system_wrappers_unittests_generate_info_plist_merge: phony obj/system_wrappers/system_wrappers_unittests_generate_info_plist_merge.stamp
+build system_wrappers_unittests_pkg_info: phony obj/system_wrappers/system_wrappers_unittests_pkg_info.stamp
+build system_wrappers_unittests_resources_bundle_data: phony obj/system_wrappers/system_wrappers_unittests_resources_bundle_data.stamp
+build test_common: phony obj/test/test_common.stamp
+build test_main: phony obj/test/test_main.stamp
+build test_opus_api: phony obj/third_party/opus/test_opus_api.stamp
+build test_opus_api_arch_executable_sources: phony obj/third_party/opus/test_opus_api_arch_executable_sources.stamp
+build test_opus_api_bundle_data_pkg_info: phony obj/third_party/opus/test_opus_api_bundle_data_pkg_info.stamp
+build test_opus_api_executable: phony obj/third_party/opus/test_opus_api_executable.stamp
+build test_opus_api_gen_entitlements: phony obj/third_party/opus/test_opus_api_gen_entitlements.stamp
+build test_opus_api_generate_info_plist: phony obj/third_party/opus/test_opus_api_generate_info_plist.stamp
+build test_opus_api_generate_info_plist_merge: phony obj/third_party/opus/test_opus_api_generate_info_plist_merge.stamp
+build test_opus_api_pkg_info: phony obj/third_party/opus/test_opus_api_pkg_info.stamp
+build test_opus_api_resources_bundle_data: phony obj/third_party/opus/test_opus_api_resources_bundle_data.stamp
+build test_opus_decode: phony obj/third_party/opus/test_opus_decode.stamp
+build test_opus_decode_arch_executable_sources: phony obj/third_party/opus/test_opus_decode_arch_executable_sources.stamp
+build test_opus_decode_bundle_data_pkg_info: phony obj/third_party/opus/test_opus_decode_bundle_data_pkg_info.stamp
+build test_opus_decode_executable: phony obj/third_party/opus/test_opus_decode_executable.stamp
+build test_opus_decode_gen_entitlements: phony obj/third_party/opus/test_opus_decode_gen_entitlements.stamp
+build test_opus_decode_generate_info_plist: phony obj/third_party/opus/test_opus_decode_generate_info_plist.stamp
+build test_opus_decode_generate_info_plist_merge: phony obj/third_party/opus/test_opus_decode_generate_info_plist_merge.stamp
+build test_opus_decode_pkg_info: phony obj/third_party/opus/test_opus_decode_pkg_info.stamp
+build test_opus_decode_resources_bundle_data: phony obj/third_party/opus/test_opus_decode_resources_bundle_data.stamp
+build test_opus_encode: phony obj/third_party/opus/test_opus_encode.stamp
+build test_opus_encode_arch_executable_sources: phony obj/third_party/opus/test_opus_encode_arch_executable_sources.stamp
+build test_opus_encode_bundle_data_pkg_info: phony obj/third_party/opus/test_opus_encode_bundle_data_pkg_info.stamp
+build test_opus_encode_executable: phony obj/third_party/opus/test_opus_encode_executable.stamp
+build test_opus_encode_gen_entitlements: phony obj/third_party/opus/test_opus_encode_gen_entitlements.stamp
+build test_opus_encode_generate_info_plist: phony obj/third_party/opus/test_opus_encode_generate_info_plist.stamp
+build test_opus_encode_generate_info_plist_merge: phony obj/third_party/opus/test_opus_encode_generate_info_plist_merge.stamp
+build test_opus_encode_pkg_info: phony obj/third_party/opus/test_opus_encode_pkg_info.stamp
+build test_opus_encode_resources_bundle_data: phony obj/third_party/opus/test_opus_encode_resources_bundle_data.stamp
+build test_opus_padding: phony obj/third_party/opus/test_opus_padding.stamp
+build test_opus_padding_arch_executable_sources: phony obj/third_party/opus/test_opus_padding_arch_executable_sources.stamp
+build test_opus_padding_bundle_data_pkg_info: phony obj/third_party/opus/test_opus_padding_bundle_data_pkg_info.stamp
+build test_opus_padding_executable: phony obj/third_party/opus/test_opus_padding_executable.stamp
+build test_opus_padding_gen_entitlements: phony obj/third_party/opus/test_opus_padding_gen_entitlements.stamp
+build test_opus_padding_generate_info_plist: phony obj/third_party/opus/test_opus_padding_generate_info_plist.stamp
+build test_opus_padding_generate_info_plist_merge: phony obj/third_party/opus/test_opus_padding_generate_info_plist_merge.stamp
+build test_opus_padding_pkg_info: phony obj/third_party/opus/test_opus_padding_pkg_info.stamp
+build test_opus_padding_resources_bundle_data: phony obj/third_party/opus/test_opus_padding_resources_bundle_data.stamp
+build test_renderer: phony obj/test/test_renderer.stamp
+build test_renderer_generic: phony obj/test/test_renderer_generic.stamp
+build test_support: phony obj/test/test_support.stamp
+build test_support_objc: phony obj/test/test_support_objc.stamp
+build test_support_test_artifacts: phony obj/test/test_support_test_artifacts.stamp
+build test_support_unittests: phony obj/test/test_support_unittests.stamp
+build test_support_unittests_arch_executable_sources: phony obj/test/test_support_unittests_arch_executable_sources.stamp
+build test_support_unittests_bundle_data: phony obj/test/test_support_unittests_bundle_data.stamp
+build test_support_unittests_bundle_data_pkg_info: phony obj/test/test_support_unittests_bundle_data_pkg_info.stamp
+build test_support_unittests_executable: phony obj/test/test_support_unittests_executable.stamp
+build test_support_unittests_gen_entitlements: phony obj/test/test_support_unittests_gen_entitlements.stamp
+build test_support_unittests_generate_info_plist: phony obj/test/test_support_unittests_generate_info_plist.stamp
+build test_support_unittests_generate_info_plist_merge: phony obj/test/test_support_unittests_generate_info_plist_merge.stamp
+build test_support_unittests_pkg_info: phony obj/test/test_support_unittests_pkg_info.stamp
+build test_support_unittests_resources_bundle_data: phony obj/test/test_support_unittests_resources_bundle_data.stamp
+build tools_unittests: phony obj/rtc_tools/tools_unittests.stamp
+build tools_unittests_arch_executable_sources: phony obj/rtc_tools/tools_unittests_arch_executable_sources.stamp
+build tools_unittests_bundle_data: phony obj/rtc_tools/tools_unittests_bundle_data.stamp
+build tools_unittests_bundle_data_pkg_info: phony obj/rtc_tools/tools_unittests_bundle_data_pkg_info.stamp
+build tools_unittests_executable: phony obj/rtc_tools/tools_unittests_executable.stamp
+build tools_unittests_gen_entitlements: phony obj/rtc_tools/tools_unittests_gen_entitlements.stamp
+build tools_unittests_generate_info_plist: phony obj/rtc_tools/tools_unittests_generate_info_plist.stamp
+build tools_unittests_generate_info_plist_merge: phony obj/rtc_tools/tools_unittests_generate_info_plist_merge.stamp
+build tools_unittests_pkg_info: phony obj/rtc_tools/tools_unittests_pkg_info.stamp
+build tools_unittests_resources_bundle_data: phony obj/rtc_tools/tools_unittests_resources_bundle_data.stamp
+build transport_api: phony obj/api/transport_api.stamp
+build ui_objc: phony obj/sdk/libui_objc.a
+build unit_tests: phony obj/modules/audio_processing/test/py_quality_assessment/unit_tests.stamp
+build unittest: phony obj/modules/audio_processing/test/conversational_speech/unittest.stamp
+build usrsctp: phony obj/third_party/usrsctp/libusrsctp.a
+build utility_tests: phony obj/audio/utility/utility_tests.stamp
+build utility_unittests: phony obj/modules/utility/utility_unittests.stamp
+build video_capture: phony obj/modules/video_capture/libvideo_capture.a
+build video_capture_internal_impl: phony obj/modules/video_capture/video_capture_internal_impl.stamp
+build video_capture_internal_impl_objc: phony obj/modules/video_capture/video_capture_internal_impl_objc.stamp
+build video_capture_module: phony obj/modules/video_capture/libvideo_capture_module.a
+build video_capture_tests: phony obj/modules/video_capture/video_capture_tests.stamp
+build video_capture_tests_arch_executable_sources: phony obj/modules/video_capture/video_capture_tests_arch_executable_sources.stamp
+build video_capture_tests_bundle_data_pkg_info: phony obj/modules/video_capture/video_capture_tests_bundle_data_pkg_info.stamp
+build video_capture_tests_executable: phony obj/modules/video_capture/video_capture_tests_executable.stamp
+build video_capture_tests_gen_entitlements: phony obj/modules/video_capture/video_capture_tests_gen_entitlements.stamp
+build video_capture_tests_generate_info_plist: phony obj/modules/video_capture/video_capture_tests_generate_info_plist.stamp
+build video_capture_tests_generate_info_plist_merge: phony obj/modules/video_capture/video_capture_tests_generate_info_plist_merge.stamp
+build video_capture_tests_pkg_info: phony obj/modules/video_capture/video_capture_tests_pkg_info.stamp
+build video_capture_tests_resources_bundle_data: phony obj/modules/video_capture/video_capture_tests_resources_bundle_data.stamp
+build video_codecs_api: phony obj/api/video_codecs/video_codecs_api.stamp
+build video_codecs_test_framework: phony obj/modules/video_coding/video_codecs_test_framework.stamp
+build video_coding: phony obj/modules/video_coding/libvideo_coding.a
+build video_coding_modules_tests: phony obj/modules/video_coding/video_coding_modules_tests.stamp
+build video_coding_modules_tests_resources_bundle_data: phony obj/modules/video_coding/video_coding_modules_tests_resources_bundle_data.stamp
+build video_coding_unittests: phony obj/modules/video_coding/video_coding_unittests.stamp
+build video_coding_utility: phony obj/modules/video_coding/video_coding_utility.stamp
+build video_frame_api: phony obj/api/video_frame_api.stamp
+build video_full_stack_tests: phony obj/video/video_full_stack_tests.stamp
+build video_objc: phony obj/sdk/libvideo_objc.a
+build video_processing: phony obj/modules/video_processing/libvideo_processing.a
+build video_processing_neon: phony obj/modules/video_processing/libvideo_processing_neon.a
+build video_processing_unittests: phony obj/modules/video_processing/video_processing_unittests.stamp
+build video_quality_analysis: phony obj/rtc_tools/libvideo_quality_analysis.a
+build video_quality_test: phony obj/video/video_quality_test.stamp
+build video_stream_api: phony obj/call/video_stream_api.stamp
+build video_test_common: phony obj/test/video_test_common.stamp
+build video_test_support: phony obj/test/video_test_support.stamp
+build video_tests: phony obj/video/video_tests.stamp
+build video_toolbox_cc: phony obj/sdk/libvideo_toolbox_cc.a
+build videotoolbox_objc: phony obj/sdk/libvideotoolbox_objc.a
+build videotracksource_objc: phony obj/sdk/libvideotracksource_objc.a
+build voice_engine_unittests: phony obj/voice_engine/voice_engine_unittests.stamp
+build voice_engine_unittests_arch_executable_sources: phony obj/voice_engine/voice_engine_unittests_arch_executable_sources.stamp
+build voice_engine_unittests_bundle_data_pkg_info: phony obj/voice_engine/voice_engine_unittests_bundle_data_pkg_info.stamp
+build voice_engine_unittests_executable: phony obj/voice_engine/voice_engine_unittests_executable.stamp
+build voice_engine_unittests_gen_entitlements: phony obj/voice_engine/voice_engine_unittests_gen_entitlements.stamp
+build voice_engine_unittests_generate_info_plist: phony obj/voice_engine/voice_engine_unittests_generate_info_plist.stamp
+build voice_engine_unittests_generate_info_plist_merge: phony obj/voice_engine/voice_engine_unittests_generate_info_plist_merge.stamp
+build voice_engine_unittests_pkg_info: phony obj/voice_engine/voice_engine_unittests_pkg_info.stamp
+build voice_engine_unittests_resources_bundle_data: phony obj/voice_engine/voice_engine_unittests_resources_bundle_data.stamp
+build weak_ptr: phony obj/rtc_base/libweak_ptr.a
+build weak_ptr_unittests: phony obj/rtc_base/weak_ptr_unittests.stamp
+build webrtc_h264: phony obj/modules/video_coding/libwebrtc_h264.a
+build webrtc_i420: phony obj/modules/video_coding/libwebrtc_i420.a
+build webrtc_opus: phony obj/modules/audio_coding/libwebrtc_opus.a
+build webrtc_opus_c: phony obj/modules/audio_coding/webrtc_opus_c.stamp
+build webrtc_vp8: phony obj/modules/video_coding/libwebrtc_vp8.a
+build webrtc_vp9: phony obj/modules/video_coding/libwebrtc_vp9.a
+build xctest: phony obj/build/config/ios/xctest.stamp
+build $:default: phony obj/default.stamp
+build $:rtc_unittests: phony obj/rtc_unittests.stamp
+build $:rtc_unittests_arch_executable: phony obj/arm64/rtc_unittests
+build $:rtc_unittests_arch_executable_sources: phony obj/rtc_unittests_arch_executable_sources.stamp
+build $:rtc_unittests_bundle_data_pkg_info: phony obj/rtc_unittests_bundle_data_pkg_info.stamp
+build $:rtc_unittests_executable: phony obj/rtc_unittests_executable.stamp
+build $:rtc_unittests_gen_entitlements: phony obj/rtc_unittests_gen_entitlements.stamp
+build $:rtc_unittests_generate_info_plist: phony obj/rtc_unittests_generate_info_plist.stamp
+build $:rtc_unittests_generate_info_plist_merge: phony obj/rtc_unittests_generate_info_plist_merge.stamp
+build $:rtc_unittests_pkg_info: phony obj/rtc_unittests_pkg_info.stamp
+build $:rtc_unittests_resources_bundle_data: phony obj/rtc_unittests_resources_bundle_data.stamp
+build $:video_engine_tests: phony obj/video_engine_tests.stamp
+build $:video_engine_tests_arch_executable: phony obj/arm64/video_engine_tests
+build $:video_engine_tests_arch_executable_sources: phony obj/video_engine_tests_arch_executable_sources.stamp
+build $:video_engine_tests_bundle_data: phony obj/video_engine_tests_bundle_data.stamp
+build $:video_engine_tests_bundle_data_pkg_info: phony obj/video_engine_tests_bundle_data_pkg_info.stamp
+build $:video_engine_tests_executable: phony obj/video_engine_tests_executable.stamp
+build $:video_engine_tests_gen_entitlements: phony obj/video_engine_tests_gen_entitlements.stamp
+build $:video_engine_tests_generate_info_plist: phony obj/video_engine_tests_generate_info_plist.stamp
+build $:video_engine_tests_generate_info_plist_merge: phony obj/video_engine_tests_generate_info_plist_merge.stamp
+build $:video_engine_tests_pkg_info: phony obj/video_engine_tests_pkg_info.stamp
+build $:video_engine_tests_resources_bundle_data: phony obj/video_engine_tests_resources_bundle_data.stamp
+build $:webrtc: phony obj/libwebrtc.a
+build $:webrtc_common: phony obj/libwebrtc_common.a
+build $:webrtc_nonparallel_tests: phony obj/webrtc_nonparallel_tests.stamp
+build $:webrtc_nonparallel_tests_arch_executable: phony obj/arm64/webrtc_nonparallel_tests
+build $:webrtc_nonparallel_tests_arch_executable_sources: phony obj/webrtc_nonparallel_tests_arch_executable_sources.stamp
+build $:webrtc_nonparallel_tests_bundle_data_pkg_info: phony obj/webrtc_nonparallel_tests_bundle_data_pkg_info.stamp
+build $:webrtc_nonparallel_tests_executable: phony obj/webrtc_nonparallel_tests_executable.stamp
+build $:webrtc_nonparallel_tests_gen_entitlements: phony obj/webrtc_nonparallel_tests_gen_entitlements.stamp
+build $:webrtc_nonparallel_tests_generate_info_plist: phony obj/webrtc_nonparallel_tests_generate_info_plist.stamp
+build $:webrtc_nonparallel_tests_generate_info_plist_merge: phony obj/webrtc_nonparallel_tests_generate_info_plist_merge.stamp
+build $:webrtc_nonparallel_tests_pkg_info: phony obj/webrtc_nonparallel_tests_pkg_info.stamp
+build $:webrtc_nonparallel_tests_resources_bundle_data: phony obj/webrtc_nonparallel_tests_resources_bundle_data.stamp
+build $:webrtc_perf_tests: phony obj/webrtc_perf_tests.stamp
+build $:webrtc_perf_tests_arch_executable: phony obj/arm64/webrtc_perf_tests
+build $:webrtc_perf_tests_arch_executable_sources: phony obj/webrtc_perf_tests_arch_executable_sources.stamp
+build $:webrtc_perf_tests_bundle_data: phony obj/webrtc_perf_tests_bundle_data.stamp
+build $:webrtc_perf_tests_bundle_data_pkg_info: phony obj/webrtc_perf_tests_bundle_data_pkg_info.stamp
+build $:webrtc_perf_tests_executable: phony obj/webrtc_perf_tests_executable.stamp
+build $:webrtc_perf_tests_gen_entitlements: phony obj/webrtc_perf_tests_gen_entitlements.stamp
+build $:webrtc_perf_tests_generate_info_plist: phony obj/webrtc_perf_tests_generate_info_plist.stamp
+build $:webrtc_perf_tests_generate_info_plist_merge: phony obj/webrtc_perf_tests_generate_info_plist_merge.stamp
+build $:webrtc_perf_tests_pkg_info: phony obj/webrtc_perf_tests_pkg_info.stamp
+build $:webrtc_perf_tests_resources_bundle_data: phony obj/webrtc_perf_tests_resources_bundle_data.stamp
+build $:webrtc_tests: phony ./webrtc_tests
+build api$:api: phony obj/api/api.stamp
+build api$:array_view: phony obj/api/array_view.stamp
+build api$:audio_mixer_api: phony obj/api/audio_mixer_api.stamp
+build api$:call_api: phony obj/api/call_api.stamp
+build api$:fakemetricsobserver: phony obj/api/fakemetricsobserver.stamp
+build api$:libjingle_api_deprecated_headers: phony obj/api/libjingle_api_deprecated_headers.stamp
+build api$:libjingle_logging_api: phony obj/api/libjingle_logging_api.stamp
+build api$:libjingle_peerconnection: phony obj/api/libjingle_peerconnection.stamp
+build api$:libjingle_peerconnection_api: phony obj/api/libjingle_peerconnection_api.a
+build api$:libjingle_peerconnection_test_api: phony obj/api/libjingle_peerconnection_test_api.stamp
+build api$:mediastream_interface_and_implicit_video_frame_api: phony obj/api/mediastream_interface_and_implicit_video_frame_api.stamp
+build api$:mock_audio_mixer: phony obj/api/mock_audio_mixer.stamp
+build api$:optional: phony obj/api/optional.stamp
+build api$:ortc_api: phony obj/api/ortc_api.stamp
+build api$:peerconnection_and_implicit_call_api: phony obj/api/peerconnection_and_implicit_call_api.stamp
+build api$:rtc_api_unittests: phony obj/api/rtc_api_unittests.stamp
+build api$:rtc_stats_api: phony obj/api/rtc_stats_api.stamp
+build api$:transport_api: phony obj/api/transport_api.stamp
+build api$:video_frame_api: phony obj/api/video_frame_api.stamp
+build api/audio_codecs$:audio_codecs_api: phony obj/api/audio_codecs/audio_codecs_api.stamp
+build api/audio_codecs$:builtin_audio_decoder_factory: phony obj/api/audio_codecs/libbuiltin_audio_decoder_factory.a
+build api/audio_codecs$:builtin_audio_encoder_factory: phony obj/api/audio_codecs/libbuiltin_audio_encoder_factory.a
+build api/audio_codecs/L16$:audio_decoder_L16: phony obj/api/audio_codecs/L16/libaudio_decoder_L16.a
+build api/audio_codecs/L16$:audio_encoder_L16: phony obj/api/audio_codecs/L16/libaudio_encoder_L16.a
+build api/audio_codecs/g711$:audio_decoder_g711: phony obj/api/audio_codecs/g711/libaudio_decoder_g711.a
+build api/audio_codecs/g711$:audio_encoder_g711: phony obj/api/audio_codecs/g711/libaudio_encoder_g711.a
+build api/audio_codecs/g722$:audio_decoder_g722: phony obj/api/audio_codecs/g722/libaudio_decoder_g722.a
+build api/audio_codecs/g722$:audio_encoder_g722: phony obj/api/audio_codecs/g722/libaudio_encoder_g722.a
+build api/audio_codecs/g722$:audio_encoder_g722_config: phony obj/api/audio_codecs/g722/audio_encoder_g722_config.stamp
+build api/audio_codecs/ilbc$:audio_decoder_ilbc: phony obj/api/audio_codecs/ilbc/libaudio_decoder_ilbc.a
+build api/audio_codecs/ilbc$:audio_encoder_ilbc: phony obj/api/audio_codecs/ilbc/libaudio_encoder_ilbc.a
+build api/audio_codecs/ilbc$:audio_encoder_ilbc_config: phony obj/api/audio_codecs/ilbc/audio_encoder_ilbc_config.stamp
+build api/audio_codecs/isac$:audio_decoder_isac: phony obj/api/audio_codecs/isac/audio_decoder_isac.stamp
+build api/audio_codecs/isac$:audio_decoder_isac_fix: phony obj/api/audio_codecs/isac/libaudio_decoder_isac_fix.a
+build api/audio_codecs/isac$:audio_decoder_isac_float: phony obj/api/audio_codecs/isac/libaudio_decoder_isac_float.a
+build api/audio_codecs/isac$:audio_encoder_isac: phony obj/api/audio_codecs/isac/audio_encoder_isac.stamp
+build api/audio_codecs/isac$:audio_encoder_isac_fix: phony obj/api/audio_codecs/isac/libaudio_encoder_isac_fix.a
+build api/audio_codecs/isac$:audio_encoder_isac_float: phony obj/api/audio_codecs/isac/libaudio_encoder_isac_float.a
+build api/audio_codecs/opus$:audio_decoder_opus: phony obj/api/audio_codecs/opus/libaudio_decoder_opus.a
+build api/audio_codecs/opus$:audio_encoder_opus: phony obj/api/audio_codecs/opus/audio_encoder_opus.stamp
+build api/audio_codecs/opus$:audio_encoder_opus_config: phony obj/api/audio_codecs/opus/libaudio_encoder_opus_config.a
+build api/audio_codecs/test$:audio_codecs_api_unittests: phony obj/api/audio_codecs/test/audio_codecs_api_unittests.stamp
+build api/video_codecs$:video_codecs_api: phony obj/api/video_codecs/video_codecs_api.stamp
+build audio$:audio: phony obj/audio/libaudio.a
+build audio$:audio_end_to_end_test: phony obj/audio/audio_end_to_end_test.stamp
+build audio$:audio_perf_tests: phony obj/audio/audio_perf_tests.stamp
+build audio$:audio_tests: phony obj/audio/audio_tests.stamp
+build audio$:low_bandwidth_audio_test: phony obj/audio/low_bandwidth_audio_test.stamp
+build audio$:low_bandwidth_audio_test_arch_executable: phony obj/audio/arm64/low_bandwidth_audio_test
+build audio$:low_bandwidth_audio_test_arch_executable_sources: phony obj/audio/low_bandwidth_audio_test_arch_executable_sources.stamp
+build audio$:low_bandwidth_audio_test_bundle_data_pkg_info: phony obj/audio/low_bandwidth_audio_test_bundle_data_pkg_info.stamp
+build audio$:low_bandwidth_audio_test_executable: phony obj/audio/low_bandwidth_audio_test_executable.stamp
+build audio$:low_bandwidth_audio_test_gen_entitlements: phony obj/audio/low_bandwidth_audio_test_gen_entitlements.stamp
+build audio$:low_bandwidth_audio_test_generate_info_plist: phony obj/audio/low_bandwidth_audio_test_generate_info_plist.stamp
+build audio$:low_bandwidth_audio_test_generate_info_plist_merge: phony obj/audio/low_bandwidth_audio_test_generate_info_plist_merge.stamp
+build audio$:low_bandwidth_audio_test_pkg_info: phony obj/audio/low_bandwidth_audio_test_pkg_info.stamp
+build audio$:low_bandwidth_audio_test_resources_bundle_data: phony obj/audio/low_bandwidth_audio_test_resources_bundle_data.stamp
+build audio/utility$:audio_frame_operations: phony obj/audio/utility/libaudio_frame_operations.a
+build audio/utility$:utility: phony obj/audio/utility/utility.stamp
+build audio/utility: phony obj/audio/utility/utility.stamp
+build audio/utility$:utility_tests: phony obj/audio/utility/utility_tests.stamp
+build build/config$:exe_and_shlib_deps: phony obj/build/config/exe_and_shlib_deps.stamp
+build build/config/ios$:xctest: phony obj/build/config/ios/xctest.stamp
+build build/config/posix$:posix: phony obj/build/config/posix/posix.stamp
+build build/config/posix: phony obj/build/config/posix/posix.stamp
+build build/config/sanitizers$:deps: phony obj/build/config/sanitizers/deps.stamp
+build build/config/sanitizers$:options_sources: phony obj/build/config/sanitizers/liboptions_sources.a
+build build/win$:default_exe_manifest: phony obj/build/win/default_exe_manifest.stamp
+build call$:bitrate_allocator: phony obj/call/bitrate_allocator.stamp
+build call$:call: phony obj/call/libcall.a
+build call$:call_interfaces: phony obj/call/call_interfaces.stamp
+build call$:call_perf_tests: phony obj/call/call_perf_tests.stamp
+build call$:call_tests: phony obj/call/call_tests.stamp
+build call$:mock_rtp_interfaces: phony obj/call/mock_rtp_interfaces.stamp
+build call$:rtp_interfaces: phony obj/call/rtp_interfaces.stamp
+build call$:rtp_receiver: phony obj/call/rtp_receiver.stamp
+build call$:rtp_sender: phony obj/call/rtp_sender.stamp
+build call$:video_stream_api: phony obj/call/video_stream_api.stamp
+build common_audio$:common_audio: phony obj/common_audio/libcommon_audio.a
+build common_audio$:common_audio_c: phony obj/common_audio/common_audio_c.stamp
+build common_audio$:common_audio_c_arm_asm: phony obj/common_audio/common_audio_c_arm_asm.stamp
+build common_audio$:common_audio_cc: phony obj/common_audio/common_audio_cc.stamp
+build common_audio$:common_audio_neon: phony obj/common_audio/libcommon_audio_neon.a
+build common_audio$:common_audio_neon_c: phony obj/common_audio/common_audio_neon_c.stamp
+build common_audio$:common_audio_unittests: phony obj/common_audio/common_audio_unittests.stamp
+build common_audio$:common_audio_unittests_arch_executable: phony obj/common_audio/arm64/common_audio_unittests
+build common_audio$:common_audio_unittests_arch_executable_sources: phony obj/common_audio/common_audio_unittests_arch_executable_sources.stamp
+build common_audio$:common_audio_unittests_bundle_data_pkg_info: phony obj/common_audio/common_audio_unittests_bundle_data_pkg_info.stamp
+build common_audio$:common_audio_unittests_executable: phony obj/common_audio/common_audio_unittests_executable.stamp
+build common_audio$:common_audio_unittests_gen_entitlements: phony obj/common_audio/common_audio_unittests_gen_entitlements.stamp
+build common_audio$:common_audio_unittests_generate_info_plist: phony obj/common_audio/common_audio_unittests_generate_info_plist.stamp
+build common_audio$:common_audio_unittests_generate_info_plist_merge: phony obj/common_audio/common_audio_unittests_generate_info_plist_merge.stamp
+build common_audio$:common_audio_unittests_pkg_info: phony obj/common_audio/common_audio_unittests_pkg_info.stamp
+build common_audio$:common_audio_unittests_resources_bundle_data: phony obj/common_audio/common_audio_unittests_resources_bundle_data.stamp
+build common_audio$:mock_common_audio: phony obj/common_audio/mock_common_audio.stamp
+build common_audio$:sinc_resampler: phony obj/common_audio/sinc_resampler.stamp
+build common_video$:common_video: phony obj/common_video/libcommon_video.a
+build common_video$:common_video_unittests: phony obj/common_video/common_video_unittests.stamp
+build common_video$:common_video_unittests_arch_executable: phony obj/common_video/arm64/common_video_unittests
+build common_video$:common_video_unittests_arch_executable_sources: phony obj/common_video/common_video_unittests_arch_executable_sources.stamp
+build common_video$:common_video_unittests_bundle_data: phony obj/common_video/common_video_unittests_bundle_data.stamp
+build common_video$:common_video_unittests_bundle_data_pkg_info: phony obj/common_video/common_video_unittests_bundle_data_pkg_info.stamp
+build common_video$:common_video_unittests_executable: phony obj/common_video/common_video_unittests_executable.stamp
+build common_video$:common_video_unittests_gen_entitlements: phony obj/common_video/common_video_unittests_gen_entitlements.stamp
+build common_video$:common_video_unittests_generate_info_plist: phony obj/common_video/common_video_unittests_generate_info_plist.stamp
+build common_video$:common_video_unittests_generate_info_plist_merge: phony obj/common_video/common_video_unittests_generate_info_plist_merge.stamp
+build common_video$:common_video_unittests_pkg_info: phony obj/common_video/common_video_unittests_pkg_info.stamp
+build common_video$:common_video_unittests_resources_bundle_data: phony obj/common_video/common_video_unittests_resources_bundle_data.stamp
+build examples$:AppRTCMobile: phony obj/examples/AppRTCMobile.stamp
+build examples$:AppRTCMobile_arch_executable: phony obj/examples/arm64/AppRTCMobile
+build examples$:AppRTCMobile_arch_executable_sources: phony obj/examples/AppRTCMobile_arch_executable_sources.stamp
+build examples$:AppRTCMobile_bundle_data_pkg_info: phony obj/examples/AppRTCMobile_bundle_data_pkg_info.stamp
+build examples$:AppRTCMobile_executable: phony obj/examples/AppRTCMobile_executable.stamp
+build examples$:AppRTCMobile_gen_entitlements: phony obj/examples/AppRTCMobile_gen_entitlements.stamp
+build examples$:AppRTCMobile_generate_info_plist: phony obj/examples/AppRTCMobile_generate_info_plist.stamp
+build examples$:AppRTCMobile_generate_info_plist_merge: phony obj/examples/AppRTCMobile_generate_info_plist_merge.stamp
+build examples$:AppRTCMobile_ios_bundle_data: phony obj/examples/AppRTCMobile_ios_bundle_data.stamp
+build examples$:AppRTCMobile_ios_frameworks: phony obj/examples/AppRTCMobile_ios_frameworks.stamp
+build examples$:AppRTCMobile_lib: phony obj/examples/libAppRTCMobile_lib.a
+build examples$:AppRTCMobile_pkg_info: phony obj/examples/AppRTCMobile_pkg_info.stamp
+build examples$:apprtc_common: phony obj/examples/libapprtc_common.a
+build examples$:apprtc_signaling: phony obj/examples/libapprtc_signaling.a
+build examples$:apprtcmobile_test_sources: phony obj/examples/apprtcmobile_test_sources.stamp
+build examples$:apprtcmobile_tests: phony obj/examples/apprtcmobile_tests.stamp
+build examples$:apprtcmobile_tests_arch_executable: phony obj/examples/arm64/apprtcmobile_tests
+build examples$:apprtcmobile_tests_arch_executable_sources: phony obj/examples/apprtcmobile_tests_arch_executable_sources.stamp
+build examples$:apprtcmobile_tests_bundle_data_pkg_info: phony obj/examples/apprtcmobile_tests_bundle_data_pkg_info.stamp
+build examples$:apprtcmobile_tests_executable: phony obj/examples/apprtcmobile_tests_executable.stamp
+build examples$:apprtcmobile_tests_gen_entitlements: phony obj/examples/apprtcmobile_tests_gen_entitlements.stamp
+build examples$:apprtcmobile_tests_generate_info_plist: phony obj/examples/apprtcmobile_tests_generate_info_plist.stamp
+build examples$:apprtcmobile_tests_generate_info_plist_merge: phony obj/examples/apprtcmobile_tests_generate_info_plist_merge.stamp
+build examples$:apprtcmobile_tests_module: phony obj/examples/apprtcmobile_tests_module.stamp
+build examples$:apprtcmobile_tests_module_arch_loadable_module: phony obj/examples/arm64/apprtcmobile_tests_module
+build examples$:apprtcmobile_tests_module_arch_loadable_module_source: phony obj/examples/apprtcmobile_tests_module_arch_loadable_module_source.stamp
+build examples$:apprtcmobile_tests_module_bundle: phony obj/examples/apprtcmobile_tests_module_bundle.stamp
+build examples$:apprtcmobile_tests_module_info_plist: phony obj/examples/apprtcmobile_tests_module_info_plist.stamp
+build examples$:apprtcmobile_tests_module_info_plist_bundle: phony obj/examples/apprtcmobile_tests_module_info_plist_bundle.stamp
+build examples$:apprtcmobile_tests_module_info_plist_merge: phony obj/examples/apprtcmobile_tests_module_info_plist_merge.stamp
+build examples$:apprtcmobile_tests_module_loadable_module: phony obj/examples/apprtcmobile_tests_module_loadable_module.stamp
+build examples$:apprtcmobile_tests_moduleshell_source: phony obj/examples/apprtcmobile_tests_moduleshell_source.stamp
+build examples$:apprtcmobile_tests_pkg_info: phony obj/examples/apprtcmobile_tests_pkg_info.stamp
+build examples$:examples: phony obj/examples/examples.stamp
+build examples$:socketrocket: phony obj/examples/libsocketrocket.a
+build examples$:stun_prober: phony ./stun_prober
+build logging$:logging: phony obj/logging/logging.stamp
+build logging$:rtc_event_log2rtp_dump: phony obj/logging/rtc_event_log2rtp_dump.stamp
+build logging$:rtc_event_log2rtp_dump_arch_executable: phony obj/logging/arm64/rtc_event_log2rtp_dump
+build logging$:rtc_event_log2rtp_dump_arch_executable_sources: phony obj/logging/rtc_event_log2rtp_dump_arch_executable_sources.stamp
+build logging$:rtc_event_log2rtp_dump_bundle_data_pkg_info: phony obj/logging/rtc_event_log2rtp_dump_bundle_data_pkg_info.stamp
+build logging$:rtc_event_log2rtp_dump_executable: phony obj/logging/rtc_event_log2rtp_dump_executable.stamp
+build logging$:rtc_event_log2rtp_dump_gen_entitlements: phony obj/logging/rtc_event_log2rtp_dump_gen_entitlements.stamp
+build logging$:rtc_event_log2rtp_dump_generate_info_plist: phony obj/logging/rtc_event_log2rtp_dump_generate_info_plist.stamp
+build logging$:rtc_event_log2rtp_dump_generate_info_plist_merge: phony obj/logging/rtc_event_log2rtp_dump_generate_info_plist_merge.stamp
+build logging$:rtc_event_log2rtp_dump_pkg_info: phony obj/logging/rtc_event_log2rtp_dump_pkg_info.stamp
+build logging$:rtc_event_log2rtp_dump_resources_bundle_data: phony obj/logging/rtc_event_log2rtp_dump_resources_bundle_data.stamp
+build logging$:rtc_event_log2stats: phony ./rtc_event_log2stats
+build logging$:rtc_event_log2text: phony ./rtc_event_log2text
+build logging$:rtc_event_log_api: phony obj/logging/rtc_event_log_api.stamp
+build logging$:rtc_event_log_impl: phony obj/logging/librtc_event_log_impl.a
+build logging$:rtc_event_log_parser: phony obj/logging/librtc_event_log_parser.a
+build logging$:rtc_event_log_proto: phony obj/logging/librtc_event_log_proto.a
+build logging$:rtc_event_log_proto_gen: phony obj/logging/rtc_event_log_proto_gen.stamp
+build logging$:rtc_event_log_tests: phony obj/logging/rtc_event_log_tests.stamp
+build media$:media: phony obj/media/media.stamp
+build media$:rtc_audio_video: phony obj/media/librtc_audio_video.a
+build media$:rtc_data: phony obj/media/librtc_data.a
+build media$:rtc_h264_profile_id: phony obj/media/rtc_h264_profile_id.stamp
+build media$:rtc_media: phony obj/media/rtc_media.stamp
+build media$:rtc_media_base: phony obj/media/librtc_media_base.a
+build media$:rtc_media_tests_utils: phony obj/media/rtc_media_tests_utils.stamp
+build media$:rtc_media_unittests: phony obj/media/rtc_media_unittests.stamp
+build media$:rtc_media_unittests_arch_executable: phony obj/media/arm64/rtc_media_unittests
+build media$:rtc_media_unittests_arch_executable_sources: phony obj/media/rtc_media_unittests_arch_executable_sources.stamp
+build media$:rtc_media_unittests_bundle_data: phony obj/media/rtc_media_unittests_bundle_data.stamp
+build media$:rtc_media_unittests_bundle_data_pkg_info: phony obj/media/rtc_media_unittests_bundle_data_pkg_info.stamp
+build media$:rtc_media_unittests_executable: phony obj/media/rtc_media_unittests_executable.stamp
+build media$:rtc_media_unittests_gen_entitlements: phony obj/media/rtc_media_unittests_gen_entitlements.stamp
+build media$:rtc_media_unittests_generate_info_plist: phony obj/media/rtc_media_unittests_generate_info_plist.stamp
+build media$:rtc_media_unittests_generate_info_plist_merge: phony obj/media/rtc_media_unittests_generate_info_plist_merge.stamp
+build media$:rtc_media_unittests_pkg_info: phony obj/media/rtc_media_unittests_pkg_info.stamp
+build media$:rtc_media_unittests_resources_bundle_data: phony obj/media/rtc_media_unittests_resources_bundle_data.stamp
+build modules$:module_api: phony obj/modules/module_api.stamp
+build modules$:modules: phony obj/modules/modules.stamp
+build modules$:modules_tests: phony obj/modules/modules_tests.stamp
+build modules$:modules_tests_arch_executable: phony obj/modules/arm64/modules_tests
+build modules$:modules_tests_arch_executable_sources: phony obj/modules/modules_tests_arch_executable_sources.stamp
+build modules$:modules_tests_bundle_data: phony obj/modules/modules_tests_bundle_data.stamp
+build modules$:modules_tests_bundle_data_pkg_info: phony obj/modules/modules_tests_bundle_data_pkg_info.stamp
+build modules$:modules_tests_executable: phony obj/modules/modules_tests_executable.stamp
+build modules$:modules_tests_gen_entitlements: phony obj/modules/modules_tests_gen_entitlements.stamp
+build modules$:modules_tests_generate_info_plist: phony obj/modules/modules_tests_generate_info_plist.stamp
+build modules$:modules_tests_generate_info_plist_merge: phony obj/modules/modules_tests_generate_info_plist_merge.stamp
+build modules$:modules_tests_pkg_info: phony obj/modules/modules_tests_pkg_info.stamp
+build modules$:modules_tests_resources_bundle_data: phony obj/modules/modules_tests_resources_bundle_data.stamp
+build modules$:modules_unittests: phony obj/modules/modules_unittests.stamp
+build modules$:modules_unittests_arch_executable: phony obj/modules/arm64/modules_unittests
+build modules$:modules_unittests_arch_executable_sources: phony obj/modules/modules_unittests_arch_executable_sources.stamp
+build modules$:modules_unittests_bundle_data: phony obj/modules/modules_unittests_bundle_data.stamp
+build modules$:modules_unittests_bundle_data_pkg_info: phony obj/modules/modules_unittests_bundle_data_pkg_info.stamp
+build modules$:modules_unittests_executable: phony obj/modules/modules_unittests_executable.stamp
+build modules$:modules_unittests_gen_entitlements: phony obj/modules/modules_unittests_gen_entitlements.stamp
+build modules$:modules_unittests_generate_info_plist: phony obj/modules/modules_unittests_generate_info_plist.stamp
+build modules$:modules_unittests_generate_info_plist_merge: phony obj/modules/modules_unittests_generate_info_plist_merge.stamp
+build modules$:modules_unittests_pkg_info: phony obj/modules/modules_unittests_pkg_info.stamp
+build modules$:modules_unittests_resources_bundle_data: phony obj/modules/modules_unittests_resources_bundle_data.stamp
+build modules/audio_coding$:RTPchange: phony ./RTPchange
+build modules/audio_coding$:RTPencode: phony ./RTPencode
+build modules/audio_coding$:RTPjitter: phony ./RTPjitter
+build modules/audio_coding$:RTPtimeshift: phony ./RTPtimeshift
+build modules/audio_coding$:acm_receive_test: phony obj/modules/audio_coding/acm_receive_test.stamp
+build modules/audio_coding$:acm_send_test: phony obj/modules/audio_coding/acm_send_test.stamp
+build modules/audio_coding$:ana_config_proto: phony obj/modules/audio_coding/libana_config_proto.a
+build modules/audio_coding$:ana_config_proto_gen: phony obj/modules/audio_coding/ana_config_proto_gen.stamp
+build modules/audio_coding$:ana_debug_dump_proto: phony obj/modules/audio_coding/libana_debug_dump_proto.a
+build modules/audio_coding$:ana_debug_dump_proto_gen: phony obj/modules/audio_coding/ana_debug_dump_proto_gen.stamp
+build modules/audio_coding$:audio_codec_speed_tests: phony obj/modules/audio_coding/audio_codec_speed_tests.stamp
+build modules/audio_coding$:audio_codec_speed_tests_arch_executable: phony obj/modules/audio_coding/arm64/audio_codec_speed_tests
+build modules/audio_coding$:audio_codec_speed_tests_arch_executable_sources: phony obj/modules/audio_coding/audio_codec_speed_tests_arch_executable_sources.stamp
+build modules/audio_coding$:audio_codec_speed_tests_bundle_data_pkg_info: phony obj/modules/audio_coding/audio_codec_speed_tests_bundle_data_pkg_info.stamp
+build modules/audio_coding$:audio_codec_speed_tests_data: phony obj/modules/audio_coding/audio_codec_speed_tests_data.stamp
+build modules/audio_coding$:audio_codec_speed_tests_executable: phony obj/modules/audio_coding/audio_codec_speed_tests_executable.stamp
+build modules/audio_coding$:audio_codec_speed_tests_gen_entitlements: phony obj/modules/audio_coding/audio_codec_speed_tests_gen_entitlements.stamp
+build modules/audio_coding$:audio_codec_speed_tests_generate_info_plist: phony obj/modules/audio_coding/audio_codec_speed_tests_generate_info_plist.stamp
+build modules/audio_coding$:audio_codec_speed_tests_generate_info_plist_merge: phony obj/modules/audio_coding/audio_codec_speed_tests_generate_info_plist_merge.stamp
+build modules/audio_coding$:audio_codec_speed_tests_pkg_info: phony obj/modules/audio_coding/audio_codec_speed_tests_pkg_info.stamp
+build modules/audio_coding$:audio_codec_speed_tests_resources_bundle_data: phony obj/modules/audio_coding/audio_codec_speed_tests_resources_bundle_data.stamp
+build modules/audio_coding$:audio_coding: phony obj/modules/audio_coding/libaudio_coding.a
+build modules/audio_coding: phony obj/modules/audio_coding/libaudio_coding.a
+build modules/audio_coding$:audio_coding_module_typedefs: phony obj/modules/audio_coding/audio_coding_module_typedefs.stamp
+build modules/audio_coding$:audio_coding_modules_tests: phony obj/modules/audio_coding/audio_coding_modules_tests.stamp
+build modules/audio_coding$:audio_coding_perf_tests: phony obj/modules/audio_coding/audio_coding_perf_tests.stamp
+build modules/audio_coding$:audio_coding_tests: phony obj/modules/audio_coding/audio_coding_tests.stamp
+build modules/audio_coding$:audio_coding_unittests: phony obj/modules/audio_coding/audio_coding_unittests.stamp
+build modules/audio_coding$:audio_decoder_interface: phony obj/modules/audio_coding/audio_decoder_interface.stamp
+build modules/audio_coding$:audio_decoder_unittests: phony obj/modules/audio_coding/audio_decoder_unittests.stamp
+build modules/audio_coding$:audio_decoder_unittests_arch_executable: phony obj/modules/audio_coding/arm64/audio_decoder_unittests
+build modules/audio_coding$:audio_decoder_unittests_arch_executable_sources: phony obj/modules/audio_coding/audio_decoder_unittests_arch_executable_sources.stamp
+build modules/audio_coding$:audio_decoder_unittests_bundle_data: phony obj/modules/audio_coding/audio_decoder_unittests_bundle_data.stamp
+build modules/audio_coding$:audio_decoder_unittests_bundle_data_pkg_info: phony obj/modules/audio_coding/audio_decoder_unittests_bundle_data_pkg_info.stamp
+build modules/audio_coding$:audio_decoder_unittests_executable: phony obj/modules/audio_coding/audio_decoder_unittests_executable.stamp
+build modules/audio_coding$:audio_decoder_unittests_gen_entitlements: phony obj/modules/audio_coding/audio_decoder_unittests_gen_entitlements.stamp
+build modules/audio_coding$:audio_decoder_unittests_generate_info_plist: phony obj/modules/audio_coding/audio_decoder_unittests_generate_info_plist.stamp
+build modules/audio_coding$:audio_decoder_unittests_generate_info_plist_merge: phony obj/modules/audio_coding/audio_decoder_unittests_generate_info_plist_merge.stamp
+build modules/audio_coding$:audio_decoder_unittests_pkg_info: phony obj/modules/audio_coding/audio_decoder_unittests_pkg_info.stamp
+build modules/audio_coding$:audio_decoder_unittests_resources_bundle_data: phony obj/modules/audio_coding/audio_decoder_unittests_resources_bundle_data.stamp
+build modules/audio_coding$:audio_encoder_interface: phony obj/modules/audio_coding/audio_encoder_interface.stamp
+build modules/audio_coding$:audio_format_conversion: phony obj/modules/audio_coding/libaudio_format_conversion.a
+build modules/audio_coding$:audio_network_adaptor: phony obj/modules/audio_coding/libaudio_network_adaptor.a
+build modules/audio_coding$:audio_network_adaptor_config: phony obj/modules/audio_coding/libaudio_network_adaptor_config.a
+build modules/audio_coding$:builtin_audio_decoder_factory: phony obj/modules/audio_coding/builtin_audio_decoder_factory.stamp
+build modules/audio_coding$:builtin_audio_encoder_factory: phony obj/modules/audio_coding/builtin_audio_encoder_factory.stamp
+build modules/audio_coding$:cng: phony obj/modules/audio_coding/libcng.a
+build modules/audio_coding$:delay_test: phony ./delay_test
+build modules/audio_coding$:g711: phony obj/modules/audio_coding/libg711.a
+build modules/audio_coding$:g711_c: phony obj/modules/audio_coding/g711_c.stamp
+build modules/audio_coding$:g711_test: phony ./g711_test
+build modules/audio_coding$:g722: phony obj/modules/audio_coding/libg722.a
+build modules/audio_coding$:g722_c: phony obj/modules/audio_coding/g722_c.stamp
+build modules/audio_coding$:g722_test: phony ./g722_test
+build modules/audio_coding$:ilbc: phony obj/modules/audio_coding/libilbc.a
+build modules/audio_coding$:ilbc_c: phony obj/modules/audio_coding/ilbc_c.stamp
+build modules/audio_coding$:ilbc_test: phony ./ilbc_test
+build modules/audio_coding$:insert_packet_with_timing: phony ./insert_packet_with_timing
+build modules/audio_coding$:isac: phony obj/modules/audio_coding/libisac.a
+build modules/audio_coding$:isac_api_test: phony ./isac_api_test
+build modules/audio_coding$:isac_c: phony obj/modules/audio_coding/libisac_c.a
+build modules/audio_coding$:isac_common: phony obj/modules/audio_coding/libisac_common.a
+build modules/audio_coding$:isac_fix: phony obj/modules/audio_coding/libisac_fix.a
+build modules/audio_coding$:isac_fix_c: phony obj/modules/audio_coding/isac_fix_c.stamp
+build modules/audio_coding$:isac_fix_c_arm_asm: phony obj/modules/audio_coding/isac_fix_c_arm_asm.stamp
+build modules/audio_coding$:isac_fix_common: phony obj/modules/audio_coding/isac_fix_common.stamp
+build modules/audio_coding$:isac_fix_test: phony ./isac_fix_test
+build modules/audio_coding$:isac_neon: phony obj/modules/audio_coding/libisac_neon.a
+build modules/audio_coding$:isac_switch_samprate_test: phony ./isac_switch_samprate_test
+build modules/audio_coding$:isac_test: phony ./isac_test
+build modules/audio_coding$:isac_test_util: phony obj/modules/audio_coding/isac_test_util.stamp
+build modules/audio_coding$:legacy_encoded_audio_frame: phony obj/modules/audio_coding/liblegacy_encoded_audio_frame.a
+build modules/audio_coding$:neteq: phony obj/modules/audio_coding/libneteq.a
+build modules/audio_coding$:neteq_decoder_enum: phony obj/modules/audio_coding/neteq_decoder_enum.stamp
+build modules/audio_coding$:neteq_ilbc_quality_test: phony ./neteq_ilbc_quality_test
+build modules/audio_coding$:neteq_input_audio_tools: phony obj/modules/audio_coding/neteq_input_audio_tools.stamp
+build modules/audio_coding$:neteq_isac_quality_test: phony ./neteq_isac_quality_test
+build modules/audio_coding$:neteq_opus_quality_test: phony ./neteq_opus_quality_test
+build modules/audio_coding$:neteq_pcmu_quality_test: phony ./neteq_pcmu_quality_test
+build modules/audio_coding$:neteq_quality_test_support: phony obj/modules/audio_coding/neteq_quality_test_support.stamp
+build modules/audio_coding$:neteq_rtpplay: phony obj/modules/audio_coding/neteq_rtpplay.stamp
+build modules/audio_coding$:neteq_rtpplay_arch_executable: phony obj/modules/audio_coding/arm64/neteq_rtpplay
+build modules/audio_coding$:neteq_rtpplay_arch_executable_sources: phony obj/modules/audio_coding/neteq_rtpplay_arch_executable_sources.stamp
+build modules/audio_coding$:neteq_rtpplay_bundle_data_pkg_info: phony obj/modules/audio_coding/neteq_rtpplay_bundle_data_pkg_info.stamp
+build modules/audio_coding$:neteq_rtpplay_executable: phony obj/modules/audio_coding/neteq_rtpplay_executable.stamp
+build modules/audio_coding$:neteq_rtpplay_gen_entitlements: phony obj/modules/audio_coding/neteq_rtpplay_gen_entitlements.stamp
+build modules/audio_coding$:neteq_rtpplay_generate_info_plist: phony obj/modules/audio_coding/neteq_rtpplay_generate_info_plist.stamp
+build modules/audio_coding$:neteq_rtpplay_generate_info_plist_merge: phony obj/modules/audio_coding/neteq_rtpplay_generate_info_plist_merge.stamp
+build modules/audio_coding$:neteq_rtpplay_pkg_info: phony obj/modules/audio_coding/neteq_rtpplay_pkg_info.stamp
+build modules/audio_coding$:neteq_rtpplay_resources_bundle_data: phony obj/modules/audio_coding/neteq_rtpplay_resources_bundle_data.stamp
+build modules/audio_coding$:neteq_speed_test: phony ./neteq_speed_test
+build modules/audio_coding$:neteq_test_support: phony obj/modules/audio_coding/neteq_test_support.stamp
+build modules/audio_coding$:neteq_test_tools: phony obj/modules/audio_coding/neteq_test_tools.stamp
+build modules/audio_coding$:neteq_test_tools_deprecated: phony obj/modules/audio_coding/neteq_test_tools_deprecated.stamp
+build modules/audio_coding$:neteq_tools: phony obj/modules/audio_coding/neteq_tools.stamp
+build modules/audio_coding$:neteq_tools_minimal: phony obj/modules/audio_coding/neteq_tools_minimal.stamp
+build modules/audio_coding$:neteq_unittest_proto: phony obj/modules/audio_coding/libneteq_unittest_proto.a
+build modules/audio_coding$:neteq_unittest_proto_gen: phony obj/modules/audio_coding/neteq_unittest_proto_gen.stamp
+build modules/audio_coding$:pcm16b: phony obj/modules/audio_coding/libpcm16b.a
+build modules/audio_coding$:pcm16b_c: phony obj/modules/audio_coding/pcm16b_c.stamp
+build modules/audio_coding$:red: phony obj/modules/audio_coding/libred.a
+build modules/audio_coding$:rent_a_codec: phony obj/modules/audio_coding/librent_a_codec.a
+build modules/audio_coding$:rtc_event_log_source: phony obj/modules/audio_coding/librtc_event_log_source.a
+build modules/audio_coding$:rtp_analyze: phony ./rtp_analyze
+build modules/audio_coding$:rtpcat: phony ./rtpcat
+build modules/audio_coding$:webrtc_opus: phony obj/modules/audio_coding/libwebrtc_opus.a
+build modules/audio_coding$:webrtc_opus_c: phony obj/modules/audio_coding/webrtc_opus_c.stamp
+build modules/audio_coding$:webrtc_opus_fec_test: phony ./webrtc_opus_fec_test
+build modules/audio_device$:audio_device: phony obj/modules/audio_device/audio_device.stamp
+build modules/audio_device: phony obj/modules/audio_device/audio_device.stamp
+build modules/audio_device$:audio_device_generic: phony obj/modules/audio_device/audio_device_generic.stamp
+build modules/audio_device$:audio_device_ios_objc: phony obj/modules/audio_device/audio_device_ios_objc.stamp
+build modules/audio_device$:audio_device_ios_objc_unittests: phony obj/modules/audio_device/audio_device_ios_objc_unittests.stamp
+build modules/audio_device$:audio_device_unittests: phony obj/modules/audio_device/audio_device_unittests.stamp
+build modules/audio_device$:mac_portaudio: phony obj/modules/audio_device/mac_portaudio.stamp
+build modules/audio_device$:mock_audio_device: phony obj/modules/audio_device/mock_audio_device.stamp
+build modules/audio_mixer$:audio_frame_manipulator: phony obj/modules/audio_mixer/libaudio_frame_manipulator.a
+build modules/audio_mixer$:audio_mixer: phony obj/modules/audio_mixer/audio_mixer.stamp
+build modules/audio_mixer: phony obj/modules/audio_mixer/audio_mixer.stamp
+build modules/audio_mixer$:audio_mixer_impl: phony obj/modules/audio_mixer/libaudio_mixer_impl.a
+build modules/audio_mixer$:audio_mixer_unittests: phony obj/modules/audio_mixer/audio_mixer_unittests.stamp
+build modules/audio_processing$:aec_dump_interface: phony obj/modules/audio_processing/aec_dump_interface.stamp
+build modules/audio_processing$:analog_mic_simulation: phony obj/modules/audio_processing/analog_mic_simulation.stamp
+build modules/audio_processing$:audio_processing: phony obj/modules/audio_processing/libaudio_processing.a
+build modules/audio_processing: phony obj/modules/audio_processing/libaudio_processing.a
+build modules/audio_processing$:audio_processing_c: phony obj/modules/audio_processing/audio_processing_c.stamp
+build modules/audio_processing$:audio_processing_neon: phony obj/modules/audio_processing/libaudio_processing_neon.a
+build modules/audio_processing$:audio_processing_neon_c: phony obj/modules/audio_processing/libaudio_processing_neon_c.a
+build modules/audio_processing$:audio_processing_perf_tests: phony obj/modules/audio_processing/audio_processing_perf_tests.stamp
+build modules/audio_processing$:audio_processing_tests: phony obj/modules/audio_processing/audio_processing_tests.stamp
+build modules/audio_processing$:audio_processing_unittests: phony obj/modules/audio_processing/audio_processing_unittests.stamp
+build modules/audio_processing$:audioproc_debug_proto: phony obj/modules/audio_processing/libaudioproc_debug_proto.a
+build modules/audio_processing$:audioproc_debug_proto_gen: phony obj/modules/audio_processing/audioproc_debug_proto_gen.stamp
+build modules/audio_processing$:audioproc_f: phony ./audioproc_f
+build modules/audio_processing$:audioproc_protobuf_utils: phony obj/modules/audio_processing/libaudioproc_protobuf_utils.a
+build modules/audio_processing$:audioproc_test_utils: phony obj/modules/audio_processing/audioproc_test_utils.stamp
+build modules/audio_processing$:audioproc_unittest_proto: phony obj/modules/audio_processing/libaudioproc_unittest_proto.a
+build modules/audio_processing$:audioproc_unittest_proto_gen: phony obj/modules/audio_processing/audioproc_unittest_proto_gen.stamp
+build modules/audio_processing$:click_annotate: phony ./click_annotate
+build modules/audio_processing$:nonlinear_beamformer_test: phony ./nonlinear_beamformer_test
+build modules/audio_processing$:transient_suppression_test: phony ./transient_suppression_test
+build modules/audio_processing$:unpack_aecdump: phony ./unpack_aecdump
+build modules/audio_processing/aec_dump$:aec_dump: phony obj/modules/audio_processing/aec_dump/aec_dump.stamp
+build modules/audio_processing/aec_dump: phony obj/modules/audio_processing/aec_dump/aec_dump.stamp
+build modules/audio_processing/aec_dump$:aec_dump_impl: phony obj/modules/audio_processing/aec_dump/aec_dump_impl.stamp
+build modules/audio_processing/aec_dump$:aec_dump_unittests: phony obj/modules/audio_processing/aec_dump/aec_dump_unittests.stamp
+build modules/audio_processing/aec_dump$:mock_aec_dump: phony obj/modules/audio_processing/aec_dump/mock_aec_dump.stamp
+build modules/audio_processing/aec_dump$:mock_aec_dump_unittests: phony obj/modules/audio_processing/aec_dump/mock_aec_dump_unittests.stamp
+build modules/audio_processing/aec_dump$:null_aec_dump_factory: phony obj/modules/audio_processing/aec_dump/null_aec_dump_factory.stamp
+build modules/audio_processing/test/conversational_speech$:conversational_speech: phony obj/modules/audio_processing/test/conversational_speech/conversational_speech.stamp
+build modules/audio_processing/test/conversational_speech: phony obj/modules/audio_processing/test/conversational_speech/conversational_speech.stamp
+build modules/audio_processing/test/conversational_speech$:conversational_speech_generator: phony ./conversational_speech_generator
+build modules/audio_processing/test/conversational_speech$:lib: phony obj/modules/audio_processing/test/conversational_speech/lib.a
+build modules/audio_processing/test/conversational_speech$:unittest: phony obj/modules/audio_processing/test/conversational_speech/unittest.stamp
+build modules/audio_processing/test/py_quality_assessment$:apm_configs: phony obj/modules/audio_processing/test/py_quality_assessment/apm_configs.stamp
+build modules/audio_processing/test/py_quality_assessment$:fake_polqa: phony ./py_quality_assessment/quality_assessment/fake_polqa
+build modules/audio_processing/test/py_quality_assessment$:lib: phony obj/modules/audio_processing/test/py_quality_assessment/lib.stamp
+build modules/audio_processing/test/py_quality_assessment$:lib_unit_tests: phony obj/modules/audio_processing/test/py_quality_assessment/lib_unit_tests.stamp
+build modules/audio_processing/test/py_quality_assessment$:output: phony obj/modules/audio_processing/test/py_quality_assessment/output.stamp
+build modules/audio_processing/test/py_quality_assessment$:py_quality_assessment: phony obj/modules/audio_processing/test/py_quality_assessment/py_quality_assessment.stamp
+build modules/audio_processing/test/py_quality_assessment: phony obj/modules/audio_processing/test/py_quality_assessment/py_quality_assessment.stamp
+build modules/audio_processing/test/py_quality_assessment$:scripts: phony obj/modules/audio_processing/test/py_quality_assessment/scripts.stamp
+build modules/audio_processing/test/py_quality_assessment$:scripts_unit_tests: phony obj/modules/audio_processing/test/py_quality_assessment/scripts_unit_tests.stamp
+build modules/audio_processing/test/py_quality_assessment$:unit_tests: phony obj/modules/audio_processing/test/py_quality_assessment/unit_tests.stamp
+build modules/bitrate_controller$:bitrate_controller: phony obj/modules/bitrate_controller/libbitrate_controller.a
+build modules/bitrate_controller: phony obj/modules/bitrate_controller/libbitrate_controller.a
+build modules/bitrate_controller$:bitrate_controller_unittests: phony obj/modules/bitrate_controller/bitrate_controller_unittests.stamp
+build modules/congestion_controller$:congestion_controller: phony obj/modules/congestion_controller/libcongestion_controller.a
+build modules/congestion_controller: phony obj/modules/congestion_controller/libcongestion_controller.a
+build modules/congestion_controller$:congestion_controller_unittests: phony obj/modules/congestion_controller/congestion_controller_unittests.stamp
+build modules/congestion_controller$:mock_congestion_controller: phony obj/modules/congestion_controller/mock_congestion_controller.stamp
+build modules/desktop_capture$:desktop_capture: phony obj/modules/desktop_capture/desktop_capture.stamp
+build modules/desktop_capture: phony obj/modules/desktop_capture/desktop_capture.stamp
+build modules/desktop_capture$:desktop_capture_generic: phony obj/modules/desktop_capture/libdesktop_capture_generic.a
+build modules/desktop_capture$:desktop_capture_mock: phony obj/modules/desktop_capture/desktop_capture_mock.stamp
+build modules/desktop_capture$:desktop_capture_modules_tests: phony obj/modules/desktop_capture/desktop_capture_modules_tests.stamp
+build modules/desktop_capture$:desktop_capture_unittests: phony obj/modules/desktop_capture/desktop_capture_unittests.stamp
+build modules/desktop_capture$:primitives: phony obj/modules/desktop_capture/libprimitives.a
+build modules/desktop_capture$:screen_drawer: phony obj/modules/desktop_capture/screen_drawer.stamp
+build modules/media_file$:media_file: phony obj/modules/media_file/libmedia_file.a
+build modules/media_file: phony obj/modules/media_file/libmedia_file.a
+build modules/media_file$:media_file_unittests: phony obj/modules/media_file/media_file_unittests.stamp
+build modules/pacing$:mock_paced_sender: phony obj/modules/pacing/mock_paced_sender.stamp
+build modules/pacing$:pacing: phony obj/modules/pacing/libpacing.a
+build modules/pacing: phony obj/modules/pacing/libpacing.a
+build modules/pacing$:pacing_unittests: phony obj/modules/pacing/pacing_unittests.stamp
+build modules/remote_bitrate_estimator$:bwe_rtp: phony obj/modules/remote_bitrate_estimator/bwe_rtp.stamp
+build modules/remote_bitrate_estimator$:bwe_simulations_tests: phony obj/modules/remote_bitrate_estimator/bwe_simulations_tests.stamp
+build modules/remote_bitrate_estimator$:bwe_simulations_tests_arch_executable: phony obj/modules/remote_bitrate_estimator/arm64/bwe_simulations_tests
+build modules/remote_bitrate_estimator$:bwe_simulations_tests_arch_executable_sources: phony obj/modules/remote_bitrate_estimator/bwe_simulations_tests_arch_executable_sources.stamp
+build modules/remote_bitrate_estimator$:bwe_simulations_tests_bundle_data_pkg_info: phony obj/modules/remote_bitrate_estimator/bwe_simulations_tests_bundle_data_pkg_info.stamp
+build modules/remote_bitrate_estimator$:bwe_simulations_tests_executable: phony obj/modules/remote_bitrate_estimator/bwe_simulations_tests_executable.stamp
+build modules/remote_bitrate_estimator$:bwe_simulations_tests_gen_entitlements: phony obj/modules/remote_bitrate_estimator/bwe_simulations_tests_gen_entitlements.stamp
+build modules/remote_bitrate_estimator$:bwe_simulations_tests_generate_info_plist: phony obj/modules/remote_bitrate_estimator/bwe_simulations_tests_generate_info_plist.stamp
+build modules/remote_bitrate_estimator$:bwe_simulations_tests_generate_info_plist_merge: phony obj/modules/remote_bitrate_estimator/bwe_simulations_tests_generate_info_plist_merge.stamp
+build modules/remote_bitrate_estimator$:bwe_simulations_tests_pkg_info: phony obj/modules/remote_bitrate_estimator/bwe_simulations_tests_pkg_info.stamp
+build modules/remote_bitrate_estimator$:bwe_simulations_tests_resources_bundle_data: phony obj/modules/remote_bitrate_estimator/bwe_simulations_tests_resources_bundle_data.stamp
+build modules/remote_bitrate_estimator$:bwe_simulator_lib: phony obj/modules/remote_bitrate_estimator/libbwe_simulator_lib.a
+build modules/remote_bitrate_estimator$:remote_bitrate_estimator: phony obj/modules/remote_bitrate_estimator/libremote_bitrate_estimator.a
+build modules/remote_bitrate_estimator: phony obj/modules/remote_bitrate_estimator/libremote_bitrate_estimator.a
+build modules/remote_bitrate_estimator$:remote_bitrate_estimator_perf_tests: phony obj/modules/remote_bitrate_estimator/remote_bitrate_estimator_perf_tests.stamp
+build modules/remote_bitrate_estimator$:remote_bitrate_estimator_unittests: phony obj/modules/remote_bitrate_estimator/remote_bitrate_estimator_unittests.stamp
+build modules/rtp_rtcp$:fec_test_helper: phony obj/modules/rtp_rtcp/fec_test_helper.stamp
+build modules/rtp_rtcp$:mock_rtp_rtcp: phony obj/modules/rtp_rtcp/mock_rtp_rtcp.stamp
+build modules/rtp_rtcp$:rtp_rtcp: phony obj/modules/rtp_rtcp/librtp_rtcp.a
+build modules/rtp_rtcp: phony obj/modules/rtp_rtcp/librtp_rtcp.a
+build modules/rtp_rtcp$:rtp_rtcp_format: phony obj/modules/rtp_rtcp/rtp_rtcp_format.stamp
+build modules/rtp_rtcp$:rtp_rtcp_modules_tests: phony obj/modules/rtp_rtcp/rtp_rtcp_modules_tests.stamp
+build modules/rtp_rtcp$:rtp_rtcp_unittests: phony obj/modules/rtp_rtcp/rtp_rtcp_unittests.stamp
+build modules/rtp_rtcp$:test_packet_masks_metrics: phony ./test_packet_masks_metrics
+build modules/utility$:mock_process_thread: phony obj/modules/utility/mock_process_thread.stamp
+build modules/utility$:utility: phony obj/modules/utility/libutility.a
+build modules/utility: phony obj/modules/utility/libutility.a
+build modules/utility$:utility_unittests: phony obj/modules/utility/utility_unittests.stamp
+build modules/video_capture$:video_capture: phony obj/modules/video_capture/libvideo_capture.a
+build modules/video_capture: phony obj/modules/video_capture/libvideo_capture.a
+build modules/video_capture$:video_capture_internal_impl: phony obj/modules/video_capture/video_capture_internal_impl.stamp
+build modules/video_capture$:video_capture_internal_impl_objc: phony obj/modules/video_capture/video_capture_internal_impl_objc.stamp
+build modules/video_capture$:video_capture_module: phony obj/modules/video_capture/libvideo_capture_module.a
+build modules/video_capture$:video_capture_tests: phony obj/modules/video_capture/video_capture_tests.stamp
+build modules/video_capture$:video_capture_tests_arch_executable: phony obj/modules/video_capture/arm64/video_capture_tests
+build modules/video_capture$:video_capture_tests_arch_executable_sources: phony obj/modules/video_capture/video_capture_tests_arch_executable_sources.stamp
+build modules/video_capture$:video_capture_tests_bundle_data_pkg_info: phony obj/modules/video_capture/video_capture_tests_bundle_data_pkg_info.stamp
+build modules/video_capture$:video_capture_tests_executable: phony obj/modules/video_capture/video_capture_tests_executable.stamp
+build modules/video_capture$:video_capture_tests_gen_entitlements: phony obj/modules/video_capture/video_capture_tests_gen_entitlements.stamp
+build modules/video_capture$:video_capture_tests_generate_info_plist: phony obj/modules/video_capture/video_capture_tests_generate_info_plist.stamp
+build modules/video_capture$:video_capture_tests_generate_info_plist_merge: phony obj/modules/video_capture/video_capture_tests_generate_info_plist_merge.stamp
+build modules/video_capture$:video_capture_tests_pkg_info: phony obj/modules/video_capture/video_capture_tests_pkg_info.stamp
+build modules/video_capture$:video_capture_tests_resources_bundle_data: phony obj/modules/video_capture/video_capture_tests_resources_bundle_data.stamp
+build modules/video_coding$:codec_globals_headers: phony obj/modules/video_coding/codec_globals_headers.stamp
+build modules/video_coding$:codec_test_objc: phony obj/modules/video_coding/libcodec_test_objc.a
+build modules/video_coding$:mock_headers: phony obj/modules/video_coding/mock_headers.stamp
+build modules/video_coding$:simulcast_test_utility: phony obj/modules/video_coding/simulcast_test_utility.stamp
+build modules/video_coding$:video_codecs_test_framework: phony obj/modules/video_coding/video_codecs_test_framework.stamp
+build modules/video_coding$:video_coding: phony obj/modules/video_coding/libvideo_coding.a
+build modules/video_coding: phony obj/modules/video_coding/libvideo_coding.a
+build modules/video_coding$:video_coding_modules_tests: phony obj/modules/video_coding/video_coding_modules_tests.stamp
+build modules/video_coding$:video_coding_modules_tests_resources_bundle_data: phony obj/modules/video_coding/video_coding_modules_tests_resources_bundle_data.stamp
+build modules/video_coding$:video_coding_unittests: phony obj/modules/video_coding/video_coding_unittests.stamp
+build modules/video_coding$:video_coding_utility: phony obj/modules/video_coding/video_coding_utility.stamp
+build modules/video_coding$:webrtc_h264: phony obj/modules/video_coding/libwebrtc_h264.a
+build modules/video_coding$:webrtc_i420: phony obj/modules/video_coding/libwebrtc_i420.a
+build modules/video_coding$:webrtc_vp8: phony obj/modules/video_coding/libwebrtc_vp8.a
+build modules/video_coding$:webrtc_vp9: phony obj/modules/video_coding/libwebrtc_vp9.a
+build modules/video_processing$:denoiser_filter: phony obj/modules/video_processing/denoiser_filter.stamp
+build modules/video_processing$:video_processing: phony obj/modules/video_processing/libvideo_processing.a
+build modules/video_processing: phony obj/modules/video_processing/libvideo_processing.a
+build modules/video_processing$:video_processing_neon: phony obj/modules/video_processing/libvideo_processing_neon.a
+build modules/video_processing$:video_processing_unittests: phony obj/modules/video_processing/video_processing_unittests.stamp
+build ortc$:ortc: phony obj/ortc/libortc.a
+build ortc$:ortc_unittests: phony obj/ortc/ortc_unittests.stamp
+build ortc$:ortc_unittests_arch_executable: phony obj/ortc/arm64/ortc_unittests
+build ortc$:ortc_unittests_arch_executable_sources: phony obj/ortc/ortc_unittests_arch_executable_sources.stamp
+build ortc$:ortc_unittests_bundle_data_pkg_info: phony obj/ortc/ortc_unittests_bundle_data_pkg_info.stamp
+build ortc$:ortc_unittests_executable: phony obj/ortc/ortc_unittests_executable.stamp
+build ortc$:ortc_unittests_gen_entitlements: phony obj/ortc/ortc_unittests_gen_entitlements.stamp
+build ortc$:ortc_unittests_generate_info_plist: phony obj/ortc/ortc_unittests_generate_info_plist.stamp
+build ortc$:ortc_unittests_generate_info_plist_merge: phony obj/ortc/ortc_unittests_generate_info_plist_merge.stamp
+build ortc$:ortc_unittests_pkg_info: phony obj/ortc/ortc_unittests_pkg_info.stamp
+build ortc$:ortc_unittests_resources_bundle_data: phony obj/ortc/ortc_unittests_resources_bundle_data.stamp
+build p2p$:libstunprober: phony obj/p2p/libstunprober.a
+build p2p$:libstunprober_unittests: phony obj/p2p/libstunprober_unittests.stamp
+build p2p$:p2p: phony obj/p2p/p2p.stamp
+build p2p$:p2p_test_utils: phony obj/p2p/p2p_test_utils.stamp
+build p2p$:rtc_p2p: phony obj/p2p/librtc_p2p.a
+build p2p$:rtc_p2p_unittests: phony obj/p2p/rtc_p2p_unittests.stamp
+build pc$:create_pc_factory: phony obj/pc/libcreate_pc_factory.a
+build pc$:libjingle_peerconnection: phony obj/pc/libjingle_peerconnection.stamp
+build pc$:pc: phony obj/pc/pc.stamp
+build pc$:pc_test_utils: phony obj/pc/pc_test_utils.stamp
+build pc$:peerconnection: phony obj/pc/libpeerconnection.a
+build pc$:peerconnection_unittests: phony obj/pc/peerconnection_unittests.stamp
+build pc$:peerconnection_unittests_arch_executable: phony obj/pc/arm64/peerconnection_unittests
+build pc$:peerconnection_unittests_arch_executable_sources: phony obj/pc/peerconnection_unittests_arch_executable_sources.stamp
+build pc$:peerconnection_unittests_bundle_data_pkg_info: phony obj/pc/peerconnection_unittests_bundle_data_pkg_info.stamp
+build pc$:peerconnection_unittests_executable: phony obj/pc/peerconnection_unittests_executable.stamp
+build pc$:peerconnection_unittests_gen_entitlements: phony obj/pc/peerconnection_unittests_gen_entitlements.stamp
+build pc$:peerconnection_unittests_generate_info_plist: phony obj/pc/peerconnection_unittests_generate_info_plist.stamp
+build pc$:peerconnection_unittests_generate_info_plist_merge: phony obj/pc/peerconnection_unittests_generate_info_plist_merge.stamp
+build pc$:peerconnection_unittests_pkg_info: phony obj/pc/peerconnection_unittests_pkg_info.stamp
+build pc$:peerconnection_unittests_resources_bundle_data: phony obj/pc/peerconnection_unittests_resources_bundle_data.stamp
+build pc$:rtc_pc: phony obj/pc/rtc_pc.stamp
+build pc$:rtc_pc_base: phony obj/pc/librtc_pc_base.a
+build pc$:rtc_pc_unittests: phony obj/pc/rtc_pc_unittests.stamp
+build pc$:rtc_pc_unittests_arch_executable: phony obj/pc/arm64/rtc_pc_unittests
+build pc$:rtc_pc_unittests_arch_executable_sources: phony obj/pc/rtc_pc_unittests_arch_executable_sources.stamp
+build pc$:rtc_pc_unittests_bundle_data_pkg_info: phony obj/pc/rtc_pc_unittests_bundle_data_pkg_info.stamp
+build pc$:rtc_pc_unittests_executable: phony obj/pc/rtc_pc_unittests_executable.stamp
+build pc$:rtc_pc_unittests_gen_entitlements: phony obj/pc/rtc_pc_unittests_gen_entitlements.stamp
+build pc$:rtc_pc_unittests_generate_info_plist: phony obj/pc/rtc_pc_unittests_generate_info_plist.stamp
+build pc$:rtc_pc_unittests_generate_info_plist_merge: phony obj/pc/rtc_pc_unittests_generate_info_plist_merge.stamp
+build pc$:rtc_pc_unittests_pkg_info: phony obj/pc/rtc_pc_unittests_pkg_info.stamp
+build pc$:rtc_pc_unittests_resources_bundle_data: phony obj/pc/rtc_pc_unittests_resources_bundle_data.stamp
+build resources/audio_processing/test/py_quality_assessment$:noise_tracks: phony obj/resources/audio_processing/test/py_quality_assessment/noise_tracks.stamp
+build resources/audio_processing/test/py_quality_assessment$:probing_signals: phony obj/resources/audio_processing/test/py_quality_assessment/probing_signals.stamp
+build rtc_base$:base: phony obj/rtc_base/base.stamp
+build rtc_base$:compile_assert_c: phony obj/rtc_base/compile_assert_c.stamp
+build rtc_base$:gtest_prod: phony obj/rtc_base/gtest_prod.stamp
+build rtc_base$:protobuf_utils: phony obj/rtc_base/protobuf_utils.stamp
+build rtc_base$:rtc_base: phony obj/rtc_base/librtc_base.a
+build rtc_base$:rtc_base_approved: phony obj/rtc_base/rtc_base_approved.stamp
+build rtc_base$:rtc_base_approved_generic: phony obj/rtc_base/rtc_base_approved_generic.stamp
+build rtc_base$:rtc_base_approved_unittests: phony obj/rtc_base/rtc_base_approved_unittests.stamp
+build rtc_base$:rtc_base_generic: phony obj/rtc_base/librtc_base_generic.a
+build rtc_base$:rtc_base_nonparallel_tests: phony obj/rtc_base/rtc_base_nonparallel_tests.stamp
+build rtc_base$:rtc_base_objc: phony obj/rtc_base/rtc_base_objc.stamp
+build rtc_base$:rtc_base_tests_main: phony obj/rtc_base/rtc_base_tests_main.stamp
+build rtc_base$:rtc_base_tests_utils: phony obj/rtc_base/rtc_base_tests_utils.stamp
+build rtc_base$:rtc_base_unittests: phony obj/rtc_base/rtc_base_unittests.stamp
+build rtc_base$:rtc_json: phony obj/rtc_base/rtc_json.stamp
+build rtc_base$:rtc_numerics: phony obj/rtc_base/librtc_numerics.a
+build rtc_base$:rtc_numerics_unittests: phony obj/rtc_base/rtc_numerics_unittests.stamp
+build rtc_base$:rtc_task_queue: phony obj/rtc_base/rtc_task_queue.stamp
+build rtc_base$:rtc_task_queue_api: phony obj/rtc_base/rtc_task_queue_api.stamp
+build rtc_base$:rtc_task_queue_impl: phony obj/rtc_base/rtc_task_queue_impl.stamp
+build rtc_base$:rtc_task_queue_unittests: phony obj/rtc_base/rtc_task_queue_unittests.stamp
+build rtc_base$:sequenced_task_checker: phony obj/rtc_base/libsequenced_task_checker.a
+build rtc_base$:sequenced_task_checker_unittests: phony obj/rtc_base/sequenced_task_checker_unittests.stamp
+build rtc_base$:weak_ptr: phony obj/rtc_base/libweak_ptr.a
+build rtc_base$:weak_ptr_unittests: phony obj/rtc_base/weak_ptr_unittests.stamp
+build rtc_tools$:activity_metric: phony ./activity_metric
+build rtc_tools$:chart_proto: phony obj/rtc_tools/libchart_proto.a
+build rtc_tools$:chart_proto_gen: phony obj/rtc_tools/chart_proto_gen.stamp
+build rtc_tools$:command_line_parser: phony obj/rtc_tools/libcommand_line_parser.a
+build rtc_tools$:event_log_visualizer: phony ./event_log_visualizer
+build rtc_tools$:event_log_visualizer_utils: phony obj/rtc_tools/libevent_log_visualizer_utils.a
+build rtc_tools$:force_mic_volume_max: phony ./force_mic_volume_max
+build rtc_tools$:frame_analyzer: phony ./frame_analyzer
+build rtc_tools$:frame_editing_lib: phony obj/rtc_tools/libframe_editing_lib.a
+build rtc_tools$:frame_editor: phony ./frame_editor
+build rtc_tools$:psnr_ssim_analyzer: phony ./psnr_ssim_analyzer
+build rtc_tools$:reference_less_video_analysis: phony ./reference_less_video_analysis
+build rtc_tools$:reference_less_video_analysis_lib: phony obj/rtc_tools/libreference_less_video_analysis_lib.a
+build rtc_tools$:rgba_to_i420_converter: phony ./rgba_to_i420_converter
+build rtc_tools$:rtc_tools: phony obj/rtc_tools/rtc_tools.stamp
+build rtc_tools$:rtp_analyzer: phony obj/rtc_tools/rtp_analyzer.stamp
+build rtc_tools$:tools_unittests: phony obj/rtc_tools/tools_unittests.stamp
+build rtc_tools$:tools_unittests_arch_executable: phony obj/rtc_tools/arm64/tools_unittests
+build rtc_tools$:tools_unittests_arch_executable_sources: phony obj/rtc_tools/tools_unittests_arch_executable_sources.stamp
+build rtc_tools$:tools_unittests_bundle_data: phony obj/rtc_tools/tools_unittests_bundle_data.stamp
+build rtc_tools$:tools_unittests_bundle_data_pkg_info: phony obj/rtc_tools/tools_unittests_bundle_data_pkg_info.stamp
+build rtc_tools$:tools_unittests_executable: phony obj/rtc_tools/tools_unittests_executable.stamp
+build rtc_tools$:tools_unittests_gen_entitlements: phony obj/rtc_tools/tools_unittests_gen_entitlements.stamp
+build rtc_tools$:tools_unittests_generate_info_plist: phony obj/rtc_tools/tools_unittests_generate_info_plist.stamp
+build rtc_tools$:tools_unittests_generate_info_plist_merge: phony obj/rtc_tools/tools_unittests_generate_info_plist_merge.stamp
+build rtc_tools$:tools_unittests_pkg_info: phony obj/rtc_tools/tools_unittests_pkg_info.stamp
+build rtc_tools$:tools_unittests_resources_bundle_data: phony obj/rtc_tools/tools_unittests_resources_bundle_data.stamp
+build rtc_tools$:video_quality_analysis: phony obj/rtc_tools/libvideo_quality_analysis.a
+build rtc_tools/network_tester$:network_tester: phony obj/rtc_tools/network_tester/libnetwork_tester.a
+build rtc_tools/network_tester: phony obj/rtc_tools/network_tester/libnetwork_tester.a
+build rtc_tools/network_tester$:network_tester_config_proto: phony obj/rtc_tools/network_tester/libnetwork_tester_config_proto.a
+build rtc_tools/network_tester$:network_tester_config_proto_gen: phony obj/rtc_tools/network_tester/network_tester_config_proto_gen.stamp
+build rtc_tools/network_tester$:network_tester_packet_proto: phony obj/rtc_tools/network_tester/libnetwork_tester_packet_proto.a
+build rtc_tools/network_tester$:network_tester_packet_proto_gen: phony obj/rtc_tools/network_tester/network_tester_packet_proto_gen.stamp
+build rtc_tools/network_tester$:network_tester_server: phony ./network_tester_server
+build rtc_tools/network_tester$:network_tester_unittests: phony obj/rtc_tools/network_tester/network_tester_unittests.stamp
+build rtc_tools/network_tester$:network_tester_unittests_bundle_data: phony obj/rtc_tools/network_tester/network_tester_unittests_bundle_data.stamp
+build sdk$:audio_objc: phony obj/sdk/libaudio_objc.a
+build sdk$:common_objc: phony obj/sdk/libcommon_objc.a
+build sdk$:corevideoframebuffer_objc: phony obj/sdk/libcorevideoframebuffer_objc.a
+build sdk$:framework_objc: phony obj/sdk/framework_objc.stamp
+build sdk$:framework_objc+bundle: phony obj/sdk/framework_objc+bundle.stamp
+build sdk$:framework_objc+link: phony obj/sdk/framework_objc+link.stamp
+build sdk$:framework_objc_arch_shared_library: phony obj/sdk/arm64/WebRTC.TOC
+build sdk$:framework_objc_arch_shared_library_sources: phony obj/sdk/framework_objc_arch_shared_library_sources.stamp
+build sdk$:framework_objc_compile_headers_map: phony obj/sdk/framework_objc_compile_headers_map.stamp
+build sdk$:framework_objc_copy_public_headers: phony obj/sdk/framework_objc_copy_public_headers.stamp
+build sdk$:framework_objc_framework_headers: phony obj/sdk/framework_objc_framework_headers.stamp
+build sdk$:framework_objc_info_plist: phony obj/sdk/framework_objc_info_plist.stamp
+build sdk$:framework_objc_info_plist_bundle: phony obj/sdk/framework_objc_info_plist_bundle.stamp
+build sdk$:framework_objc_info_plist_merge: phony obj/sdk/framework_objc_info_plist_merge.stamp
+build sdk$:framework_objc_module_map: phony obj/sdk/framework_objc_module_map.stamp
+build sdk$:framework_objc_shared_library: phony obj/sdk/framework_objc_shared_library.stamp
+build sdk$:metal_objc: phony obj/sdk/libmetal_objc.a
+build sdk$:peerconnection_objc: phony obj/sdk/libpeerconnection_objc.a
+build sdk$:peerconnectionfactory_base_objc: phony obj/sdk/libpeerconnectionfactory_base_objc.a
+build sdk$:peerconnectionfactory_no_media_objc: phony obj/sdk/libpeerconnectionfactory_no_media_objc.a
+build sdk$:peerconnectionfactory_objc: phony obj/sdk/libpeerconnectionfactory_objc.a
+build sdk$:rtc_sdk_objc: phony obj/sdk/librtc_sdk_objc.a
+build sdk$:sdk: phony obj/sdk/sdk.stamp
+build sdk$:sdk_unittests: phony obj/sdk/sdk_unittests.stamp
+build sdk$:sdk_unittests_arch_executable: phony obj/sdk/arm64/sdk_unittests
+build sdk$:sdk_unittests_arch_executable_sources: phony obj/sdk/sdk_unittests_arch_executable_sources.stamp
+build sdk$:sdk_unittests_bundle_data_pkg_info: phony obj/sdk/sdk_unittests_bundle_data_pkg_info.stamp
+build sdk$:sdk_unittests_executable: phony obj/sdk/sdk_unittests_executable.stamp
+build sdk$:sdk_unittests_gen_entitlements: phony obj/sdk/sdk_unittests_gen_entitlements.stamp
+build sdk$:sdk_unittests_generate_info_plist: phony obj/sdk/sdk_unittests_generate_info_plist.stamp
+build sdk$:sdk_unittests_generate_info_plist_merge: phony obj/sdk/sdk_unittests_generate_info_plist_merge.stamp
+build sdk$:sdk_unittests_module: phony obj/sdk/sdk_unittests_module.stamp
+build sdk$:sdk_unittests_module_arch_loadable_module: phony obj/sdk/arm64/sdk_unittests_module
+build sdk$:sdk_unittests_module_arch_loadable_module_source: phony obj/sdk/sdk_unittests_module_arch_loadable_module_source.stamp
+build sdk$:sdk_unittests_module_bundle: phony obj/sdk/sdk_unittests_module_bundle.stamp
+build sdk$:sdk_unittests_module_info_plist: phony obj/sdk/sdk_unittests_module_info_plist.stamp
+build sdk$:sdk_unittests_module_info_plist_bundle: phony obj/sdk/sdk_unittests_module_info_plist_bundle.stamp
+build sdk$:sdk_unittests_module_info_plist_merge: phony obj/sdk/sdk_unittests_module_info_plist_merge.stamp
+build sdk$:sdk_unittests_module_loadable_module: phony obj/sdk/sdk_unittests_module_loadable_module.stamp
+build sdk$:sdk_unittests_moduleshell_source: phony obj/sdk/sdk_unittests_moduleshell_source.stamp
+build sdk$:sdk_unittests_objc: phony obj/sdk/sdk_unittests_objc.stamp
+build sdk$:sdk_unittests_pkg_info: phony obj/sdk/sdk_unittests_pkg_info.stamp
+build sdk$:sdk_unittests_sources: phony obj/sdk/sdk_unittests_sources.stamp
+build sdk$:ui_objc: phony obj/sdk/libui_objc.a
+build sdk$:video_objc: phony obj/sdk/libvideo_objc.a
+build sdk$:video_toolbox_cc: phony obj/sdk/libvideo_toolbox_cc.a
+build sdk$:videotoolbox_objc: phony obj/sdk/libvideotoolbox_objc.a
+build sdk$:videotracksource_objc: phony obj/sdk/libvideotracksource_objc.a
+build stats$:rtc_stats: phony obj/stats/librtc_stats.a
+build stats$:rtc_stats_test_utils: phony obj/stats/rtc_stats_test_utils.stamp
+build stats$:rtc_stats_unittests: phony obj/stats/rtc_stats_unittests.stamp
+build stats$:rtc_stats_unittests_arch_executable: phony obj/stats/arm64/rtc_stats_unittests
+build stats$:rtc_stats_unittests_arch_executable_sources: phony obj/stats/rtc_stats_unittests_arch_executable_sources.stamp
+build stats$:rtc_stats_unittests_bundle_data_pkg_info: phony obj/stats/rtc_stats_unittests_bundle_data_pkg_info.stamp
+build stats$:rtc_stats_unittests_executable: phony obj/stats/rtc_stats_unittests_executable.stamp
+build stats$:rtc_stats_unittests_gen_entitlements: phony obj/stats/rtc_stats_unittests_gen_entitlements.stamp
+build stats$:rtc_stats_unittests_generate_info_plist: phony obj/stats/rtc_stats_unittests_generate_info_plist.stamp
+build stats$:rtc_stats_unittests_generate_info_plist_merge: phony obj/stats/rtc_stats_unittests_generate_info_plist_merge.stamp
+build stats$:rtc_stats_unittests_pkg_info: phony obj/stats/rtc_stats_unittests_pkg_info.stamp
+build stats$:rtc_stats_unittests_resources_bundle_data: phony obj/stats/rtc_stats_unittests_resources_bundle_data.stamp
+build stats$:stats: phony obj/stats/stats.stamp
+build system_wrappers$:asm_defines: phony obj/system_wrappers/asm_defines.stamp
+build system_wrappers$:cpu_features_api: phony obj/system_wrappers/cpu_features_api.stamp
+build system_wrappers$:field_trial_api: phony obj/system_wrappers/field_trial_api.stamp
+build system_wrappers$:field_trial_default: phony obj/system_wrappers/libfield_trial_default.a
+build system_wrappers$:metrics_api: phony obj/system_wrappers/metrics_api.stamp
+build system_wrappers$:metrics_default: phony obj/system_wrappers/libmetrics_default.a
+build system_wrappers$:system_wrappers: phony obj/system_wrappers/libsystem_wrappers.a
+build system_wrappers$:system_wrappers_default: phony obj/system_wrappers/system_wrappers_default.stamp
+build system_wrappers$:system_wrappers_unittests: phony obj/system_wrappers/system_wrappers_unittests.stamp
+build system_wrappers$:system_wrappers_unittests_arch_executable: phony obj/system_wrappers/arm64/system_wrappers_unittests
+build system_wrappers$:system_wrappers_unittests_arch_executable_sources: phony obj/system_wrappers/system_wrappers_unittests_arch_executable_sources.stamp
+build system_wrappers$:system_wrappers_unittests_bundle_data_pkg_info: phony obj/system_wrappers/system_wrappers_unittests_bundle_data_pkg_info.stamp
+build system_wrappers$:system_wrappers_unittests_executable: phony obj/system_wrappers/system_wrappers_unittests_executable.stamp
+build system_wrappers$:system_wrappers_unittests_gen_entitlements: phony obj/system_wrappers/system_wrappers_unittests_gen_entitlements.stamp
+build system_wrappers$:system_wrappers_unittests_generate_info_plist: phony obj/system_wrappers/system_wrappers_unittests_generate_info_plist.stamp
+build system_wrappers$:system_wrappers_unittests_generate_info_plist_merge: phony obj/system_wrappers/system_wrappers_unittests_generate_info_plist_merge.stamp
+build system_wrappers$:system_wrappers_unittests_pkg_info: phony obj/system_wrappers/system_wrappers_unittests_pkg_info.stamp
+build system_wrappers$:system_wrappers_unittests_resources_bundle_data: phony obj/system_wrappers/system_wrappers_unittests_resources_bundle_data.stamp
+build test$:audio_codec_mocks: phony obj/test/audio_codec_mocks.stamp
+build test$:direct_transport: phony obj/test/direct_transport.stamp
+build test$:fake_audio_device: phony obj/test/fake_audio_device.stamp
+build test$:field_trial: phony obj/test/field_trial.stamp
+build test$:fileutils: phony obj/test/fileutils.stamp
+build test$:fileutils_objc: phony obj/test/fileutils_objc.stamp
+build test$:fileutils_unittests: phony obj/test/fileutils_unittests.stamp
+build test$:rtp_test_utils: phony obj/test/rtp_test_utils.stamp
+build test$:run_test: phony obj/test/run_test.stamp
+build test$:run_test_generic: phony obj/test/run_test_generic.stamp
+build test$:run_test_interface: phony obj/test/run_test_interface.stamp
+build test$:single_threaded_task_queue: phony obj/test/single_threaded_task_queue.stamp
+build test$:test: phony obj/test/test.stamp
+build test$:test_common: phony obj/test/test_common.stamp
+build test$:test_main: phony obj/test/test_main.stamp
+build test$:test_renderer: phony obj/test/test_renderer.stamp
+build test$:test_renderer_generic: phony obj/test/test_renderer_generic.stamp
+build test$:test_support: phony obj/test/test_support.stamp
+build test$:test_support_objc: phony obj/test/test_support_objc.stamp
+build test$:test_support_test_artifacts: phony obj/test/test_support_test_artifacts.stamp
+build test$:test_support_unittests: phony obj/test/test_support_unittests.stamp
+build test$:test_support_unittests_arch_executable: phony obj/test/arm64/test_support_unittests
+build test$:test_support_unittests_arch_executable_sources: phony obj/test/test_support_unittests_arch_executable_sources.stamp
+build test$:test_support_unittests_bundle_data: phony obj/test/test_support_unittests_bundle_data.stamp
+build test$:test_support_unittests_bundle_data_pkg_info: phony obj/test/test_support_unittests_bundle_data_pkg_info.stamp
+build test$:test_support_unittests_executable: phony obj/test/test_support_unittests_executable.stamp
+build test$:test_support_unittests_gen_entitlements: phony obj/test/test_support_unittests_gen_entitlements.stamp
+build test$:test_support_unittests_generate_info_plist: phony obj/test/test_support_unittests_generate_info_plist.stamp
+build test$:test_support_unittests_generate_info_plist_merge: phony obj/test/test_support_unittests_generate_info_plist_merge.stamp
+build test$:test_support_unittests_pkg_info: phony obj/test/test_support_unittests_pkg_info.stamp
+build test$:test_support_unittests_resources_bundle_data: phony obj/test/test_support_unittests_resources_bundle_data.stamp
+build test$:video_test_common: phony obj/test/video_test_common.stamp
+build test$:video_test_support: phony obj/test/video_test_support.stamp
+build testing/gmock$:gmock: phony obj/testing/gmock/gmock.stamp
+build testing/gmock: phony obj/testing/gmock/gmock.stamp
+build testing/gmock$:gmock_main: phony obj/testing/gmock/gmock_main.stamp
+build testing/gtest$:gtest: phony obj/testing/gtest/libgtest.a
+build testing/gtest: phony obj/testing/gtest/libgtest.a
+build testing/gtest$:gtest_main: phony obj/testing/gtest/gtest_main.stamp
+build testing/gtest$:ios_enable_coverage: phony obj/testing/gtest/ios_enable_coverage.stamp
+build third_party/boringssl$:boringssl: phony obj/third_party/boringssl/libboringssl.a
+build third_party/boringssl: phony obj/third_party/boringssl/libboringssl.a
+build third_party/boringssl$:boringssl_asm: phony obj/third_party/boringssl/boringssl_asm.stamp
+build third_party/boringssl$:boringssl_crypto_tests: phony obj/third_party/boringssl/boringssl_crypto_tests.stamp
+build third_party/boringssl$:boringssl_crypto_tests_arch_executable: phony obj/third_party/boringssl/arm64/boringssl_crypto_tests
+build third_party/boringssl$:boringssl_crypto_tests_arch_executable_sources: phony obj/third_party/boringssl/boringssl_crypto_tests_arch_executable_sources.stamp
+build third_party/boringssl$:boringssl_crypto_tests_bundle_data_pkg_info: phony obj/third_party/boringssl/boringssl_crypto_tests_bundle_data_pkg_info.stamp
+build third_party/boringssl$:boringssl_crypto_tests_executable: phony obj/third_party/boringssl/boringssl_crypto_tests_executable.stamp
+build third_party/boringssl$:boringssl_crypto_tests_gen_entitlements: phony obj/third_party/boringssl/boringssl_crypto_tests_gen_entitlements.stamp
+build third_party/boringssl$:boringssl_crypto_tests_generate_info_plist: phony obj/third_party/boringssl/boringssl_crypto_tests_generate_info_plist.stamp
+build third_party/boringssl$:boringssl_crypto_tests_generate_info_plist_merge: phony obj/third_party/boringssl/boringssl_crypto_tests_generate_info_plist_merge.stamp
+build third_party/boringssl$:boringssl_crypto_tests_pkg_info: phony obj/third_party/boringssl/boringssl_crypto_tests_pkg_info.stamp
+build third_party/boringssl$:boringssl_crypto_tests_resources_bundle_data: phony obj/third_party/boringssl/boringssl_crypto_tests_resources_bundle_data.stamp
+build third_party/boringssl$:boringssl_ssl_tests: phony obj/third_party/boringssl/boringssl_ssl_tests.stamp
+build third_party/boringssl$:boringssl_ssl_tests_arch_executable: phony obj/third_party/boringssl/arm64/boringssl_ssl_tests
+build third_party/boringssl$:boringssl_ssl_tests_arch_executable_sources: phony obj/third_party/boringssl/boringssl_ssl_tests_arch_executable_sources.stamp
+build third_party/boringssl$:boringssl_ssl_tests_bundle_data_pkg_info: phony obj/third_party/boringssl/boringssl_ssl_tests_bundle_data_pkg_info.stamp
+build third_party/boringssl$:boringssl_ssl_tests_executable: phony obj/third_party/boringssl/boringssl_ssl_tests_executable.stamp
+build third_party/boringssl$:boringssl_ssl_tests_gen_entitlements: phony obj/third_party/boringssl/boringssl_ssl_tests_gen_entitlements.stamp
+build third_party/boringssl$:boringssl_ssl_tests_generate_info_plist: phony obj/third_party/boringssl/boringssl_ssl_tests_generate_info_plist.stamp
+build third_party/boringssl$:boringssl_ssl_tests_generate_info_plist_merge: phony obj/third_party/boringssl/boringssl_ssl_tests_generate_info_plist_merge.stamp
+build third_party/boringssl$:boringssl_ssl_tests_pkg_info: phony obj/third_party/boringssl/boringssl_ssl_tests_pkg_info.stamp
+build third_party/boringssl$:boringssl_ssl_tests_resources_bundle_data: phony obj/third_party/boringssl/boringssl_ssl_tests_resources_bundle_data.stamp
+build third_party/googletest$:gmock: phony obj/third_party/googletest/gmock.stamp
+build third_party/googletest$:gmock_main: phony obj/third_party/googletest/libgmock_main.a
+build third_party/googletest$:gtest: phony obj/third_party/googletest/gtest.stamp
+build third_party/googletest$:gtest_main: phony obj/third_party/googletest/gtest_main.stamp
+build third_party/jsoncpp$:jsoncpp: phony obj/third_party/jsoncpp/jsoncpp.stamp
+build third_party/jsoncpp: phony obj/third_party/jsoncpp/jsoncpp.stamp
+build third_party/libsrtp$:libsrtp: phony obj/third_party/libsrtp/libsrtp.a
+build third_party/libsrtp: phony obj/third_party/libsrtp/libsrtp.a
+build third_party/libvpx$:libvpx: phony obj/third_party/libvpx/libvpx.a
+build third_party/libvpx: phony obj/third_party/libvpx/libvpx.a
+build third_party/libyuv$:compare: phony ./compare
+build third_party/libyuv$:cpuid: phony ./cpuid
+build third_party/libyuv$:default: phony obj/third_party/libyuv/default.stamp
+build third_party/libyuv$:libyuv: phony obj/third_party/libyuv/libyuv.stamp
+build third_party/libyuv: phony obj/third_party/libyuv/libyuv.stamp
+build third_party/libyuv$:libyuv_internal: phony obj/third_party/libyuv/libyuv_internal.a
+build third_party/libyuv$:libyuv_neon: phony obj/third_party/libyuv/libyuv_neon.a
+build third_party/libyuv$:libyuv_unittest: phony obj/third_party/libyuv/libyuv_unittest.stamp
+build third_party/libyuv$:libyuv_unittest_arch_executable: phony obj/third_party/libyuv/arm64/libyuv_unittest
+build third_party/libyuv$:libyuv_unittest_arch_executable_sources: phony obj/third_party/libyuv/libyuv_unittest_arch_executable_sources.stamp
+build third_party/libyuv$:libyuv_unittest_bundle_data_pkg_info: phony obj/third_party/libyuv/libyuv_unittest_bundle_data_pkg_info.stamp
+build third_party/libyuv$:libyuv_unittest_executable: phony obj/third_party/libyuv/libyuv_unittest_executable.stamp
+build third_party/libyuv$:libyuv_unittest_gen_entitlements: phony obj/third_party/libyuv/libyuv_unittest_gen_entitlements.stamp
+build third_party/libyuv$:libyuv_unittest_generate_info_plist: phony obj/third_party/libyuv/libyuv_unittest_generate_info_plist.stamp
+build third_party/libyuv$:libyuv_unittest_generate_info_plist_merge: phony obj/third_party/libyuv/libyuv_unittest_generate_info_plist_merge.stamp
+build third_party/libyuv$:libyuv_unittest_pkg_info: phony obj/third_party/libyuv/libyuv_unittest_pkg_info.stamp
+build third_party/libyuv$:libyuv_unittest_resources_bundle_data: phony obj/third_party/libyuv/libyuv_unittest_resources_bundle_data.stamp
+build third_party/libyuv$:psnr: phony ./psnr
+build third_party/libyuv$:yuvconvert: phony ./yuvconvert
+build third_party/ocmock$:ocmock: phony obj/third_party/ocmock/ocmock.stamp
+build third_party/ocmock: phony obj/third_party/ocmock/ocmock.stamp
+build third_party/opus$:opus: phony obj/third_party/opus/libopus.a
+build third_party/opus: phony obj/third_party/opus/libopus.a
+build third_party/opus$:opus_compare: phony ./opus_compare
+build third_party/opus$:opus_demo: phony ./opus_demo
+build third_party/opus$:test_opus_api: phony obj/third_party/opus/test_opus_api.stamp
+build third_party/opus$:test_opus_api_arch_executable: phony obj/third_party/opus/arm64/test_opus_api
+build third_party/opus$:test_opus_api_arch_executable_sources: phony obj/third_party/opus/test_opus_api_arch_executable_sources.stamp
+build third_party/opus$:test_opus_api_bundle_data_pkg_info: phony obj/third_party/opus/test_opus_api_bundle_data_pkg_info.stamp
+build third_party/opus$:test_opus_api_executable: phony obj/third_party/opus/test_opus_api_executable.stamp
+build third_party/opus$:test_opus_api_gen_entitlements: phony obj/third_party/opus/test_opus_api_gen_entitlements.stamp
+build third_party/opus$:test_opus_api_generate_info_plist: phony obj/third_party/opus/test_opus_api_generate_info_plist.stamp
+build third_party/opus$:test_opus_api_generate_info_plist_merge: phony obj/third_party/opus/test_opus_api_generate_info_plist_merge.stamp
+build third_party/opus$:test_opus_api_pkg_info: phony obj/third_party/opus/test_opus_api_pkg_info.stamp
+build third_party/opus$:test_opus_api_resources_bundle_data: phony obj/third_party/opus/test_opus_api_resources_bundle_data.stamp
+build third_party/opus$:test_opus_decode: phony obj/third_party/opus/test_opus_decode.stamp
+build third_party/opus$:test_opus_decode_arch_executable: phony obj/third_party/opus/arm64/test_opus_decode
+build third_party/opus$:test_opus_decode_arch_executable_sources: phony obj/third_party/opus/test_opus_decode_arch_executable_sources.stamp
+build third_party/opus$:test_opus_decode_bundle_data_pkg_info: phony obj/third_party/opus/test_opus_decode_bundle_data_pkg_info.stamp
+build third_party/opus$:test_opus_decode_executable: phony obj/third_party/opus/test_opus_decode_executable.stamp
+build third_party/opus$:test_opus_decode_gen_entitlements: phony obj/third_party/opus/test_opus_decode_gen_entitlements.stamp
+build third_party/opus$:test_opus_decode_generate_info_plist: phony obj/third_party/opus/test_opus_decode_generate_info_plist.stamp
+build third_party/opus$:test_opus_decode_generate_info_plist_merge: phony obj/third_party/opus/test_opus_decode_generate_info_plist_merge.stamp
+build third_party/opus$:test_opus_decode_pkg_info: phony obj/third_party/opus/test_opus_decode_pkg_info.stamp
+build third_party/opus$:test_opus_decode_resources_bundle_data: phony obj/third_party/opus/test_opus_decode_resources_bundle_data.stamp
+build third_party/opus$:test_opus_encode: phony obj/third_party/opus/test_opus_encode.stamp
+build third_party/opus$:test_opus_encode_arch_executable: phony obj/third_party/opus/arm64/test_opus_encode
+build third_party/opus$:test_opus_encode_arch_executable_sources: phony obj/third_party/opus/test_opus_encode_arch_executable_sources.stamp
+build third_party/opus$:test_opus_encode_bundle_data_pkg_info: phony obj/third_party/opus/test_opus_encode_bundle_data_pkg_info.stamp
+build third_party/opus$:test_opus_encode_executable: phony obj/third_party/opus/test_opus_encode_executable.stamp
+build third_party/opus$:test_opus_encode_gen_entitlements: phony obj/third_party/opus/test_opus_encode_gen_entitlements.stamp
+build third_party/opus$:test_opus_encode_generate_info_plist: phony obj/third_party/opus/test_opus_encode_generate_info_plist.stamp
+build third_party/opus$:test_opus_encode_generate_info_plist_merge: phony obj/third_party/opus/test_opus_encode_generate_info_plist_merge.stamp
+build third_party/opus$:test_opus_encode_pkg_info: phony obj/third_party/opus/test_opus_encode_pkg_info.stamp
+build third_party/opus$:test_opus_encode_resources_bundle_data: phony obj/third_party/opus/test_opus_encode_resources_bundle_data.stamp
+build third_party/opus$:test_opus_padding: phony obj/third_party/opus/test_opus_padding.stamp
+build third_party/opus$:test_opus_padding_arch_executable: phony obj/third_party/opus/arm64/test_opus_padding
+build third_party/opus$:test_opus_padding_arch_executable_sources: phony obj/third_party/opus/test_opus_padding_arch_executable_sources.stamp
+build third_party/opus$:test_opus_padding_bundle_data_pkg_info: phony obj/third_party/opus/test_opus_padding_bundle_data_pkg_info.stamp
+build third_party/opus$:test_opus_padding_executable: phony obj/third_party/opus/test_opus_padding_executable.stamp
+build third_party/opus$:test_opus_padding_gen_entitlements: phony obj/third_party/opus/test_opus_padding_gen_entitlements.stamp
+build third_party/opus$:test_opus_padding_generate_info_plist: phony obj/third_party/opus/test_opus_padding_generate_info_plist.stamp
+build third_party/opus$:test_opus_padding_generate_info_plist_merge: phony obj/third_party/opus/test_opus_padding_generate_info_plist_merge.stamp
+build third_party/opus$:test_opus_padding_pkg_info: phony obj/third_party/opus/test_opus_padding_pkg_info.stamp
+build third_party/opus$:test_opus_padding_resources_bundle_data: phony obj/third_party/opus/test_opus_padding_resources_bundle_data.stamp
+build third_party/protobuf$:copy_google: phony obj/third_party/protobuf/copy_google.stamp
+build third_party/protobuf$:copy_google_protobuf: phony obj/third_party/protobuf/copy_google_protobuf.stamp
+build third_party/protobuf$:copy_google_protobuf_internal: phony obj/third_party/protobuf/copy_google_protobuf_internal.stamp
+build third_party/protobuf$:copy_six: phony obj/third_party/protobuf/copy_six.stamp
+build third_party/protobuf$:protobuf_full: phony obj/third_party/protobuf/libprotobuf_full.a
+build third_party/protobuf$:protobuf_lite: phony obj/third_party/protobuf/libprotobuf_lite.a
+build third_party/protobuf$:py_proto: phony obj/third_party/protobuf/py_proto.stamp
+build third_party/usrsctp$:usrsctp: phony obj/third_party/usrsctp/libusrsctp.a
+build third_party/usrsctp: phony obj/third_party/usrsctp/libusrsctp.a
+build video$:screenshare_loopback: phony ./screenshare_loopback
+build video$:video: phony obj/video/libvideo.a
+build video$:video_full_stack_tests: phony obj/video/video_full_stack_tests.stamp
+build video$:video_loopback: phony ./video_loopback
+build video$:video_quality_test: phony obj/video/video_quality_test.stamp
+build video$:video_replay: phony ./video_replay
+build video$:video_tests: phony obj/video/video_tests.stamp
+build voice_engine$:audio_level: phony obj/voice_engine/libaudio_level.a
+build voice_engine$:voice_engine: phony obj/voice_engine/libvoice_engine.a
+build voice_engine$:voice_engine_unittests: phony obj/voice_engine/voice_engine_unittests.stamp
+build voice_engine$:voice_engine_unittests_arch_executable: phony obj/voice_engine/arm64/voice_engine_unittests
+build voice_engine$:voice_engine_unittests_arch_executable_sources: phony obj/voice_engine/voice_engine_unittests_arch_executable_sources.stamp
+build voice_engine$:voice_engine_unittests_bundle_data_pkg_info: phony obj/voice_engine/voice_engine_unittests_bundle_data_pkg_info.stamp
+build voice_engine$:voice_engine_unittests_executable: phony obj/voice_engine/voice_engine_unittests_executable.stamp
+build voice_engine$:voice_engine_unittests_gen_entitlements: phony obj/voice_engine/voice_engine_unittests_gen_entitlements.stamp
+build voice_engine$:voice_engine_unittests_generate_info_plist: phony obj/voice_engine/voice_engine_unittests_generate_info_plist.stamp
+build voice_engine$:voice_engine_unittests_generate_info_plist_merge: phony obj/voice_engine/voice_engine_unittests_generate_info_plist_merge.stamp
+build voice_engine$:voice_engine_unittests_pkg_info: phony obj/voice_engine/voice_engine_unittests_pkg_info.stamp
+build voice_engine$:voice_engine_unittests_resources_bundle_data: phony obj/voice_engine/voice_engine_unittests_resources_bundle_data.stamp
+
+build all: phony $
+    obj/default.stamp $
+    obj/rtc_unittests.stamp $
+    obj/arm64/rtc_unittests $
+    obj/rtc_unittests_arch_executable_sources.stamp $
+    obj/rtc_unittests_bundle_data_pkg_info.stamp $
+    obj/rtc_unittests_executable.stamp $
+    obj/rtc_unittests_gen_entitlements.stamp $
+    obj/rtc_unittests_generate_info_plist.stamp $
+    obj/rtc_unittests_generate_info_plist_merge.stamp $
+    obj/rtc_unittests_pkg_info.stamp $
+    obj/rtc_unittests_resources_bundle_data.stamp $
+    obj/video_engine_tests.stamp $
+    obj/arm64/video_engine_tests $
+    obj/video_engine_tests_arch_executable_sources.stamp $
+    obj/video_engine_tests_bundle_data.stamp $
+    obj/video_engine_tests_bundle_data_pkg_info.stamp $
+    obj/video_engine_tests_executable.stamp $
+    obj/video_engine_tests_gen_entitlements.stamp $
+    obj/video_engine_tests_generate_info_plist.stamp $
+    obj/video_engine_tests_generate_info_plist_merge.stamp $
+    obj/video_engine_tests_pkg_info.stamp $
+    obj/video_engine_tests_resources_bundle_data.stamp $
+    obj/libwebrtc.a $
+    obj/libwebrtc_common.a $
+    obj/webrtc_nonparallel_tests.stamp $
+    obj/arm64/webrtc_nonparallel_tests $
+    obj/webrtc_nonparallel_tests_arch_executable_sources.stamp $
+    obj/webrtc_nonparallel_tests_bundle_data_pkg_info.stamp $
+    obj/webrtc_nonparallel_tests_executable.stamp $
+    obj/webrtc_nonparallel_tests_gen_entitlements.stamp $
+    obj/webrtc_nonparallel_tests_generate_info_plist.stamp $
+    obj/webrtc_nonparallel_tests_generate_info_plist_merge.stamp $
+    obj/webrtc_nonparallel_tests_pkg_info.stamp $
+    obj/webrtc_nonparallel_tests_resources_bundle_data.stamp $
+    obj/webrtc_perf_tests.stamp $
+    obj/arm64/webrtc_perf_tests $
+    obj/webrtc_perf_tests_arch_executable_sources.stamp $
+    obj/webrtc_perf_tests_bundle_data.stamp $
+    obj/webrtc_perf_tests_bundle_data_pkg_info.stamp $
+    obj/webrtc_perf_tests_executable.stamp $
+    obj/webrtc_perf_tests_gen_entitlements.stamp $
+    obj/webrtc_perf_tests_generate_info_plist.stamp $
+    obj/webrtc_perf_tests_generate_info_plist_merge.stamp $
+    obj/webrtc_perf_tests_pkg_info.stamp $
+    obj/webrtc_perf_tests_resources_bundle_data.stamp $
+    ./webrtc_tests $
+    obj/api/api.stamp $
+    obj/api/array_view.stamp $
+    obj/api/audio_mixer_api.stamp $
+    obj/api/call_api.stamp $
+    obj/api/fakemetricsobserver.stamp $
+    obj/api/libjingle_api_deprecated_headers.stamp $
+    obj/api/libjingle_logging_api.stamp $
+    obj/api/libjingle_peerconnection.stamp $
+    obj/api/libjingle_peerconnection_api.a $
+    obj/api/libjingle_peerconnection_test_api.stamp $
+    obj/api/mediastream_interface_and_implicit_video_frame_api.stamp $
+    obj/api/mock_audio_mixer.stamp $
+    obj/api/optional.stamp $
+    obj/api/ortc_api.stamp $
+    obj/api/peerconnection_and_implicit_call_api.stamp $
+    obj/api/rtc_api_unittests.stamp $
+    obj/api/rtc_stats_api.stamp $
+    obj/api/transport_api.stamp $
+    obj/api/video_frame_api.stamp $
+    obj/api/audio_codecs/audio_codecs_api.stamp $
+    obj/api/audio_codecs/libbuiltin_audio_decoder_factory.a $
+    obj/api/audio_codecs/libbuiltin_audio_encoder_factory.a $
+    obj/api/audio_codecs/L16/libaudio_decoder_L16.a $
+    obj/api/audio_codecs/L16/libaudio_encoder_L16.a $
+    obj/api/audio_codecs/g711/libaudio_decoder_g711.a $
+    obj/api/audio_codecs/g711/libaudio_encoder_g711.a $
+    obj/api/audio_codecs/g722/libaudio_decoder_g722.a $
+    obj/api/audio_codecs/g722/libaudio_encoder_g722.a $
+    obj/api/audio_codecs/g722/audio_encoder_g722_config.stamp $
+    obj/api/audio_codecs/ilbc/libaudio_decoder_ilbc.a $
+    obj/api/audio_codecs/ilbc/libaudio_encoder_ilbc.a $
+    obj/api/audio_codecs/ilbc/audio_encoder_ilbc_config.stamp $
+    obj/api/audio_codecs/isac/audio_decoder_isac.stamp $
+    obj/api/audio_codecs/isac/libaudio_decoder_isac_fix.a $
+    obj/api/audio_codecs/isac/libaudio_decoder_isac_float.a $
+    obj/api/audio_codecs/isac/audio_encoder_isac.stamp $
+    obj/api/audio_codecs/isac/libaudio_encoder_isac_fix.a $
+    obj/api/audio_codecs/isac/libaudio_encoder_isac_float.a $
+    obj/api/audio_codecs/opus/libaudio_decoder_opus.a $
+    obj/api/audio_codecs/opus/audio_encoder_opus.stamp $
+    obj/api/audio_codecs/opus/libaudio_encoder_opus_config.a $
+    obj/api/audio_codecs/test/audio_codecs_api_unittests.stamp $
+    obj/api/video_codecs/video_codecs_api.stamp $
+    obj/audio/libaudio.a $
+    obj/audio/audio_end_to_end_test.stamp $
+    obj/audio/audio_perf_tests.stamp $
+    obj/audio/audio_tests.stamp $
+    obj/audio/low_bandwidth_audio_test.stamp $
+    obj/audio/arm64/low_bandwidth_audio_test $
+    obj/audio/low_bandwidth_audio_test_arch_executable_sources.stamp $
+    obj/audio/low_bandwidth_audio_test_bundle_data_pkg_info.stamp $
+    obj/audio/low_bandwidth_audio_test_executable.stamp $
+    obj/audio/low_bandwidth_audio_test_gen_entitlements.stamp $
+    obj/audio/low_bandwidth_audio_test_generate_info_plist.stamp $
+    obj/audio/low_bandwidth_audio_test_generate_info_plist_merge.stamp $
+    obj/audio/low_bandwidth_audio_test_pkg_info.stamp $
+    obj/audio/low_bandwidth_audio_test_resources_bundle_data.stamp $
+    obj/audio/utility/libaudio_frame_operations.a $
+    obj/audio/utility/utility.stamp $
+    obj/audio/utility/utility_tests.stamp $
+    obj/build/config/exe_and_shlib_deps.stamp $
+    obj/build/config/ios/xctest.stamp $
+    obj/build/config/posix/posix.stamp $
+    obj/build/config/sanitizers/deps.stamp $
+    obj/build/config/sanitizers/liboptions_sources.a $
+    obj/build/win/default_exe_manifest.stamp $
+    obj/call/bitrate_allocator.stamp $
+    obj/call/libcall.a $
+    obj/call/call_interfaces.stamp $
+    obj/call/call_perf_tests.stamp $
+    obj/call/call_tests.stamp $
+    obj/call/mock_rtp_interfaces.stamp $
+    obj/call/rtp_interfaces.stamp $
+    obj/call/rtp_receiver.stamp $
+    obj/call/rtp_sender.stamp $
+    obj/call/video_stream_api.stamp $
+    obj/common_audio/libcommon_audio.a $
+    obj/common_audio/common_audio_c.stamp $
+    obj/common_audio/common_audio_c_arm_asm.stamp $
+    obj/common_audio/common_audio_cc.stamp $
+    obj/common_audio/libcommon_audio_neon.a $
+    obj/common_audio/common_audio_neon_c.stamp $
+    obj/common_audio/common_audio_unittests.stamp $
+    obj/common_audio/arm64/common_audio_unittests $
+    obj/common_audio/common_audio_unittests_arch_executable_sources.stamp $
+    obj/common_audio/common_audio_unittests_bundle_data_pkg_info.stamp $
+    obj/common_audio/common_audio_unittests_executable.stamp $
+    obj/common_audio/common_audio_unittests_gen_entitlements.stamp $
+    obj/common_audio/common_audio_unittests_generate_info_plist.stamp $
+    obj/common_audio/common_audio_unittests_generate_info_plist_merge.stamp $
+    obj/common_audio/common_audio_unittests_pkg_info.stamp $
+    obj/common_audio/common_audio_unittests_resources_bundle_data.stamp $
+    obj/common_audio/mock_common_audio.stamp $
+    obj/common_audio/sinc_resampler.stamp $
+    obj/common_video/libcommon_video.a $
+    obj/common_video/common_video_unittests.stamp $
+    obj/common_video/arm64/common_video_unittests $
+    obj/common_video/common_video_unittests_arch_executable_sources.stamp $
+    obj/common_video/common_video_unittests_bundle_data.stamp $
+    obj/common_video/common_video_unittests_bundle_data_pkg_info.stamp $
+    obj/common_video/common_video_unittests_executable.stamp $
+    obj/common_video/common_video_unittests_gen_entitlements.stamp $
+    obj/common_video/common_video_unittests_generate_info_plist.stamp $
+    obj/common_video/common_video_unittests_generate_info_plist_merge.stamp $
+    obj/common_video/common_video_unittests_pkg_info.stamp $
+    obj/common_video/common_video_unittests_resources_bundle_data.stamp $
+    obj/examples/AppRTCMobile.stamp $
+    obj/examples/arm64/AppRTCMobile $
+    obj/examples/AppRTCMobile_arch_executable_sources.stamp $
+    obj/examples/AppRTCMobile_bundle_data_pkg_info.stamp $
+    obj/examples/AppRTCMobile_executable.stamp $
+    obj/examples/AppRTCMobile_gen_entitlements.stamp $
+    obj/examples/AppRTCMobile_generate_info_plist.stamp $
+    obj/examples/AppRTCMobile_generate_info_plist_merge.stamp $
+    obj/examples/AppRTCMobile_ios_bundle_data.stamp $
+    obj/examples/AppRTCMobile_ios_frameworks.stamp $
+    obj/examples/libAppRTCMobile_lib.a $
+    obj/examples/AppRTCMobile_pkg_info.stamp $
+    obj/examples/libapprtc_common.a $
+    obj/examples/libapprtc_signaling.a $
+    obj/examples/apprtcmobile_test_sources.stamp $
+    obj/examples/apprtcmobile_tests.stamp $
+    obj/examples/arm64/apprtcmobile_tests $
+    obj/examples/apprtcmobile_tests_arch_executable_sources.stamp $
+    obj/examples/apprtcmobile_tests_bundle_data_pkg_info.stamp $
+    obj/examples/apprtcmobile_tests_executable.stamp $
+    obj/examples/apprtcmobile_tests_gen_entitlements.stamp $
+    obj/examples/apprtcmobile_tests_generate_info_plist.stamp $
+    obj/examples/apprtcmobile_tests_generate_info_plist_merge.stamp $
+    obj/examples/apprtcmobile_tests_module.stamp $
+    obj/examples/arm64/apprtcmobile_tests_module $
+    obj/examples/apprtcmobile_tests_module_arch_loadable_module_source.stamp $
+    obj/examples/apprtcmobile_tests_module_bundle.stamp $
+    obj/examples/apprtcmobile_tests_module_info_plist.stamp $
+    obj/examples/apprtcmobile_tests_module_info_plist_bundle.stamp $
+    obj/examples/apprtcmobile_tests_module_info_plist_merge.stamp $
+    obj/examples/apprtcmobile_tests_module_loadable_module.stamp $
+    obj/examples/apprtcmobile_tests_moduleshell_source.stamp $
+    obj/examples/apprtcmobile_tests_pkg_info.stamp $
+    obj/examples/examples.stamp $
+    obj/examples/libsocketrocket.a $
+    ./stun_prober $
+    obj/logging/logging.stamp $
+    obj/logging/rtc_event_log2rtp_dump.stamp $
+    obj/logging/arm64/rtc_event_log2rtp_dump $
+    obj/logging/rtc_event_log2rtp_dump_arch_executable_sources.stamp $
+    obj/logging/rtc_event_log2rtp_dump_bundle_data_pkg_info.stamp $
+    obj/logging/rtc_event_log2rtp_dump_executable.stamp $
+    obj/logging/rtc_event_log2rtp_dump_gen_entitlements.stamp $
+    obj/logging/rtc_event_log2rtp_dump_generate_info_plist.stamp $
+    obj/logging/rtc_event_log2rtp_dump_generate_info_plist_merge.stamp $
+    obj/logging/rtc_event_log2rtp_dump_pkg_info.stamp $
+    obj/logging/rtc_event_log2rtp_dump_resources_bundle_data.stamp $
+    ./rtc_event_log2stats $
+    ./rtc_event_log2text $
+    obj/logging/rtc_event_log_api.stamp $
+    obj/logging/librtc_event_log_impl.a $
+    obj/logging/librtc_event_log_parser.a $
+    obj/logging/librtc_event_log_proto.a $
+    obj/logging/rtc_event_log_proto_gen.stamp $
+    obj/logging/rtc_event_log_tests.stamp $
+    obj/media/media.stamp $
+    obj/media/librtc_audio_video.a $
+    obj/media/librtc_data.a $
+    obj/media/rtc_h264_profile_id.stamp $
+    obj/media/rtc_media.stamp $
+    obj/media/librtc_media_base.a $
+    obj/media/rtc_media_tests_utils.stamp $
+    obj/media/rtc_media_unittests.stamp $
+    obj/media/arm64/rtc_media_unittests $
+    obj/media/rtc_media_unittests_arch_executable_sources.stamp $
+    obj/media/rtc_media_unittests_bundle_data.stamp $
+    obj/media/rtc_media_unittests_bundle_data_pkg_info.stamp $
+    obj/media/rtc_media_unittests_executable.stamp $
+    obj/media/rtc_media_unittests_gen_entitlements.stamp $
+    obj/media/rtc_media_unittests_generate_info_plist.stamp $
+    obj/media/rtc_media_unittests_generate_info_plist_merge.stamp $
+    obj/media/rtc_media_unittests_pkg_info.stamp $
+    obj/media/rtc_media_unittests_resources_bundle_data.stamp $
+    obj/modules/module_api.stamp $
+    obj/modules/modules.stamp $
+    obj/modules/modules_tests.stamp $
+    obj/modules/arm64/modules_tests $
+    obj/modules/modules_tests_arch_executable_sources.stamp $
+    obj/modules/modules_tests_bundle_data.stamp $
+    obj/modules/modules_tests_bundle_data_pkg_info.stamp $
+    obj/modules/modules_tests_executable.stamp $
+    obj/modules/modules_tests_gen_entitlements.stamp $
+    obj/modules/modules_tests_generate_info_plist.stamp $
+    obj/modules/modules_tests_generate_info_plist_merge.stamp $
+    obj/modules/modules_tests_pkg_info.stamp $
+    obj/modules/modules_tests_resources_bundle_data.stamp $
+    obj/modules/modules_unittests.stamp $
+    obj/modules/arm64/modules_unittests $
+    obj/modules/modules_unittests_arch_executable_sources.stamp $
+    obj/modules/modules_unittests_bundle_data.stamp $
+    obj/modules/modules_unittests_bundle_data_pkg_info.stamp $
+    obj/modules/modules_unittests_executable.stamp $
+    obj/modules/modules_unittests_gen_entitlements.stamp $
+    obj/modules/modules_unittests_generate_info_plist.stamp $
+    obj/modules/modules_unittests_generate_info_plist_merge.stamp $
+    obj/modules/modules_unittests_pkg_info.stamp $
+    obj/modules/modules_unittests_resources_bundle_data.stamp $
+    ./RTPchange $
+    ./RTPencode $
+    ./RTPjitter $
+    ./RTPtimeshift $
+    obj/modules/audio_coding/acm_receive_test.stamp $
+    obj/modules/audio_coding/acm_send_test.stamp $
+    obj/modules/audio_coding/libana_config_proto.a $
+    obj/modules/audio_coding/ana_config_proto_gen.stamp $
+    obj/modules/audio_coding/libana_debug_dump_proto.a $
+    obj/modules/audio_coding/ana_debug_dump_proto_gen.stamp $
+    obj/modules/audio_coding/audio_codec_speed_tests.stamp $
+    obj/modules/audio_coding/arm64/audio_codec_speed_tests $
+    obj/modules/audio_coding/audio_codec_speed_tests_arch_executable_sources.stamp $
+    obj/modules/audio_coding/audio_codec_speed_tests_bundle_data_pkg_info.stamp $
+    obj/modules/audio_coding/audio_codec_speed_tests_data.stamp $
+    obj/modules/audio_coding/audio_codec_speed_tests_executable.stamp $
+    obj/modules/audio_coding/audio_codec_speed_tests_gen_entitlements.stamp $
+    obj/modules/audio_coding/audio_codec_speed_tests_generate_info_plist.stamp $
+    obj/modules/audio_coding/audio_codec_speed_tests_generate_info_plist_merge.stamp $
+    obj/modules/audio_coding/audio_codec_speed_tests_pkg_info.stamp $
+    obj/modules/audio_coding/audio_codec_speed_tests_resources_bundle_data.stamp $
+    obj/modules/audio_coding/libaudio_coding.a $
+    obj/modules/audio_coding/audio_coding_module_typedefs.stamp $
+    obj/modules/audio_coding/audio_coding_modules_tests.stamp $
+    obj/modules/audio_coding/audio_coding_perf_tests.stamp $
+    obj/modules/audio_coding/audio_coding_tests.stamp $
+    obj/modules/audio_coding/audio_coding_unittests.stamp $
+    obj/modules/audio_coding/audio_decoder_interface.stamp $
+    obj/modules/audio_coding/audio_decoder_unittests.stamp $
+    obj/modules/audio_coding/arm64/audio_decoder_unittests $
+    obj/modules/audio_coding/audio_decoder_unittests_arch_executable_sources.stamp $
+    obj/modules/audio_coding/audio_decoder_unittests_bundle_data.stamp $
+    obj/modules/audio_coding/audio_decoder_unittests_bundle_data_pkg_info.stamp $
+    obj/modules/audio_coding/audio_decoder_unittests_executable.stamp $
+    obj/modules/audio_coding/audio_decoder_unittests_gen_entitlements.stamp $
+    obj/modules/audio_coding/audio_decoder_unittests_generate_info_plist.stamp $
+    obj/modules/audio_coding/audio_decoder_unittests_generate_info_plist_merge.stamp $
+    obj/modules/audio_coding/audio_decoder_unittests_pkg_info.stamp $
+    obj/modules/audio_coding/audio_decoder_unittests_resources_bundle_data.stamp $
+    obj/modules/audio_coding/audio_encoder_interface.stamp $
+    obj/modules/audio_coding/libaudio_format_conversion.a $
+    obj/modules/audio_coding/libaudio_network_adaptor.a $
+    obj/modules/audio_coding/libaudio_network_adaptor_config.a $
+    obj/modules/audio_coding/builtin_audio_decoder_factory.stamp $
+    obj/modules/audio_coding/builtin_audio_encoder_factory.stamp $
+    obj/modules/audio_coding/libcng.a $
+    ./delay_test $
+    obj/modules/audio_coding/libg711.a $
+    obj/modules/audio_coding/g711_c.stamp $
+    ./g711_test $
+    obj/modules/audio_coding/libg722.a $
+    obj/modules/audio_coding/g722_c.stamp $
+    ./g722_test $
+    obj/modules/audio_coding/libilbc.a $
+    obj/modules/audio_coding/ilbc_c.stamp $
+    ./ilbc_test $
+    ./insert_packet_with_timing $
+    obj/modules/audio_coding/libisac.a $
+    ./isac_api_test $
+    obj/modules/audio_coding/libisac_c.a $
+    obj/modules/audio_coding/libisac_common.a $
+    obj/modules/audio_coding/libisac_fix.a $
+    obj/modules/audio_coding/isac_fix_c.stamp $
+    obj/modules/audio_coding/isac_fix_c_arm_asm.stamp $
+    obj/modules/audio_coding/isac_fix_common.stamp $
+    ./isac_fix_test $
+    obj/modules/audio_coding/libisac_neon.a $
+    ./isac_switch_samprate_test $
+    ./isac_test $
+    obj/modules/audio_coding/isac_test_util.stamp $
+    obj/modules/audio_coding/liblegacy_encoded_audio_frame.a $
+    obj/modules/audio_coding/libneteq.a $
+    obj/modules/audio_coding/neteq_decoder_enum.stamp $
+    ./neteq_ilbc_quality_test $
+    obj/modules/audio_coding/neteq_input_audio_tools.stamp $
+    ./neteq_isac_quality_test $
+    ./neteq_opus_quality_test $
+    ./neteq_pcmu_quality_test $
+    obj/modules/audio_coding/neteq_quality_test_support.stamp $
+    obj/modules/audio_coding/neteq_rtpplay.stamp $
+    obj/modules/audio_coding/arm64/neteq_rtpplay $
+    obj/modules/audio_coding/neteq_rtpplay_arch_executable_sources.stamp $
+    obj/modules/audio_coding/neteq_rtpplay_bundle_data_pkg_info.stamp $
+    obj/modules/audio_coding/neteq_rtpplay_executable.stamp $
+    obj/modules/audio_coding/neteq_rtpplay_gen_entitlements.stamp $
+    obj/modules/audio_coding/neteq_rtpplay_generate_info_plist.stamp $
+    obj/modules/audio_coding/neteq_rtpplay_generate_info_plist_merge.stamp $
+    obj/modules/audio_coding/neteq_rtpplay_pkg_info.stamp $
+    obj/modules/audio_coding/neteq_rtpplay_resources_bundle_data.stamp $
+    ./neteq_speed_test $
+    obj/modules/audio_coding/neteq_test_support.stamp $
+    obj/modules/audio_coding/neteq_test_tools.stamp $
+    obj/modules/audio_coding/neteq_test_tools_deprecated.stamp $
+    obj/modules/audio_coding/neteq_tools.stamp $
+    obj/modules/audio_coding/neteq_tools_minimal.stamp $
+    obj/modules/audio_coding/libneteq_unittest_proto.a $
+    obj/modules/audio_coding/neteq_unittest_proto_gen.stamp $
+    obj/modules/audio_coding/libpcm16b.a $
+    obj/modules/audio_coding/pcm16b_c.stamp $
+    obj/modules/audio_coding/libred.a $
+    obj/modules/audio_coding/librent_a_codec.a $
+    obj/modules/audio_coding/librtc_event_log_source.a $
+    ./rtp_analyze $
+    ./rtpcat $
+    obj/modules/audio_coding/libwebrtc_opus.a $
+    obj/modules/audio_coding/webrtc_opus_c.stamp $
+    ./webrtc_opus_fec_test $
+    obj/modules/audio_device/audio_device.stamp $
+    obj/modules/audio_device/audio_device_generic.stamp $
+    obj/modules/audio_device/audio_device_ios_objc.stamp $
+    obj/modules/audio_device/audio_device_ios_objc_unittests.stamp $
+    obj/modules/audio_device/audio_device_unittests.stamp $
+    obj/modules/audio_device/mac_portaudio.stamp $
+    obj/modules/audio_device/mock_audio_device.stamp $
+    obj/modules/audio_mixer/libaudio_frame_manipulator.a $
+    obj/modules/audio_mixer/audio_mixer.stamp $
+    obj/modules/audio_mixer/libaudio_mixer_impl.a $
+    obj/modules/audio_mixer/audio_mixer_unittests.stamp $
+    obj/modules/audio_processing/aec_dump_interface.stamp $
+    obj/modules/audio_processing/analog_mic_simulation.stamp $
+    obj/modules/audio_processing/libaudio_processing.a $
+    obj/modules/audio_processing/audio_processing_c.stamp $
+    obj/modules/audio_processing/libaudio_processing_neon.a $
+    obj/modules/audio_processing/libaudio_processing_neon_c.a $
+    obj/modules/audio_processing/audio_processing_perf_tests.stamp $
+    obj/modules/audio_processing/audio_processing_tests.stamp $
+    obj/modules/audio_processing/audio_processing_unittests.stamp $
+    obj/modules/audio_processing/libaudioproc_debug_proto.a $
+    obj/modules/audio_processing/audioproc_debug_proto_gen.stamp $
+    ./audioproc_f $
+    obj/modules/audio_processing/libaudioproc_protobuf_utils.a $
+    obj/modules/audio_processing/audioproc_test_utils.stamp $
+    obj/modules/audio_processing/libaudioproc_unittest_proto.a $
+    obj/modules/audio_processing/audioproc_unittest_proto_gen.stamp $
+    ./click_annotate $
+    ./nonlinear_beamformer_test $
+    ./transient_suppression_test $
+    ./unpack_aecdump $
+    obj/modules/audio_processing/aec_dump/aec_dump.stamp $
+    obj/modules/audio_processing/aec_dump/aec_dump_impl.stamp $
+    obj/modules/audio_processing/aec_dump/aec_dump_unittests.stamp $
+    obj/modules/audio_processing/aec_dump/mock_aec_dump.stamp $
+    obj/modules/audio_processing/aec_dump/mock_aec_dump_unittests.stamp $
+    obj/modules/audio_processing/aec_dump/null_aec_dump_factory.stamp $
+    obj/modules/audio_processing/test/conversational_speech/conversational_speech.stamp $
+    ./conversational_speech_generator $
+    obj/modules/audio_processing/test/conversational_speech/lib.a $
+    obj/modules/audio_processing/test/conversational_speech/unittest.stamp $
+    obj/modules/audio_processing/test/py_quality_assessment/apm_configs.stamp $
+    ./py_quality_assessment/quality_assessment/fake_polqa $
+    obj/modules/audio_processing/test/py_quality_assessment/lib.stamp $
+    obj/modules/audio_processing/test/py_quality_assessment/lib_unit_tests.stamp $
+    obj/modules/audio_processing/test/py_quality_assessment/output.stamp $
+    obj/modules/audio_processing/test/py_quality_assessment/py_quality_assessment.stamp $
+    obj/modules/audio_processing/test/py_quality_assessment/scripts.stamp $
+    obj/modules/audio_processing/test/py_quality_assessment/scripts_unit_tests.stamp $
+    obj/modules/audio_processing/test/py_quality_assessment/unit_tests.stamp $
+    obj/modules/bitrate_controller/libbitrate_controller.a $
+    obj/modules/bitrate_controller/bitrate_controller_unittests.stamp $
+    obj/modules/congestion_controller/libcongestion_controller.a $
+    obj/modules/congestion_controller/congestion_controller_unittests.stamp $
+    obj/modules/congestion_controller/mock_congestion_controller.stamp $
+    obj/modules/desktop_capture/desktop_capture.stamp $
+    obj/modules/desktop_capture/libdesktop_capture_generic.a $
+    obj/modules/desktop_capture/desktop_capture_mock.stamp $
+    obj/modules/desktop_capture/desktop_capture_modules_tests.stamp $
+    obj/modules/desktop_capture/desktop_capture_unittests.stamp $
+    obj/modules/desktop_capture/libprimitives.a $
+    obj/modules/desktop_capture/screen_drawer.stamp $
+    obj/modules/media_file/libmedia_file.a $
+    obj/modules/media_file/media_file_unittests.stamp $
+    obj/modules/pacing/mock_paced_sender.stamp $
+    obj/modules/pacing/libpacing.a $
+    obj/modules/pacing/pacing_unittests.stamp $
+    obj/modules/remote_bitrate_estimator/bwe_rtp.stamp $
+    obj/modules/remote_bitrate_estimator/bwe_simulations_tests.stamp $
+    obj/modules/remote_bitrate_estimator/arm64/bwe_simulations_tests $
+    obj/modules/remote_bitrate_estimator/bwe_simulations_tests_arch_executable_sources.stamp $
+    obj/modules/remote_bitrate_estimator/bwe_simulations_tests_bundle_data_pkg_info.stamp $
+    obj/modules/remote_bitrate_estimator/bwe_simulations_tests_executable.stamp $
+    obj/modules/remote_bitrate_estimator/bwe_simulations_tests_gen_entitlements.stamp $
+    obj/modules/remote_bitrate_estimator/bwe_simulations_tests_generate_info_plist.stamp $
+    obj/modules/remote_bitrate_estimator/bwe_simulations_tests_generate_info_plist_merge.stamp $
+    obj/modules/remote_bitrate_estimator/bwe_simulations_tests_pkg_info.stamp $
+    obj/modules/remote_bitrate_estimator/bwe_simulations_tests_resources_bundle_data.stamp $
+    obj/modules/remote_bitrate_estimator/libbwe_simulator_lib.a $
+    obj/modules/remote_bitrate_estimator/libremote_bitrate_estimator.a $
+    obj/modules/remote_bitrate_estimator/remote_bitrate_estimator_perf_tests.stamp $
+    obj/modules/remote_bitrate_estimator/remote_bitrate_estimator_unittests.stamp $
+    obj/modules/rtp_rtcp/fec_test_helper.stamp $
+    obj/modules/rtp_rtcp/mock_rtp_rtcp.stamp $
+    obj/modules/rtp_rtcp/librtp_rtcp.a $
+    obj/modules/rtp_rtcp/rtp_rtcp_format.stamp $
+    obj/modules/rtp_rtcp/rtp_rtcp_modules_tests.stamp $
+    obj/modules/rtp_rtcp/rtp_rtcp_unittests.stamp $
+    ./test_packet_masks_metrics $
+    obj/modules/utility/mock_process_thread.stamp $
+    obj/modules/utility/libutility.a $
+    obj/modules/utility/utility_unittests.stamp $
+    obj/modules/video_capture/libvideo_capture.a $
+    obj/modules/video_capture/video_capture_internal_impl.stamp $
+    obj/modules/video_capture/video_capture_internal_impl_objc.stamp $
+    obj/modules/video_capture/libvideo_capture_module.a $
+    obj/modules/video_capture/video_capture_tests.stamp $
+    obj/modules/video_capture/arm64/video_capture_tests $
+    obj/modules/video_capture/video_capture_tests_arch_executable_sources.stamp $
+    obj/modules/video_capture/video_capture_tests_bundle_data_pkg_info.stamp $
+    obj/modules/video_capture/video_capture_tests_executable.stamp $
+    obj/modules/video_capture/video_capture_tests_gen_entitlements.stamp $
+    obj/modules/video_capture/video_capture_tests_generate_info_plist.stamp $
+    obj/modules/video_capture/video_capture_tests_generate_info_plist_merge.stamp $
+    obj/modules/video_capture/video_capture_tests_pkg_info.stamp $
+    obj/modules/video_capture/video_capture_tests_resources_bundle_data.stamp $
+    obj/modules/video_coding/codec_globals_headers.stamp $
+    obj/modules/video_coding/libcodec_test_objc.a $
+    obj/modules/video_coding/mock_headers.stamp $
+    obj/modules/video_coding/simulcast_test_utility.stamp $
+    obj/modules/video_coding/video_codecs_test_framework.stamp $
+    obj/modules/video_coding/libvideo_coding.a $
+    obj/modules/video_coding/video_coding_modules_tests.stamp $
+    obj/modules/video_coding/video_coding_modules_tests_resources_bundle_data.stamp $
+    obj/modules/video_coding/video_coding_unittests.stamp $
+    obj/modules/video_coding/video_coding_utility.stamp $
+    obj/modules/video_coding/libwebrtc_h264.a $
+    obj/modules/video_coding/libwebrtc_i420.a $
+    obj/modules/video_coding/libwebrtc_vp8.a $
+    obj/modules/video_coding/libwebrtc_vp9.a $
+    obj/modules/video_processing/denoiser_filter.stamp $
+    obj/modules/video_processing/libvideo_processing.a $
+    obj/modules/video_processing/libvideo_processing_neon.a $
+    obj/modules/video_processing/video_processing_unittests.stamp $
+    obj/ortc/libortc.a $
+    obj/ortc/ortc_unittests.stamp $
+    obj/ortc/arm64/ortc_unittests $
+    obj/ortc/ortc_unittests_arch_executable_sources.stamp $
+    obj/ortc/ortc_unittests_bundle_data_pkg_info.stamp $
+    obj/ortc/ortc_unittests_executable.stamp $
+    obj/ortc/ortc_unittests_gen_entitlements.stamp $
+    obj/ortc/ortc_unittests_generate_info_plist.stamp $
+    obj/ortc/ortc_unittests_generate_info_plist_merge.stamp $
+    obj/ortc/ortc_unittests_pkg_info.stamp $
+    obj/ortc/ortc_unittests_resources_bundle_data.stamp $
+    obj/p2p/libstunprober.a $
+    obj/p2p/libstunprober_unittests.stamp $
+    obj/p2p/p2p.stamp $
+    obj/p2p/p2p_test_utils.stamp $
+    obj/p2p/librtc_p2p.a $
+    obj/p2p/rtc_p2p_unittests.stamp $
+    obj/pc/libcreate_pc_factory.a $
+    obj/pc/libjingle_peerconnection.stamp $
+    obj/pc/pc.stamp $
+    obj/pc/pc_test_utils.stamp $
+    obj/pc/libpeerconnection.a $
+    obj/pc/peerconnection_unittests.stamp $
+    obj/pc/arm64/peerconnection_unittests $
+    obj/pc/peerconnection_unittests_arch_executable_sources.stamp $
+    obj/pc/peerconnection_unittests_bundle_data_pkg_info.stamp $
+    obj/pc/peerconnection_unittests_executable.stamp $
+    obj/pc/peerconnection_unittests_gen_entitlements.stamp $
+    obj/pc/peerconnection_unittests_generate_info_plist.stamp $
+    obj/pc/peerconnection_unittests_generate_info_plist_merge.stamp $
+    obj/pc/peerconnection_unittests_pkg_info.stamp $
+    obj/pc/peerconnection_unittests_resources_bundle_data.stamp $
+    obj/pc/rtc_pc.stamp $
+    obj/pc/librtc_pc_base.a $
+    obj/pc/rtc_pc_unittests.stamp $
+    obj/pc/arm64/rtc_pc_unittests $
+    obj/pc/rtc_pc_unittests_arch_executable_sources.stamp $
+    obj/pc/rtc_pc_unittests_bundle_data_pkg_info.stamp $
+    obj/pc/rtc_pc_unittests_executable.stamp $
+    obj/pc/rtc_pc_unittests_gen_entitlements.stamp $
+    obj/pc/rtc_pc_unittests_generate_info_plist.stamp $
+    obj/pc/rtc_pc_unittests_generate_info_plist_merge.stamp $
+    obj/pc/rtc_pc_unittests_pkg_info.stamp $
+    obj/pc/rtc_pc_unittests_resources_bundle_data.stamp $
+    obj/resources/audio_processing/test/py_quality_assessment/noise_tracks.stamp $
+    obj/resources/audio_processing/test/py_quality_assessment/probing_signals.stamp $
+    obj/rtc_base/base.stamp $
+    obj/rtc_base/compile_assert_c.stamp $
+    obj/rtc_base/gtest_prod.stamp $
+    obj/rtc_base/protobuf_utils.stamp $
+    obj/rtc_base/librtc_base.a $
+    obj/rtc_base/rtc_base_approved.stamp $
+    obj/rtc_base/rtc_base_approved_generic.stamp $
+    obj/rtc_base/rtc_base_approved_unittests.stamp $
+    obj/rtc_base/librtc_base_generic.a $
+    obj/rtc_base/rtc_base_nonparallel_tests.stamp $
+    obj/rtc_base/rtc_base_objc.stamp $
+    obj/rtc_base/rtc_base_tests_main.stamp $
+    obj/rtc_base/rtc_base_tests_utils.stamp $
+    obj/rtc_base/rtc_base_unittests.stamp $
+    obj/rtc_base/rtc_json.stamp $
+    obj/rtc_base/librtc_numerics.a $
+    obj/rtc_base/rtc_numerics_unittests.stamp $
+    obj/rtc_base/rtc_task_queue.stamp $
+    obj/rtc_base/rtc_task_queue_api.stamp $
+    obj/rtc_base/rtc_task_queue_impl.stamp $
+    obj/rtc_base/rtc_task_queue_unittests.stamp $
+    obj/rtc_base/libsequenced_task_checker.a $
+    obj/rtc_base/sequenced_task_checker_unittests.stamp $
+    obj/rtc_base/libweak_ptr.a $
+    obj/rtc_base/weak_ptr_unittests.stamp $
+    ./activity_metric $
+    obj/rtc_tools/libchart_proto.a $
+    obj/rtc_tools/chart_proto_gen.stamp $
+    obj/rtc_tools/libcommand_line_parser.a $
+    ./event_log_visualizer $
+    obj/rtc_tools/libevent_log_visualizer_utils.a $
+    ./force_mic_volume_max $
+    ./frame_analyzer $
+    obj/rtc_tools/libframe_editing_lib.a $
+    ./frame_editor $
+    ./psnr_ssim_analyzer $
+    ./reference_less_video_analysis $
+    obj/rtc_tools/libreference_less_video_analysis_lib.a $
+    ./rgba_to_i420_converter $
+    obj/rtc_tools/rtc_tools.stamp $
+    obj/rtc_tools/rtp_analyzer.stamp $
+    obj/rtc_tools/tools_unittests.stamp $
+    obj/rtc_tools/arm64/tools_unittests $
+    obj/rtc_tools/tools_unittests_arch_executable_sources.stamp $
+    obj/rtc_tools/tools_unittests_bundle_data.stamp $
+    obj/rtc_tools/tools_unittests_bundle_data_pkg_info.stamp $
+    obj/rtc_tools/tools_unittests_executable.stamp $
+    obj/rtc_tools/tools_unittests_gen_entitlements.stamp $
+    obj/rtc_tools/tools_unittests_generate_info_plist.stamp $
+    obj/rtc_tools/tools_unittests_generate_info_plist_merge.stamp $
+    obj/rtc_tools/tools_unittests_pkg_info.stamp $
+    obj/rtc_tools/tools_unittests_resources_bundle_data.stamp $
+    obj/rtc_tools/libvideo_quality_analysis.a $
+    obj/rtc_tools/network_tester/libnetwork_tester.a $
+    obj/rtc_tools/network_tester/libnetwork_tester_config_proto.a $
+    obj/rtc_tools/network_tester/network_tester_config_proto_gen.stamp $
+    obj/rtc_tools/network_tester/libnetwork_tester_packet_proto.a $
+    obj/rtc_tools/network_tester/network_tester_packet_proto_gen.stamp $
+    ./network_tester_server $
+    obj/rtc_tools/network_tester/network_tester_unittests.stamp $
+    obj/rtc_tools/network_tester/network_tester_unittests_bundle_data.stamp $
+    obj/sdk/libaudio_objc.a $
+    obj/sdk/libcommon_objc.a $
+    obj/sdk/libcorevideoframebuffer_objc.a $
+    obj/sdk/framework_objc.stamp $
+    obj/sdk/framework_objc+bundle.stamp $
+    obj/sdk/framework_objc+link.stamp $
+    obj/sdk/arm64/WebRTC.TOC $
+    obj/sdk/framework_objc_arch_shared_library_sources.stamp $
+    obj/sdk/framework_objc_compile_headers_map.stamp $
+    obj/sdk/framework_objc_copy_public_headers.stamp $
+    obj/sdk/framework_objc_framework_headers.stamp $
+    obj/sdk/framework_objc_info_plist.stamp $
+    obj/sdk/framework_objc_info_plist_bundle.stamp $
+    obj/sdk/framework_objc_info_plist_merge.stamp $
+    obj/sdk/framework_objc_module_map.stamp $
+    obj/sdk/framework_objc_shared_library.stamp $
+    obj/sdk/libmetal_objc.a $
+    obj/sdk/libpeerconnection_objc.a $
+    obj/sdk/libpeerconnectionfactory_base_objc.a $
+    obj/sdk/libpeerconnectionfactory_no_media_objc.a $
+    obj/sdk/libpeerconnectionfactory_objc.a $
+    obj/sdk/librtc_sdk_objc.a $
+    obj/sdk/sdk.stamp $
+    obj/sdk/sdk_unittests.stamp $
+    obj/sdk/arm64/sdk_unittests $
+    obj/sdk/sdk_unittests_arch_executable_sources.stamp $
+    obj/sdk/sdk_unittests_bundle_data_pkg_info.stamp $
+    obj/sdk/sdk_unittests_executable.stamp $
+    obj/sdk/sdk_unittests_gen_entitlements.stamp $
+    obj/sdk/sdk_unittests_generate_info_plist.stamp $
+    obj/sdk/sdk_unittests_generate_info_plist_merge.stamp $
+    obj/sdk/sdk_unittests_module.stamp $
+    obj/sdk/arm64/sdk_unittests_module $
+    obj/sdk/sdk_unittests_module_arch_loadable_module_source.stamp $
+    obj/sdk/sdk_unittests_module_bundle.stamp $
+    obj/sdk/sdk_unittests_module_info_plist.stamp $
+    obj/sdk/sdk_unittests_module_info_plist_bundle.stamp $
+    obj/sdk/sdk_unittests_module_info_plist_merge.stamp $
+    obj/sdk/sdk_unittests_module_loadable_module.stamp $
+    obj/sdk/sdk_unittests_moduleshell_source.stamp $
+    obj/sdk/sdk_unittests_objc.stamp $
+    obj/sdk/sdk_unittests_pkg_info.stamp $
+    obj/sdk/sdk_unittests_sources.stamp $
+    obj/sdk/libui_objc.a $
+    obj/sdk/libvideo_objc.a $
+    obj/sdk/libvideo_toolbox_cc.a $
+    obj/sdk/libvideotoolbox_objc.a $
+    obj/sdk/libvideotracksource_objc.a $
+    obj/stats/librtc_stats.a $
+    obj/stats/rtc_stats_test_utils.stamp $
+    obj/stats/rtc_stats_unittests.stamp $
+    obj/stats/arm64/rtc_stats_unittests $
+    obj/stats/rtc_stats_unittests_arch_executable_sources.stamp $
+    obj/stats/rtc_stats_unittests_bundle_data_pkg_info.stamp $
+    obj/stats/rtc_stats_unittests_executable.stamp $
+    obj/stats/rtc_stats_unittests_gen_entitlements.stamp $
+    obj/stats/rtc_stats_unittests_generate_info_plist.stamp $
+    obj/stats/rtc_stats_unittests_generate_info_plist_merge.stamp $
+    obj/stats/rtc_stats_unittests_pkg_info.stamp $
+    obj/stats/rtc_stats_unittests_resources_bundle_data.stamp $
+    obj/stats/stats.stamp $
+    obj/system_wrappers/asm_defines.stamp $
+    obj/system_wrappers/cpu_features_api.stamp $
+    obj/system_wrappers/field_trial_api.stamp $
+    obj/system_wrappers/libfield_trial_default.a $
+    obj/system_wrappers/metrics_api.stamp $
+    obj/system_wrappers/libmetrics_default.a $
+    obj/system_wrappers/libsystem_wrappers.a $
+    obj/system_wrappers/system_wrappers_default.stamp $
+    obj/system_wrappers/system_wrappers_unittests.stamp $
+    obj/system_wrappers/arm64/system_wrappers_unittests $
+    obj/system_wrappers/system_wrappers_unittests_arch_executable_sources.stamp $
+    obj/system_wrappers/system_wrappers_unittests_bundle_data_pkg_info.stamp $
+    obj/system_wrappers/system_wrappers_unittests_executable.stamp $
+    obj/system_wrappers/system_wrappers_unittests_gen_entitlements.stamp $
+    obj/system_wrappers/system_wrappers_unittests_generate_info_plist.stamp $
+    obj/system_wrappers/system_wrappers_unittests_generate_info_plist_merge.stamp $
+    obj/system_wrappers/system_wrappers_unittests_pkg_info.stamp $
+    obj/system_wrappers/system_wrappers_unittests_resources_bundle_data.stamp $
+    obj/test/audio_codec_mocks.stamp $
+    obj/test/direct_transport.stamp $
+    obj/test/fake_audio_device.stamp $
+    obj/test/field_trial.stamp $
+    obj/test/fileutils.stamp $
+    obj/test/fileutils_objc.stamp $
+    obj/test/fileutils_unittests.stamp $
+    obj/test/rtp_test_utils.stamp $
+    obj/test/run_test.stamp $
+    obj/test/run_test_generic.stamp $
+    obj/test/run_test_interface.stamp $
+    obj/test/single_threaded_task_queue.stamp $
+    obj/test/test.stamp $
+    obj/test/test_common.stamp $
+    obj/test/test_main.stamp $
+    obj/test/test_renderer.stamp $
+    obj/test/test_renderer_generic.stamp $
+    obj/test/test_support.stamp $
+    obj/test/test_support_objc.stamp $
+    obj/test/test_support_test_artifacts.stamp $
+    obj/test/test_support_unittests.stamp $
+    obj/test/arm64/test_support_unittests $
+    obj/test/test_support_unittests_arch_executable_sources.stamp $
+    obj/test/test_support_unittests_bundle_data.stamp $
+    obj/test/test_support_unittests_bundle_data_pkg_info.stamp $
+    obj/test/test_support_unittests_executable.stamp $
+    obj/test/test_support_unittests_gen_entitlements.stamp $
+    obj/test/test_support_unittests_generate_info_plist.stamp $
+    obj/test/test_support_unittests_generate_info_plist_merge.stamp $
+    obj/test/test_support_unittests_pkg_info.stamp $
+    obj/test/test_support_unittests_resources_bundle_data.stamp $
+    obj/test/video_test_common.stamp $
+    obj/test/video_test_support.stamp $
+    obj/testing/gmock/gmock.stamp $
+    obj/testing/gmock/gmock_main.stamp $
+    obj/testing/gtest/libgtest.a $
+    obj/testing/gtest/gtest_main.stamp $
+    obj/testing/gtest/ios_enable_coverage.stamp $
+    obj/third_party/boringssl/libboringssl.a $
+    obj/third_party/boringssl/boringssl_asm.stamp $
+    obj/third_party/boringssl/boringssl_crypto_tests.stamp $
+    obj/third_party/boringssl/arm64/boringssl_crypto_tests $
+    obj/third_party/boringssl/boringssl_crypto_tests_arch_executable_sources.stamp $
+    obj/third_party/boringssl/boringssl_crypto_tests_bundle_data_pkg_info.stamp $
+    obj/third_party/boringssl/boringssl_crypto_tests_executable.stamp $
+    obj/third_party/boringssl/boringssl_crypto_tests_gen_entitlements.stamp $
+    obj/third_party/boringssl/boringssl_crypto_tests_generate_info_plist.stamp $
+    obj/third_party/boringssl/boringssl_crypto_tests_generate_info_plist_merge.stamp $
+    obj/third_party/boringssl/boringssl_crypto_tests_pkg_info.stamp $
+    obj/third_party/boringssl/boringssl_crypto_tests_resources_bundle_data.stamp $
+    obj/third_party/boringssl/boringssl_ssl_tests.stamp $
+    obj/third_party/boringssl/arm64/boringssl_ssl_tests $
+    obj/third_party/boringssl/boringssl_ssl_tests_arch_executable_sources.stamp $
+    obj/third_party/boringssl/boringssl_ssl_tests_bundle_data_pkg_info.stamp $
+    obj/third_party/boringssl/boringssl_ssl_tests_executable.stamp $
+    obj/third_party/boringssl/boringssl_ssl_tests_gen_entitlements.stamp $
+    obj/third_party/boringssl/boringssl_ssl_tests_generate_info_plist.stamp $
+    obj/third_party/boringssl/boringssl_ssl_tests_generate_info_plist_merge.stamp $
+    obj/third_party/boringssl/boringssl_ssl_tests_pkg_info.stamp $
+    obj/third_party/boringssl/boringssl_ssl_tests_resources_bundle_data.stamp $
+    obj/third_party/googletest/gmock.stamp $
+    obj/third_party/googletest/libgmock_main.a $
+    obj/third_party/googletest/gtest.stamp $
+    obj/third_party/googletest/gtest_main.stamp $
+    obj/third_party/jsoncpp/jsoncpp.stamp $
+    obj/third_party/libsrtp/libsrtp.a $
+    obj/third_party/libvpx/libvpx.a $
+    ./compare $
+    ./cpuid $
+    obj/third_party/libyuv/default.stamp $
+    obj/third_party/libyuv/libyuv.stamp $
+    obj/third_party/libyuv/libyuv_internal.a $
+    obj/third_party/libyuv/libyuv_neon.a $
+    obj/third_party/libyuv/libyuv_unittest.stamp $
+    obj/third_party/libyuv/arm64/libyuv_unittest $
+    obj/third_party/libyuv/libyuv_unittest_arch_executable_sources.stamp $
+    obj/third_party/libyuv/libyuv_unittest_bundle_data_pkg_info.stamp $
+    obj/third_party/libyuv/libyuv_unittest_executable.stamp $
+    obj/third_party/libyuv/libyuv_unittest_gen_entitlements.stamp $
+    obj/third_party/libyuv/libyuv_unittest_generate_info_plist.stamp $
+    obj/third_party/libyuv/libyuv_unittest_generate_info_plist_merge.stamp $
+    obj/third_party/libyuv/libyuv_unittest_pkg_info.stamp $
+    obj/third_party/libyuv/libyuv_unittest_resources_bundle_data.stamp $
+    ./psnr $
+    ./yuvconvert $
+    obj/third_party/ocmock/ocmock.stamp $
+    obj/third_party/opus/libopus.a $
+    ./opus_compare $
+    ./opus_demo $
+    obj/third_party/opus/test_opus_api.stamp $
+    obj/third_party/opus/arm64/test_opus_api $
+    obj/third_party/opus/test_opus_api_arch_executable_sources.stamp $
+    obj/third_party/opus/test_opus_api_bundle_data_pkg_info.stamp $
+    obj/third_party/opus/test_opus_api_executable.stamp $
+    obj/third_party/opus/test_opus_api_gen_entitlements.stamp $
+    obj/third_party/opus/test_opus_api_generate_info_plist.stamp $
+    obj/third_party/opus/test_opus_api_generate_info_plist_merge.stamp $
+    obj/third_party/opus/test_opus_api_pkg_info.stamp $
+    obj/third_party/opus/test_opus_api_resources_bundle_data.stamp $
+    obj/third_party/opus/test_opus_decode.stamp $
+    obj/third_party/opus/arm64/test_opus_decode $
+    obj/third_party/opus/test_opus_decode_arch_executable_sources.stamp $
+    obj/third_party/opus/test_opus_decode_bundle_data_pkg_info.stamp $
+    obj/third_party/opus/test_opus_decode_executable.stamp $
+    obj/third_party/opus/test_opus_decode_gen_entitlements.stamp $
+    obj/third_party/opus/test_opus_decode_generate_info_plist.stamp $
+    obj/third_party/opus/test_opus_decode_generate_info_plist_merge.stamp $
+    obj/third_party/opus/test_opus_decode_pkg_info.stamp $
+    obj/third_party/opus/test_opus_decode_resources_bundle_data.stamp $
+    obj/third_party/opus/test_opus_encode.stamp $
+    obj/third_party/opus/arm64/test_opus_encode $
+    obj/third_party/opus/test_opus_encode_arch_executable_sources.stamp $
+    obj/third_party/opus/test_opus_encode_bundle_data_pkg_info.stamp $
+    obj/third_party/opus/test_opus_encode_executable.stamp $
+    obj/third_party/opus/test_opus_encode_gen_entitlements.stamp $
+    obj/third_party/opus/test_opus_encode_generate_info_plist.stamp $
+    obj/third_party/opus/test_opus_encode_generate_info_plist_merge.stamp $
+    obj/third_party/opus/test_opus_encode_pkg_info.stamp $
+    obj/third_party/opus/test_opus_encode_resources_bundle_data.stamp $
+    obj/third_party/opus/test_opus_padding.stamp $
+    obj/third_party/opus/arm64/test_opus_padding $
+    obj/third_party/opus/test_opus_padding_arch_executable_sources.stamp $
+    obj/third_party/opus/test_opus_padding_bundle_data_pkg_info.stamp $
+    obj/third_party/opus/test_opus_padding_executable.stamp $
+    obj/third_party/opus/test_opus_padding_gen_entitlements.stamp $
+    obj/third_party/opus/test_opus_padding_generate_info_plist.stamp $
+    obj/third_party/opus/test_opus_padding_generate_info_plist_merge.stamp $
+    obj/third_party/opus/test_opus_padding_pkg_info.stamp $
+    obj/third_party/opus/test_opus_padding_resources_bundle_data.stamp $
+    obj/third_party/protobuf/copy_google.stamp $
+    obj/third_party/protobuf/copy_google_protobuf.stamp $
+    obj/third_party/protobuf/copy_google_protobuf_internal.stamp $
+    obj/third_party/protobuf/copy_six.stamp $
+    obj/third_party/protobuf/libprotobuf_full.a $
+    obj/third_party/protobuf/libprotobuf_lite.a $
+    obj/third_party/protobuf/py_proto.stamp $
+    obj/third_party/usrsctp/libusrsctp.a $
+    ./screenshare_loopback $
+    obj/video/libvideo.a $
+    obj/video/video_full_stack_tests.stamp $
+    ./video_loopback $
+    obj/video/video_quality_test.stamp $
+    ./video_replay $
+    obj/video/video_tests.stamp $
+    obj/voice_engine/libaudio_level.a $
+    obj/voice_engine/libvoice_engine.a $
+    obj/voice_engine/voice_engine_unittests.stamp $
+    obj/voice_engine/arm64/voice_engine_unittests $
+    obj/voice_engine/voice_engine_unittests_arch_executable_sources.stamp $
+    obj/voice_engine/voice_engine_unittests_bundle_data_pkg_info.stamp $
+    obj/voice_engine/voice_engine_unittests_executable.stamp $
+    obj/voice_engine/voice_engine_unittests_gen_entitlements.stamp $
+    obj/voice_engine/voice_engine_unittests_generate_info_plist.stamp $
+    obj/voice_engine/voice_engine_unittests_generate_info_plist_merge.stamp $
+    obj/voice_engine/voice_engine_unittests_pkg_info.stamp $
+    obj/voice_engine/voice_engine_unittests_resources_bundle_data.stamp
+
+default default

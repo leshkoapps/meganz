@@ -1,0 +1,12 @@
+defines = -DV8_DEPRECATION_WARNINGS -DNO_TCMALLOC -DCHROMIUM_BUILD -DFIELDTRIAL_TESTING_ENABLED -DCR_XCODE_VERSION=0901 -DCR_CLANG_REVISION=\"313786-1\" -D__STDC_CONSTANT_MACROS -D__STDC_FORMAT_MACROS -D_DEBUG -DDYNAMIC_ANNOTATIONS_ENABLED=1 -DWTF_USE_DYNAMIC_ANNOTATIONS=1
+include_dirs = -I../.. -Igen
+label_name = sdk_unittests_module_arch_loadable_module
+target_out_dir = obj/sdk
+target_output_name = sdk_unittests_module
+
+
+build obj/sdk/arm64/sdk_unittests_module: solink_module obj/sdk/sdk_unittests_moduleshell_source/xctest_shell.o || obj/sdk/sdk_unittests_module_arch_loadable_module_source.stamp obj/sdk/sdk_unittests_moduleshell_source.stamp
+  ldflags = -arch arm64 -Werror -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS11.0.sdk -stdlib=libc++ -miphoneos-version-min=9.0 -Wl,-ObjC -F /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/Library/Frameworks
+  libs = -framework CoreFoundation -framework CoreGraphics -framework CoreText -framework Foundation -framework XCTest
+  output_extension = 
+  output_dir = obj/sdk/arm64

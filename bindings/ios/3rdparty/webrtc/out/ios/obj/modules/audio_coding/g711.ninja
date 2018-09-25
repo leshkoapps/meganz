@@ -1,0 +1,15 @@
+defines = -DV8_DEPRECATION_WARNINGS -DNO_TCMALLOC -DCHROMIUM_BUILD -DFIELDTRIAL_TESTING_ENABLED -DCR_XCODE_VERSION=0901 -DCR_CLANG_REVISION=\"313786-1\" -D__STDC_CONSTANT_MACROS -D__STDC_FORMAT_MACROS -D_DEBUG -DDYNAMIC_ANNOTATIONS_ENABLED=1 -DWTF_USE_DYNAMIC_ANNOTATIONS=1 -DWEBRTC_ENABLE_PROTOBUF=1 -DWEBRTC_INCLUDE_INTERNAL_AUDIO_DEVICE -DHAVE_SCTP -DWEBRTC_ARCH_ARM64 -DWEBRTC_HAS_NEON -DWEBRTC_NON_STATIC_TRACE_EVENT_HANDLERS=1 -DWEBRTC_POSIX -DWEBRTC_MAC -DWEBRTC_IOS
+include_dirs = -I../.. -Igen -I../../modules/audio_coding/codecs/g711/include
+cflags = -fno-strict-aliasing --param=ssp-buffer-size=4 -fstack-protector -Wno-builtin-macro-redefined -D__DATE__= -D__TIME__= -D__TIMESTAMP__= -fcolor-diagnostics -no-canonical-prefixes -arch arm64 -Wall -Werror -Wextra -Wundeclared-selector -Wno-missing-field-initializers -Wno-unused-parameter -Wno-c++11-narrowing -Wno-covered-switch-default -Wno-unneeded-internal-declaration -Wno-inconsistent-missing-override -Wno-undefined-var-template -Wno-nonportable-include-path -Wno-address-of-packed-member -Wno-unused-lambda-capture -Wno-user-defined-warnings -Wno-enum-compare-switch -Wno-tautological-unsigned-zero-compare -Wno-null-pointer-arithmetic -Wno-tautological-unsigned-enum-zero-compare -O0 -fno-omit-frame-pointer -gdwarf-2 -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS11.0.sdk -stdlib=libc++ -miphoneos-version-min=9.0 -fvisibility=hidden -Xclang -load -Xclang ../../third_party/llvm-build/Release+Asserts/lib/libFindBadConstructs.dylib -Xclang -add-plugin -Xclang find-bad-constructs -Xclang -plugin-arg-find-bad-constructs -Xclang check-auto-raw-pointer -Wheader-hygiene -Wstring-conversion -Wtautological-overlap-compare -Wextra -Wno-unused-parameter -Wno-missing-field-initializers -Wno-strict-overflow -Wc++11-narrowing -Wimplicit-fallthrough -Wthread-safety -Winconsistent-missing-override -Wundef -Wunused-lambda-capture
+cflags_cc = -Wno-undefined-bool-conversion -Wno-tautological-undefined-compare -std=c++11 -fno-rtti -fno-exceptions -fvisibility-inlines-hidden -Wnon-virtual-dtor -Woverloaded-virtual
+label_name = g711
+target_out_dir = obj/modules/audio_coding
+target_output_name = libg711
+
+build obj/modules/audio_coding/g711/audio_decoder_pcm.o: cxx ../../modules/audio_coding/codecs/g711/audio_decoder_pcm.cc
+build obj/modules/audio_coding/g711/audio_encoder_pcm.o: cxx ../../modules/audio_coding/codecs/g711/audio_encoder_pcm.cc
+
+build obj/modules/audio_coding/libg711.a: alink obj/modules/audio_coding/g711/audio_decoder_pcm.o obj/modules/audio_coding/g711/audio_encoder_pcm.o || obj/modules/audio_coding/g711_c.stamp obj/modules/audio_coding/liblegacy_encoded_audio_frame.a obj/libwebrtc_common.a obj/api/audio_codecs/audio_codecs_api.stamp obj/rtc_base/rtc_base_approved.stamp obj/api/array_view.stamp obj/rtc_base/rtc_base_approved_generic.stamp obj/api/optional.stamp
+  arflags =
+  output_extension = .a
+  output_dir = obj/modules/audio_coding

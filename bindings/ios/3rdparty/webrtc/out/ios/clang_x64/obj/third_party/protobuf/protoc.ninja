@@ -1,0 +1,15 @@
+defines = -DV8_DEPRECATION_WARNINGS -DNO_TCMALLOC -DFULL_SAFE_BROWSING -DSAFE_BROWSING_CSD -DSAFE_BROWSING_DB_LOCAL -DCHROMIUM_BUILD -DFIELDTRIAL_TESTING_ENABLED -DCR_XCODE_VERSION=0901 -DCR_CLANG_REVISION=\"313786-1\" -D__ASSERT_MACROS_DEFINE_VERSIONS_WITHOUT_UNDERSCORE=0 -D_DEBUG -DDYNAMIC_ANNOTATIONS_ENABLED=1 -DWTF_USE_DYNAMIC_ANNOTATIONS=1 -DGOOGLE_PROTOBUF_NO_RTTI -DGOOGLE_PROTOBUF_NO_STATIC_INITIALIZER -DHAVE_PTHREAD
+include_dirs = -I../.. -Iclang_x64/gen -I../../third_party/protobuf/src
+cflags = -fno-strict-aliasing -fstack-protector-strong -Wno-builtin-macro-redefined -D__DATE__= -D__TIME__= -D__TIMESTAMP__= -fcolor-diagnostics -Xclang -mllvm -Xclang -instcombine-lower-dbg-declare=1 -no-canonical-prefixes -arch x86_64 -O0 -fno-omit-frame-pointer -gdwarf-2 -isysroot ../../../../../../../Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.13.sdk -mmacosx-version-min=10.9.0 -fvisibility=hidden -Xclang -load -Xclang ../../third_party/llvm-build/Release+Asserts/lib/libFindBadConstructs.dylib -Xclang -add-plugin -Xclang find-bad-constructs -Xclang -plugin-arg-find-bad-constructs -Xclang check-auto-raw-pointer -Wheader-hygiene -Wstring-conversion -Wtautological-overlap-compare -Werror -Wall -Wno-unused-variable -Wunguarded-availability -Wno-missing-field-initializers -Wno-unused-parameter -Wno-c++11-narrowing -Wno-covered-switch-default -Wno-unneeded-internal-declaration -Wno-inconsistent-missing-override -Wno-undefined-var-template -Wno-nonportable-include-path -Wno-address-of-packed-member -Wno-unused-lambda-capture -Wno-user-defined-warnings -Wno-enum-compare-switch -Wno-tautological-unsigned-zero-compare -Wno-null-pointer-arithmetic -Wno-tautological-unsigned-enum-zero-compare
+cflags_cc = -Wno-undefined-bool-conversion -Wno-tautological-undefined-compare -std=c++11 -stdlib=libc++ -fno-rtti -fno-exceptions -fvisibility-inlines-hidden
+label_name = protoc
+target_out_dir = clang_x64/obj/third_party/protobuf
+target_output_name = protoc
+
+build clang_x64/obj/third_party/protobuf/protoc/main.o: clang_x64_cxx ../../third_party/protobuf/src/google/protobuf/compiler/main.cc
+
+build clang_x64/protoc: clang_x64_link clang_x64/obj/third_party/protobuf/protoc/main.o clang_x64/obj/third_party/protobuf/libprotoc_lib.a clang_x64/obj/third_party/protobuf/libprotobuf_full.a || clang_x64/obj/build/win/default_exe_manifest.stamp
+  ldflags = -stdlib=libc++ -arch x86_64 -isysroot ../../../../../../../Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.13.sdk -mmacosx-version-min=10.9.0 -Wl,-ObjC -Werror
+  libs =
+  output_extension = 
+  output_dir = clang_x64

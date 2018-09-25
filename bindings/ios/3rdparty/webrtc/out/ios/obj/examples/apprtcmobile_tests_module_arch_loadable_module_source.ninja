@@ -1,0 +1,8 @@
+defines = -DV8_DEPRECATION_WARNINGS -DNO_TCMALLOC -DCHROMIUM_BUILD -DFIELDTRIAL_TESTING_ENABLED -DCR_XCODE_VERSION=0901 -DCR_CLANG_REVISION=\"313786-1\" -D__STDC_CONSTANT_MACROS -D__STDC_FORMAT_MACROS -D_DEBUG -DDYNAMIC_ANNOTATIONS_ENABLED=1 -DWTF_USE_DYNAMIC_ANNOTATIONS=1
+include_dirs = -I../.. -Igen
+label_name = apprtcmobile_tests_module_arch_loadable_module_source
+target_out_dir = obj/examples
+target_output_name = apprtcmobile_tests_module_arch_loadable_module_source
+
+
+build obj/examples/apprtcmobile_tests_module_arch_loadable_module_source.stamp: stamp || obj/examples/apprtcmobile_tests_moduleshell_source.stamp

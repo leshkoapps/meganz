@@ -1,0 +1,19 @@
+defines = -DV8_DEPRECATION_WARNINGS -DNO_TCMALLOC -DCHROMIUM_BUILD -DFIELDTRIAL_TESTING_ENABLED -DCR_XCODE_VERSION=0901 -DCR_CLANG_REVISION=\"313786-1\" -D__STDC_CONSTANT_MACROS -D__STDC_FORMAT_MACROS -D_DEBUG -DDYNAMIC_ANNOTATIONS_ENABLED=1 -DWTF_USE_DYNAMIC_ANNOTATIONS=1 -DUNIT_TEST -DGTEST_API_= -DGTEST_HAS_POSIX_RE=0 -DGTEST_LANG_CXX11=1
+include_dirs = -I../.. -Igen -I../../third_party/googletest/src/googletest/include
+cflags = -fno-strict-aliasing --param=ssp-buffer-size=4 -fstack-protector -Wno-builtin-macro-redefined -D__DATE__= -D__TIME__= -D__TIMESTAMP__= -fcolor-diagnostics -no-canonical-prefixes -arch arm64 -Wall -Werror -Wextra -Wundeclared-selector -Wno-missing-field-initializers -Wno-unused-parameter -Wno-c++11-narrowing -Wno-covered-switch-default -Wno-unneeded-internal-declaration -Wno-inconsistent-missing-override -Wno-undefined-var-template -Wno-nonportable-include-path -Wno-address-of-packed-member -Wno-unused-lambda-capture -Wno-user-defined-warnings -Wno-enum-compare-switch -Wno-tautological-unsigned-zero-compare -Wno-null-pointer-arithmetic -Wno-tautological-unsigned-enum-zero-compare -O0 -fno-omit-frame-pointer -gdwarf-2 -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS11.0.sdk -stdlib=libc++ -miphoneos-version-min=9.0 -fvisibility=hidden -Xclang -load -Xclang ../../third_party/llvm-build/Release+Asserts/lib/libFindBadConstructs.dylib -Xclang -add-plugin -Xclang find-bad-constructs -Xclang -plugin-arg-find-bad-constructs -Xclang check-auto-raw-pointer -Wheader-hygiene -Wstring-conversion -Wtautological-overlap-compare
+cflags_cc = -Wno-undefined-bool-conversion -Wno-tautological-undefined-compare -std=c++11 -fno-rtti -fno-exceptions -fvisibility-inlines-hidden
+cflags_objcc = -Wno-undefined-bool-conversion -Wno-tautological-undefined-compare -std=c++11 -fobjc-call-cxx-cdtors -Wobjc-missing-property-synthesis -Wunguarded-availability -fno-rtti -fno-exceptions -fvisibility-inlines-hidden
+label_name = gtest
+target_out_dir = obj/testing/gtest
+target_output_name = libgtest
+
+build obj/testing/gtest/gtest/empty.o: cxx ../../testing/gtest/empty.cc || obj/testing/gtest/ios_enable_coverage.stamp
+build obj/testing/gtest/gtest/multiprocess_func_list.o: cxx ../../testing/multiprocess_func_list.cc || obj/testing/gtest/ios_enable_coverage.stamp
+build obj/testing/gtest/gtest/gtest_mac.o: objcxx ../../testing/gtest_mac.mm || obj/testing/gtest/ios_enable_coverage.stamp
+build obj/testing/gtest/gtest/platform_test_mac.o: objcxx ../../testing/platform_test_mac.mm || obj/testing/gtest/ios_enable_coverage.stamp
+build obj/testing/gtest/gtest/coverage_util_ios.o: objcxx ../../testing/coverage_util_ios.mm || obj/testing/gtest/ios_enable_coverage.stamp
+
+build obj/testing/gtest/libgtest.a: alink obj/testing/gtest/gtest/empty.o obj/testing/gtest/gtest/multiprocess_func_list.o obj/testing/gtest/gtest/gtest_mac.o obj/testing/gtest/gtest/platform_test_mac.o obj/testing/gtest/gtest/coverage_util_ios.o || obj/third_party/googletest/gtest.stamp obj/testing/gtest/ios_enable_coverage.stamp
+  arflags =
+  output_extension = .a
+  output_dir = obj/testing/gtest

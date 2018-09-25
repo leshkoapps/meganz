@@ -1,0 +1,15 @@
+defines = -DV8_DEPRECATION_WARNINGS -DNO_TCMALLOC -DCHROMIUM_BUILD -DFIELDTRIAL_TESTING_ENABLED -DCR_XCODE_VERSION=0901 -DCR_CLANG_REVISION=\"313786-1\" -D__STDC_CONSTANT_MACROS -D__STDC_FORMAT_MACROS -D_DEBUG -DDYNAMIC_ANNOTATIONS_ENABLED=1 -DWTF_USE_DYNAMIC_ANNOTATIONS=1
+include_dirs = -I../.. -Igen -I../../third_party/libyuv/include
+cflags = -fno-strict-aliasing --param=ssp-buffer-size=4 -fstack-protector -Wno-builtin-macro-redefined -D__DATE__= -D__TIME__= -D__TIMESTAMP__= -fcolor-diagnostics -no-canonical-prefixes -arch arm64 -Wall -Werror -Wextra -Wundeclared-selector -Wno-missing-field-initializers -Wno-unused-parameter -Wno-c++11-narrowing -Wno-covered-switch-default -Wno-unneeded-internal-declaration -Wno-inconsistent-missing-override -Wno-undefined-var-template -Wno-nonportable-include-path -Wno-address-of-packed-member -Wno-unused-lambda-capture -Wno-user-defined-warnings -Wno-enum-compare-switch -Wno-tautological-unsigned-zero-compare -Wno-null-pointer-arithmetic -Wno-tautological-unsigned-enum-zero-compare -O0 -fno-omit-frame-pointer -gdwarf-2 -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS11.0.sdk -stdlib=libc++ -miphoneos-version-min=9.0 -fvisibility=hidden -Xclang -load -Xclang ../../third_party/llvm-build/Release+Asserts/lib/libFindBadConstructs.dylib -Xclang -add-plugin -Xclang find-bad-constructs -Xclang -plugin-arg-find-bad-constructs -Xclang check-auto-raw-pointer -Wheader-hygiene -Wstring-conversion -Wtautological-overlap-compare
+cflags_c = -std=c11
+label_name = cpuid
+target_out_dir = obj/third_party/libyuv
+target_output_name = cpuid
+
+build obj/third_party/libyuv/cpuid/cpuid.o: cc ../../third_party/libyuv/util/cpuid.c
+
+build ./cpuid: link obj/third_party/libyuv/cpuid/cpuid.o obj/third_party/libyuv/libyuv_internal.a obj/third_party/libyuv/libyuv_neon.a || obj/third_party/libyuv/libyuv.stamp obj/build/config/exe_and_shlib_deps.stamp
+  ldflags = -arch arm64 -Werror -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS11.0.sdk -stdlib=libc++ -miphoneos-version-min=9.0 -Wl,-ObjC
+  libs = -framework CoreFoundation -framework CoreGraphics -framework CoreText -framework Foundation
+  output_extension = 
+  output_dir = .

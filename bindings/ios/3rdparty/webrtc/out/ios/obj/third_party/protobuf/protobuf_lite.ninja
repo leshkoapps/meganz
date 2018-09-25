@@ -1,0 +1,36 @@
+defines = -DV8_DEPRECATION_WARNINGS -DNO_TCMALLOC -DCHROMIUM_BUILD -DFIELDTRIAL_TESTING_ENABLED -DCR_XCODE_VERSION=0901 -DCR_CLANG_REVISION=\"313786-1\" -D_DEBUG -DDYNAMIC_ANNOTATIONS_ENABLED=1 -DWTF_USE_DYNAMIC_ANNOTATIONS=1 -DGOOGLE_PROTOBUF_NO_RTTI -DGOOGLE_PROTOBUF_NO_STATIC_INITIALIZER -DHAVE_PTHREAD
+include_dirs = -I../.. -Igen -I../../third_party/protobuf/src
+cflags = -fno-strict-aliasing --param=ssp-buffer-size=4 -fstack-protector -Wno-builtin-macro-redefined -D__DATE__= -D__TIME__= -D__TIMESTAMP__= -fcolor-diagnostics -no-canonical-prefixes -arch arm64 -O0 -fno-omit-frame-pointer -gdwarf-2 -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS11.0.sdk -stdlib=libc++ -miphoneos-version-min=9.0 -fvisibility=hidden -Xclang -load -Xclang ../../third_party/llvm-build/Release+Asserts/lib/libFindBadConstructs.dylib -Xclang -add-plugin -Xclang find-bad-constructs -Xclang -plugin-arg-find-bad-constructs -Xclang check-auto-raw-pointer -Wheader-hygiene -Wstring-conversion -Wtautological-overlap-compare -Werror -Wall -Wno-unused-variable -Wundeclared-selector -Wno-missing-field-initializers -Wno-unused-parameter -Wno-c++11-narrowing -Wno-covered-switch-default -Wno-unneeded-internal-declaration -Wno-inconsistent-missing-override -Wno-undefined-var-template -Wno-nonportable-include-path -Wno-address-of-packed-member -Wno-unused-lambda-capture -Wno-user-defined-warnings -Wno-enum-compare-switch -Wno-tautological-unsigned-zero-compare -Wno-null-pointer-arithmetic -Wno-tautological-unsigned-enum-zero-compare -Wno-unused-function
+cflags_cc = -Wno-undefined-bool-conversion -Wno-tautological-undefined-compare -std=c++11 -fno-rtti -fno-exceptions -fvisibility-inlines-hidden
+label_name = protobuf_lite
+target_out_dir = obj/third_party/protobuf
+target_output_name = libprotobuf_lite
+
+build obj/third_party/protobuf/protobuf_lite/arena.o: cxx ../../third_party/protobuf/src/google/protobuf/arena.cc
+build obj/third_party/protobuf/protobuf_lite/arenastring.o: cxx ../../third_party/protobuf/src/google/protobuf/arenastring.cc
+build obj/third_party/protobuf/protobuf_lite/extension_set.o: cxx ../../third_party/protobuf/src/google/protobuf/extension_set.cc
+build obj/third_party/protobuf/protobuf_lite/generated_message_util.o: cxx ../../third_party/protobuf/src/google/protobuf/generated_message_util.cc
+build obj/third_party/protobuf/protobuf_lite/coded_stream.o: cxx ../../third_party/protobuf/src/google/protobuf/io/coded_stream.cc
+build obj/third_party/protobuf/protobuf_lite/zero_copy_stream.o: cxx ../../third_party/protobuf/src/google/protobuf/io/zero_copy_stream.cc
+build obj/third_party/protobuf/protobuf_lite/zero_copy_stream_impl_lite.o: cxx ../../third_party/protobuf/src/google/protobuf/io/zero_copy_stream_impl_lite.cc
+build obj/third_party/protobuf/protobuf_lite/message_lite.o: cxx ../../third_party/protobuf/src/google/protobuf/message_lite.cc
+build obj/third_party/protobuf/protobuf_lite/repeated_field.o: cxx ../../third_party/protobuf/src/google/protobuf/repeated_field.cc
+build obj/third_party/protobuf/protobuf_lite/atomicops_internals_x86_gcc.o: cxx ../../third_party/protobuf/src/google/protobuf/stubs/atomicops_internals_x86_gcc.cc
+build obj/third_party/protobuf/protobuf_lite/atomicops_internals_x86_msvc.o: cxx ../../third_party/protobuf/src/google/protobuf/stubs/atomicops_internals_x86_msvc.cc
+build obj/third_party/protobuf/protobuf_lite/bytestream.o: cxx ../../third_party/protobuf/src/google/protobuf/stubs/bytestream.cc
+build obj/third_party/protobuf/protobuf_lite/common.o: cxx ../../third_party/protobuf/src/google/protobuf/stubs/common.cc
+build obj/third_party/protobuf/protobuf_lite/int128.o: cxx ../../third_party/protobuf/src/google/protobuf/stubs/int128.cc
+build obj/third_party/protobuf/protobuf_lite/once.o: cxx ../../third_party/protobuf/src/google/protobuf/stubs/once.cc
+build obj/third_party/protobuf/protobuf_lite/status.o: cxx ../../third_party/protobuf/src/google/protobuf/stubs/status.cc
+build obj/third_party/protobuf/protobuf_lite/statusor.o: cxx ../../third_party/protobuf/src/google/protobuf/stubs/statusor.cc
+build obj/third_party/protobuf/protobuf_lite/stringpiece.o: cxx ../../third_party/protobuf/src/google/protobuf/stubs/stringpiece.cc
+build obj/third_party/protobuf/protobuf_lite/stringprintf.o: cxx ../../third_party/protobuf/src/google/protobuf/stubs/stringprintf.cc
+build obj/third_party/protobuf/protobuf_lite/structurally_valid.o: cxx ../../third_party/protobuf/src/google/protobuf/stubs/structurally_valid.cc
+build obj/third_party/protobuf/protobuf_lite/strutil.o: cxx ../../third_party/protobuf/src/google/protobuf/stubs/strutil.cc
+build obj/third_party/protobuf/protobuf_lite/time.o: cxx ../../third_party/protobuf/src/google/protobuf/stubs/time.cc
+build obj/third_party/protobuf/protobuf_lite/wire_format_lite.o: cxx ../../third_party/protobuf/src/google/protobuf/wire_format_lite.cc
+
+build obj/third_party/protobuf/libprotobuf_lite.a: alink obj/third_party/protobuf/protobuf_lite/arena.o obj/third_party/protobuf/protobuf_lite/arenastring.o obj/third_party/protobuf/protobuf_lite/extension_set.o obj/third_party/protobuf/protobuf_lite/generated_message_util.o obj/third_party/protobuf/protobuf_lite/coded_stream.o obj/third_party/protobuf/protobuf_lite/zero_copy_stream.o obj/third_party/protobuf/protobuf_lite/zero_copy_stream_impl_lite.o obj/third_party/protobuf/protobuf_lite/message_lite.o obj/third_party/protobuf/protobuf_lite/repeated_field.o obj/third_party/protobuf/protobuf_lite/atomicops_internals_x86_gcc.o obj/third_party/protobuf/protobuf_lite/atomicops_internals_x86_msvc.o obj/third_party/protobuf/protobuf_lite/bytestream.o obj/third_party/protobuf/protobuf_lite/common.o obj/third_party/protobuf/protobuf_lite/int128.o obj/third_party/protobuf/protobuf_lite/once.o obj/third_party/protobuf/protobuf_lite/status.o obj/third_party/protobuf/protobuf_lite/statusor.o obj/third_party/protobuf/protobuf_lite/stringpiece.o obj/third_party/protobuf/protobuf_lite/stringprintf.o obj/third_party/protobuf/protobuf_lite/structurally_valid.o obj/third_party/protobuf/protobuf_lite/strutil.o obj/third_party/protobuf/protobuf_lite/time.o obj/third_party/protobuf/protobuf_lite/wire_format_lite.o || obj/build/config/exe_and_shlib_deps.stamp
+  arflags =
+  output_extension = .a
+  output_dir = obj/third_party/protobuf

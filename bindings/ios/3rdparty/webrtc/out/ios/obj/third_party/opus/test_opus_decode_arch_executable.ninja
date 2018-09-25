@@ -1,0 +1,12 @@
+defines = -DV8_DEPRECATION_WARNINGS -DNO_TCMALLOC -DCHROMIUM_BUILD -DFIELDTRIAL_TESTING_ENABLED -DCR_XCODE_VERSION=0901 -DCR_CLANG_REVISION=\"313786-1\" -D_DEBUG -DDYNAMIC_ANNOTATIONS_ENABLED=1 -DWTF_USE_DYNAMIC_ANNOTATIONS=1 -DOPUS_FIXED_POINT
+include_dirs = -I../.. -Igen -I../../third_party/opus/src/celt -I../../third_party/opus/src/silk -I../../third_party/opus/src/include
+label_name = test_opus_decode_arch_executable
+target_out_dir = obj/third_party/opus
+target_output_name = test_opus_decode
+
+
+build obj/third_party/opus/arm64/test_opus_decode: link obj/third_party/opus/test_opus_decode_arch_executable_sources/test_opus_decode.o obj/third_party/opus/libopus.a || obj/build/config/exe_and_shlib_deps.stamp obj/third_party/opus/test_opus_decode_arch_executable_sources.stamp
+  ldflags = -Xlinker -rpath -Xlinker @executable_path/Frameworks -Xlinker -objc_abi_version -Xlinker 2 -arch arm64 -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS11.0.sdk -stdlib=libc++ -miphoneos-version-min=9.0 -Wl,-ObjC -Werror
+  libs = -framework UIKit -framework CoreFoundation -framework CoreGraphics -framework CoreText -framework Foundation
+  output_extension = 
+  output_dir = obj/third_party/opus/arm64

@@ -1,0 +1,27 @@
+defines = -DV8_DEPRECATION_WARNINGS -DNO_TCMALLOC -DCHROMIUM_BUILD -DFIELDTRIAL_TESTING_ENABLED -DCR_XCODE_VERSION=0901 -DCR_CLANG_REVISION=\"313786-1\" -D__STDC_CONSTANT_MACROS -D__STDC_FORMAT_MACROS -D_DEBUG -DDYNAMIC_ANNOTATIONS_ENABLED=1 -DWTF_USE_DYNAMIC_ANNOTATIONS=1 -DWEBRTC_ENABLE_PROTOBUF=1 -DWEBRTC_INCLUDE_INTERNAL_AUDIO_DEVICE -DHAVE_SCTP -DWEBRTC_ARCH_ARM64 -DWEBRTC_HAS_NEON -DWEBRTC_NON_STATIC_TRACE_EVENT_HANDLERS=1 -DWEBRTC_POSIX -DWEBRTC_MAC -DWEBRTC_IOS -DHAVE_SCTP -DFEATURE_ENABLE_VOICEMAIL -DPACKAGE_STRING=\"libsrtp2\$ 2.1.0-pre\" -DPACKAGE_VERSION=\"2.1.0-pre\" -DHAVE_CONFIG_H -DOPENSSL -DHAVE_STDLIB_H -DHAVE_STRING_H -DHAVE_STDINT_H -DHAVE_INTTYPES_H -DHAVE_INT16_T -DHAVE_INT32_T -DHAVE_INT8_T -DHAVE_UINT16_T -DHAVE_UINT32_T -DHAVE_UINT64_T -DHAVE_UINT8_T -DHAVE_ARPA_INET_H -DHAVE_NETINET_IN_H -DHAVE_SYS_TYPES_H -DHAVE_UNISTD_H
+include_dirs = -I../.. -Igen -I../../third_party/libyuv/include -I../../third_party/libsrtp -I../../third_party/libsrtp/config -I../../third_party/libsrtp/include -I../../third_party/libsrtp/crypto/include -I../../third_party/boringssl/src/include
+cflags = -fno-strict-aliasing --param=ssp-buffer-size=4 -fstack-protector -Wno-builtin-macro-redefined -D__DATE__= -D__TIME__= -D__TIMESTAMP__= -fcolor-diagnostics -no-canonical-prefixes -arch arm64 -Wall -Werror -Wextra -Wundeclared-selector -Wno-missing-field-initializers -Wno-unused-parameter -Wno-c++11-narrowing -Wno-covered-switch-default -Wno-unneeded-internal-declaration -Wno-inconsistent-missing-override -Wno-undefined-var-template -Wno-nonportable-include-path -Wno-address-of-packed-member -Wno-unused-lambda-capture -Wno-user-defined-warnings -Wno-enum-compare-switch -Wno-tautological-unsigned-zero-compare -Wno-null-pointer-arithmetic -Wno-tautological-unsigned-enum-zero-compare -O0 -fno-omit-frame-pointer -gdwarf-2 -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS11.0.sdk -stdlib=libc++ -miphoneos-version-min=9.0 -fvisibility=hidden -Wheader-hygiene -Wstring-conversion -Wtautological-overlap-compare -Wextra -Wno-unused-parameter -Wno-missing-field-initializers -Wno-strict-overflow -Wc++11-narrowing -Wimplicit-fallthrough -Wthread-safety -Winconsistent-missing-override -Wundef -Wunused-lambda-capture
+cflags_cc = -Wno-undefined-bool-conversion -Wno-tautological-undefined-compare -std=c++11 -fno-rtti -fno-exceptions -fvisibility-inlines-hidden -Wnon-virtual-dtor -Woverloaded-virtual
+label_name = rtc_pc_base
+target_out_dir = obj/pc
+target_output_name = librtc_pc_base
+
+build obj/pc/rtc_pc_base/audiomonitor.o: cxx ../../pc/audiomonitor.cc
+build obj/pc/rtc_pc_base/bundlefilter.o: cxx ../../pc/bundlefilter.cc
+build obj/pc/rtc_pc_base/channel.o: cxx ../../pc/channel.cc
+build obj/pc/rtc_pc_base/channelmanager.o: cxx ../../pc/channelmanager.cc
+build obj/pc/rtc_pc_base/currentspeakermonitor.o: cxx ../../pc/currentspeakermonitor.cc
+build obj/pc/rtc_pc_base/externalhmac.o: cxx ../../pc/externalhmac.cc
+build obj/pc/rtc_pc_base/mediamonitor.o: cxx ../../pc/mediamonitor.cc
+build obj/pc/rtc_pc_base/mediasession.o: cxx ../../pc/mediasession.cc
+build obj/pc/rtc_pc_base/rtcpmuxfilter.o: cxx ../../pc/rtcpmuxfilter.cc
+build obj/pc/rtc_pc_base/rtptransport.o: cxx ../../pc/rtptransport.cc
+build obj/pc/rtc_pc_base/srtpfilter.o: cxx ../../pc/srtpfilter.cc
+build obj/pc/rtc_pc_base/srtpsession.o: cxx ../../pc/srtpsession.cc
+build obj/pc/rtc_pc_base/srtptransport.o: cxx ../../pc/srtptransport.cc
+build obj/pc/rtc_pc_base/transportcontroller.o: cxx ../../pc/transportcontroller.cc
+
+build obj/pc/librtc_pc_base.a: alink obj/pc/rtc_pc_base/audiomonitor.o obj/pc/rtc_pc_base/bundlefilter.o obj/pc/rtc_pc_base/channel.o obj/pc/rtc_pc_base/channelmanager.o obj/pc/rtc_pc_base/currentspeakermonitor.o obj/pc/rtc_pc_base/externalhmac.o obj/pc/rtc_pc_base/mediamonitor.o obj/pc/rtc_pc_base/mediasession.o obj/pc/rtc_pc_base/rtcpmuxfilter.o obj/pc/rtc_pc_base/rtptransport.o obj/pc/rtc_pc_base/srtpfilter.o obj/pc/rtc_pc_base/srtpsession.o obj/pc/rtc_pc_base/srtptransport.o obj/pc/rtc_pc_base/transportcontroller.o || obj/libwebrtc_common.a obj/api/call_api.stamp obj/api/libjingle_peerconnection_api.a obj/api/optional.stamp obj/api/ortc_api.stamp obj/media/librtc_data.a obj/media/rtc_h264_profile_id.stamp obj/media/librtc_media_base.a obj/p2p/librtc_p2p.a obj/rtc_base/librtc_base.a obj/rtc_base/rtc_task_queue.stamp obj/third_party/libsrtp/libsrtp.a obj/api/audio_mixer_api.stamp obj/modules/module_api.stamp obj/api/array_view.stamp obj/rtc_base/rtc_base_approved.stamp obj/rtc_base/rtc_base_approved_generic.stamp obj/api/video_frame_api.stamp obj/third_party/libyuv/libyuv_internal.a obj/third_party/libyuv/libyuv_neon.a obj/system_wrappers/libsystem_wrappers.a obj/system_wrappers/cpu_features_api.stamp obj/system_wrappers/field_trial_api.stamp obj/system_wrappers/metrics_api.stamp obj/modules/video_coding/codec_globals_headers.stamp obj/api/transport_api.stamp obj/api/audio_codecs/audio_codecs_api.stamp obj/api/libjingle_api_deprecated_headers.stamp obj/api/mediastream_interface_and_implicit_video_frame_api.stamp obj/api/peerconnection_and_implicit_call_api.stamp obj/api/rtc_stats_api.stamp obj/rtc_base/librtc_base_generic.a obj/third_party/boringssl/libboringssl.a obj/third_party/boringssl/boringssl_asm.stamp obj/rtc_base/rtc_base_objc.stamp obj/third_party/usrsctp/libusrsctp.a obj/p2p/libstunprober.a obj/rtc_base/rtc_task_queue_api.stamp obj/rtc_base/rtc_task_queue_impl.stamp
+  arflags =
+  output_extension = .a
+  output_dir = obj/pc

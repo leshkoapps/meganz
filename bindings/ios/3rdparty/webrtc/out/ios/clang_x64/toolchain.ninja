@@ -1,0 +1,67 @@
+rule clang_x64_cc
+  command =  ../../third_party/llvm-build/Release+Asserts/bin/clang -MMD -MF ${out}.d ${defines} ${include_dirs} ${cflags} ${cflags_c} -c ${in} -o ${out}
+  description = CC ${out}
+  depfile = ${out}.d
+  deps = gcc
+rule clang_x64_cxx
+  command =  ../../third_party/llvm-build/Release+Asserts/bin/clang++ -MMD -MF ${out}.d ${defines} ${include_dirs} ${cflags} ${cflags_cc} -c ${in} -o ${out}
+  description = CXX ${out}
+  depfile = ${out}.d
+  deps = gcc
+rule clang_x64_objc
+  command =  ../../third_party/llvm-build/Release+Asserts/bin/clang -MMD -MF ${out}.d ${defines} ${include_dirs} ${cflags} ${cflags_objc} -c ${in} -o ${out}
+  description = OBJC ${out}
+  depfile = ${out}.d
+  deps = gcc
+rule clang_x64_objcxx
+  command =  ../../third_party/llvm-build/Release+Asserts/bin/clang++ -MMD -MF ${out}.d ${defines} ${include_dirs} ${cflags} ${cflags_objcc} -c ${in} -o ${out}
+  description = OBJCXX ${out}
+  depfile = ${out}.d
+  deps = gcc
+rule clang_x64_asm
+  command =  ../../third_party/llvm-build/Release+Asserts/bin/clang -MMD -MF ${out}.d ${defines} ${include_dirs} ${asmflags} -c ${in} -o ${out}
+  description = ASM ${out}
+  depfile = ${out}.d
+  deps = gcc
+rule clang_x64_alink
+  command =  rm -f ${out} && TOOL_VERSION=1508749486 python ../../build/toolchain/mac/filter_libtool.py libtool -static ${arflags} -o ${out} ${in}
+  description = LIBTOOL-STATIC ${out}
+rule clang_x64_solink
+  command =  if [ ! -e "${output_dir}/${target_output_name}${output_extension}" -o ! -e "${output_dir}/${target_output_name}${output_extension}.TOC" ] || otool -l "${output_dir}/${target_output_name}${output_extension}" | grep -q LC_REEXPORT_DYLIB ; then TOOL_VERSION=1508749486 ../../build/toolchain/mac/linker_driver.py ../../third_party/llvm-build/Release+Asserts/bin/clang++ -shared ${ldflags} -o "${output_dir}/${target_output_name}${output_extension}" -Wl,-filelist,"${output_dir}/${target_output_name}${output_extension}.rsp" ${libs} ${solibs} && { otool -l "${output_dir}/${target_output_name}${output_extension}" | grep LC_ID_DYLIB -A 5; nm -gP "${output_dir}/${target_output_name}${output_extension}" | cut -f1-2 -d' ' | grep -v U$$$$; true; } > "${output_dir}/${target_output_name}${output_extension}.TOC"; else TOOL_VERSION=1508749486 ../../build/toolchain/mac/linker_driver.py ../../third_party/llvm-build/Release+Asserts/bin/clang++ -shared ${ldflags} -o "${output_dir}/${target_output_name}${output_extension}" -Wl,-filelist,"${output_dir}/${target_output_name}${output_extension}.rsp" ${libs} ${solibs} && { otool -l "${output_dir}/${target_output_name}${output_extension}" | grep LC_ID_DYLIB -A 5; nm -gP "${output_dir}/${target_output_name}${output_extension}" | cut -f1-2 -d' ' | grep -v U$$$$; true; } > "${output_dir}/${target_output_name}${output_extension}.tmp" && if ! cmp -s "${output_dir}/${target_output_name}${output_extension}.tmp" "${output_dir}/${target_output_name}${output_extension}.TOC"; then mv "${output_dir}/${target_output_name}${output_extension}.tmp" "${output_dir}/${target_output_name}${output_extension}.TOC" ; fi; fi
+  description = SOLINK ${out}
+  rspfile = ${output_dir}/${target_output_name}${output_extension}.rsp
+  rspfile_content = ${in_newline}
+  pool = build_toolchain_link_pool
+  restat = 1
+rule clang_x64_solink_module
+  command =  TOOL_VERSION=1508749486 ../../build/toolchain/mac/linker_driver.py ../../third_party/llvm-build/Release+Asserts/bin/clang++ -bundle ${ldflags} -o "${output_dir}/${target_output_name}${output_extension}" -Wl,-filelist,"${output_dir}/${target_output_name}${output_extension}.rsp" ${solibs} ${libs}
+  description = SOLINK_MODULE ${out}
+  rspfile = ${output_dir}/${target_output_name}${output_extension}.rsp
+  rspfile_content = ${in_newline}
+  pool = build_toolchain_link_pool
+rule clang_x64_link
+  command =  TOOL_VERSION=1508749486 ../../build/toolchain/mac/linker_driver.py ../../third_party/llvm-build/Release+Asserts/bin/clang++  ${ldflags} -o "${output_dir}/${target_output_name}${output_extension}" -Wl,-filelist,"${output_dir}/${target_output_name}${output_extension}.rsp" ${solibs} ${libs}
+  description = LINK ${output_dir}/${target_output_name}${output_extension}
+  rspfile = ${output_dir}/${target_output_name}${output_extension}.rsp
+  rspfile_content = ${in_newline}
+  pool = build_toolchain_link_pool
+rule clang_x64_stamp
+  command = touch ${out}
+  description = STAMP ${out}
+rule clang_x64_copy
+  command = ln -f ${in} ${out} 2>/dev/null || (rm -rf ${out} && cp -af ${in} ${out})
+  description = COPY ${in} ${out}
+rule clang_x64_copy_bundle_data
+  command = rm -rf ${out} && if [[ -d ${in} ]]; then mkdir -p ${out} && cd ${in} && pax -rwl . "$$OLDPWD"/${out}; else ln -f ${in} ${out} 2>/dev/null || (rm -rf ${out} && cp -af ${in} ${out}); fi
+  description = COPY_BUNDLE_DATA ${in} ${out}
+  pool = build_toolchain_mac_bundle_pool
+rule clang_x64_compile_xcassets
+  command =  rm -f "${out}" && TOOL_VERSION=1508749486 python ../../build/toolchain/mac/compile_xcassets.py -p "iphoneos" -t "9.0" -T "${product_type}" -P "${partial_info_plist}" -o ${out} ${in}
+  description = COMPILE_XCASSETS ${out}
+  pool = build_toolchain_mac_bundle_pool
+
+build clang_x64/obj/build/config/exe_and_shlib_deps.stamp: clang_x64_stamp
+build clang_x64/obj/build/win/default_exe_manifest.stamp: clang_x64_stamp
+subninja clang_x64/obj/third_party/protobuf/protobuf_full.ninja
+subninja clang_x64/obj/third_party/protobuf/protoc.ninja
+subninja clang_x64/obj/third_party/protobuf/protoc_lib.ninja

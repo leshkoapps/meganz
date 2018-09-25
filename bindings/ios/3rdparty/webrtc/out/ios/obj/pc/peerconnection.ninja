@@ -1,0 +1,38 @@
+defines = -DV8_DEPRECATION_WARNINGS -DNO_TCMALLOC -DCHROMIUM_BUILD -DFIELDTRIAL_TESTING_ENABLED -DCR_XCODE_VERSION=0901 -DCR_CLANG_REVISION=\"313786-1\" -D__STDC_CONSTANT_MACROS -D__STDC_FORMAT_MACROS -D_DEBUG -DDYNAMIC_ANNOTATIONS_ENABLED=1 -DWTF_USE_DYNAMIC_ANNOTATIONS=1 -DWEBRTC_ENABLE_PROTOBUF=1 -DWEBRTC_INCLUDE_INTERNAL_AUDIO_DEVICE -DHAVE_SCTP -DWEBRTC_ARCH_ARM64 -DWEBRTC_HAS_NEON -DWEBRTC_NON_STATIC_TRACE_EVENT_HANDLERS=1 -DWEBRTC_POSIX -DWEBRTC_MAC -DWEBRTC_IOS -DHAVE_SCTP -DFEATURE_ENABLE_VOICEMAIL
+include_dirs = -I../.. -Igen -I../../third_party/libyuv/include
+cflags = -fno-strict-aliasing --param=ssp-buffer-size=4 -fstack-protector -Wno-builtin-macro-redefined -D__DATE__= -D__TIME__= -D__TIMESTAMP__= -fcolor-diagnostics -no-canonical-prefixes -arch arm64 -Wall -Werror -Wextra -Wundeclared-selector -Wno-missing-field-initializers -Wno-unused-parameter -Wno-c++11-narrowing -Wno-covered-switch-default -Wno-unneeded-internal-declaration -Wno-inconsistent-missing-override -Wno-undefined-var-template -Wno-nonportable-include-path -Wno-address-of-packed-member -Wno-unused-lambda-capture -Wno-user-defined-warnings -Wno-enum-compare-switch -Wno-tautological-unsigned-zero-compare -Wno-null-pointer-arithmetic -Wno-tautological-unsigned-enum-zero-compare -O0 -fno-omit-frame-pointer -gdwarf-2 -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS11.0.sdk -stdlib=libc++ -miphoneos-version-min=9.0 -fvisibility=hidden -Wheader-hygiene -Wstring-conversion -Wtautological-overlap-compare -Wextra -Wno-unused-parameter -Wno-missing-field-initializers -Wno-strict-overflow -Wc++11-narrowing -Wimplicit-fallthrough -Wthread-safety -Winconsistent-missing-override -Wundef -Wunused-lambda-capture
+cflags_cc = -Wno-undefined-bool-conversion -Wno-tautological-undefined-compare -std=c++11 -fno-rtti -fno-exceptions -fvisibility-inlines-hidden -Wnon-virtual-dtor -Woverloaded-virtual
+label_name = peerconnection
+target_out_dir = obj/pc
+target_output_name = libpeerconnection
+
+build obj/pc/peerconnection/audiotrack.o: cxx ../../pc/audiotrack.cc
+build obj/pc/peerconnection/datachannel.o: cxx ../../pc/datachannel.cc
+build obj/pc/peerconnection/dtmfsender.o: cxx ../../pc/dtmfsender.cc
+build obj/pc/peerconnection/iceserverparsing.o: cxx ../../pc/iceserverparsing.cc
+build obj/pc/peerconnection/jsepicecandidate.o: cxx ../../pc/jsepicecandidate.cc
+build obj/pc/peerconnection/jsepsessiondescription.o: cxx ../../pc/jsepsessiondescription.cc
+build obj/pc/peerconnection/localaudiosource.o: cxx ../../pc/localaudiosource.cc
+build obj/pc/peerconnection/mediastream.o: cxx ../../pc/mediastream.cc
+build obj/pc/peerconnection/mediastreamobserver.o: cxx ../../pc/mediastreamobserver.cc
+build obj/pc/peerconnection/peerconnection.o: cxx ../../pc/peerconnection.cc
+build obj/pc/peerconnection/peerconnectionfactory.o: cxx ../../pc/peerconnectionfactory.cc
+build obj/pc/peerconnection/remoteaudiosource.o: cxx ../../pc/remoteaudiosource.cc
+build obj/pc/peerconnection/rtcstatscollector.o: cxx ../../pc/rtcstatscollector.cc
+build obj/pc/peerconnection/rtpreceiver.o: cxx ../../pc/rtpreceiver.cc
+build obj/pc/peerconnection/rtpsender.o: cxx ../../pc/rtpsender.cc
+build obj/pc/peerconnection/sctputils.o: cxx ../../pc/sctputils.cc
+build obj/pc/peerconnection/sdputils.o: cxx ../../pc/sdputils.cc
+build obj/pc/peerconnection/statscollector.o: cxx ../../pc/statscollector.cc
+build obj/pc/peerconnection/trackmediainfomap.o: cxx ../../pc/trackmediainfomap.cc
+build obj/pc/peerconnection/videocapturertracksource.o: cxx ../../pc/videocapturertracksource.cc
+build obj/pc/peerconnection/videotrack.o: cxx ../../pc/videotrack.cc
+build obj/pc/peerconnection/videotracksource.o: cxx ../../pc/videotracksource.cc
+build obj/pc/peerconnection/webrtcsdp.o: cxx ../../pc/webrtcsdp.cc
+build obj/pc/peerconnection/webrtcsession.o: cxx ../../pc/webrtcsession.cc
+build obj/pc/peerconnection/webrtcsessiondescriptionfactory.o: cxx ../../pc/webrtcsessiondescriptionfactory.cc
+
+build obj/pc/libpeerconnection.a: alink obj/pc/peerconnection/audiotrack.o obj/pc/peerconnection/datachannel.o obj/pc/peerconnection/dtmfsender.o obj/pc/peerconnection/iceserverparsing.o obj/pc/peerconnection/jsepicecandidate.o obj/pc/peerconnection/jsepsessiondescription.o obj/pc/peerconnection/localaudiosource.o obj/pc/peerconnection/mediastream.o obj/pc/peerconnection/mediastreamobserver.o obj/pc/peerconnection/peerconnection.o obj/pc/peerconnection/peerconnectionfactory.o obj/pc/peerconnection/remoteaudiosource.o obj/pc/peerconnection/rtcstatscollector.o obj/pc/peerconnection/rtpreceiver.o obj/pc/peerconnection/rtpsender.o obj/pc/peerconnection/sctputils.o obj/pc/peerconnection/sdputils.o obj/pc/peerconnection/statscollector.o obj/pc/peerconnection/trackmediainfomap.o obj/pc/peerconnection/videocapturertracksource.o obj/pc/peerconnection/videotrack.o obj/pc/peerconnection/videotracksource.o obj/pc/peerconnection/webrtcsdp.o obj/pc/peerconnection/webrtcsession.o obj/pc/peerconnection/webrtcsessiondescriptionfactory.o || obj/api/libjingle_peerconnection_api.a obj/pc/librtc_pc_base.a obj/libwebrtc_common.a obj/api/call_api.stamp obj/api/optional.stamp obj/api/rtc_stats_api.stamp obj/api/video_codecs/video_codecs_api.stamp obj/call/call_interfaces.stamp obj/logging/rtc_event_log_api.stamp obj/media/librtc_data.a obj/media/librtc_media_base.a obj/p2p/librtc_p2p.a obj/rtc_base/librtc_base.a obj/rtc_base/rtc_base_approved.stamp obj/stats/stats.stamp obj/system_wrappers/libsystem_wrappers.a obj/api/libjingle_api_deprecated_headers.stamp obj/api/mediastream_interface_and_implicit_video_frame_api.stamp obj/api/peerconnection_and_implicit_call_api.stamp obj/api/array_view.stamp obj/rtc_base/rtc_base_approved_generic.stamp obj/rtc_base/librtc_base_generic.a obj/third_party/boringssl/libboringssl.a obj/third_party/boringssl/boringssl_asm.stamp obj/rtc_base/rtc_base_objc.stamp obj/api/audio_codecs/audio_codecs_api.stamp obj/api/audio_mixer_api.stamp obj/modules/module_api.stamp obj/api/video_frame_api.stamp obj/third_party/libyuv/libyuv_internal.a obj/third_party/libyuv/libyuv_neon.a obj/system_wrappers/cpu_features_api.stamp obj/system_wrappers/field_trial_api.stamp obj/system_wrappers/metrics_api.stamp obj/modules/video_coding/codec_globals_headers.stamp obj/api/transport_api.stamp obj/api/ortc_api.stamp obj/third_party/usrsctp/libusrsctp.a obj/media/rtc_h264_profile_id.stamp obj/p2p/libstunprober.a obj/rtc_base/rtc_task_queue.stamp obj/rtc_base/rtc_task_queue_api.stamp obj/rtc_base/rtc_task_queue_impl.stamp obj/third_party/libsrtp/libsrtp.a obj/common_video/libcommon_video.a obj/call/rtp_interfaces.stamp obj/call/video_stream_api.stamp obj/api/libjingle_logging_api.stamp obj/modules/audio_coding/libaudio_network_adaptor_config.a obj/modules/remote_bitrate_estimator/libremote_bitrate_estimator.a obj/modules/rtp_rtcp/rtp_rtcp_format.stamp obj/stats/librtc_stats.a
+  arflags =
+  output_extension = .a
+  output_dir = obj/pc

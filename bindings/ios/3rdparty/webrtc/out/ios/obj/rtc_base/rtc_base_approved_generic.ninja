@@ -1,0 +1,40 @@
+defines = -DV8_DEPRECATION_WARNINGS -DNO_TCMALLOC -DCHROMIUM_BUILD -DFIELDTRIAL_TESTING_ENABLED -DCR_XCODE_VERSION=0901 -DCR_CLANG_REVISION=\"313786-1\" -D__STDC_CONSTANT_MACROS -D__STDC_FORMAT_MACROS -D_DEBUG -DDYNAMIC_ANNOTATIONS_ENABLED=1 -DWTF_USE_DYNAMIC_ANNOTATIONS=1 -DWEBRTC_ENABLE_PROTOBUF=1 -DWEBRTC_INCLUDE_INTERNAL_AUDIO_DEVICE -DHAVE_SCTP -DWEBRTC_ARCH_ARM64 -DWEBRTC_HAS_NEON -DWEBRTC_NON_STATIC_TRACE_EVENT_HANDLERS=1 -DWEBRTC_POSIX -DWEBRTC_MAC -DWEBRTC_IOS
+include_dirs = -I../.. -Igen
+cflags = -fno-strict-aliasing --param=ssp-buffer-size=4 -fstack-protector -Wno-builtin-macro-redefined -D__DATE__= -D__TIME__= -D__TIMESTAMP__= -fcolor-diagnostics -no-canonical-prefixes -arch arm64 -Wall -Werror -Wextra -Wundeclared-selector -Wno-missing-field-initializers -Wno-unused-parameter -Wno-c++11-narrowing -Wno-covered-switch-default -Wno-unneeded-internal-declaration -Wno-inconsistent-missing-override -Wno-undefined-var-template -Wno-nonportable-include-path -Wno-address-of-packed-member -Wno-unused-lambda-capture -Wno-user-defined-warnings -Wno-enum-compare-switch -Wno-tautological-unsigned-zero-compare -Wno-null-pointer-arithmetic -Wno-tautological-unsigned-enum-zero-compare -O0 -fno-omit-frame-pointer -gdwarf-2 -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS11.0.sdk -stdlib=libc++ -miphoneos-version-min=9.0 -fvisibility=hidden -Xclang -load -Xclang ../../third_party/llvm-build/Release+Asserts/lib/libFindBadConstructs.dylib -Xclang -add-plugin -Xclang find-bad-constructs -Xclang -plugin-arg-find-bad-constructs -Xclang check-auto-raw-pointer -Wheader-hygiene -Wstring-conversion -Wtautological-overlap-compare -Wextra -Wno-unused-parameter -Wno-missing-field-initializers -Wno-strict-overflow -Wc++11-narrowing -Wimplicit-fallthrough -Wthread-safety -Winconsistent-missing-override -Wundef -Wunused-lambda-capture
+cflags_cc = -Wno-undefined-bool-conversion -Wno-tautological-undefined-compare -std=c++11 -fno-rtti -fno-exceptions -fvisibility-inlines-hidden -Wnon-virtual-dtor -Woverloaded-virtual
+label_name = rtc_base_approved_generic
+target_out_dir = obj/rtc_base
+target_output_name = rtc_base_approved_generic
+
+build obj/rtc_base/rtc_base_approved_generic/base64.o: cxx ../../rtc_base/base64.cc
+build obj/rtc_base/rtc_base_approved_generic/bitbuffer.o: cxx ../../rtc_base/bitbuffer.cc
+build obj/rtc_base/rtc_base_approved_generic/bitrateallocationstrategy.o: cxx ../../rtc_base/bitrateallocationstrategy.cc
+build obj/rtc_base/rtc_base_approved_generic/bufferqueue.o: cxx ../../rtc_base/bufferqueue.cc
+build obj/rtc_base/rtc_base_approved_generic/bytebuffer.o: cxx ../../rtc_base/bytebuffer.cc
+build obj/rtc_base/rtc_base_approved_generic/checks.o: cxx ../../rtc_base/checks.cc
+build obj/rtc_base/rtc_base_approved_generic/copyonwritebuffer.o: cxx ../../rtc_base/copyonwritebuffer.cc
+build obj/rtc_base/rtc_base_approved_generic/criticalsection.o: cxx ../../rtc_base/criticalsection.cc
+build obj/rtc_base/rtc_base_approved_generic/event.o: cxx ../../rtc_base/event.cc
+build obj/rtc_base/rtc_base_approved_generic/event_tracer.o: cxx ../../rtc_base/event_tracer.cc
+build obj/rtc_base/rtc_base_approved_generic/file.o: cxx ../../rtc_base/file.cc
+build obj/rtc_base/rtc_base_approved_generic/flags.o: cxx ../../rtc_base/flags.cc
+build obj/rtc_base/rtc_base_approved_generic/histogram_percentile_counter.o: cxx ../../rtc_base/histogram_percentile_counter.cc
+build obj/rtc_base/rtc_base_approved_generic/location.o: cxx ../../rtc_base/location.cc
+build obj/rtc_base/rtc_base_approved_generic/pathutils.o: cxx ../../rtc_base/pathutils.cc
+build obj/rtc_base/rtc_base_approved_generic/platform_file.o: cxx ../../rtc_base/platform_file.cc
+build obj/rtc_base/rtc_base_approved_generic/platform_thread.o: cxx ../../rtc_base/platform_thread.cc
+build obj/rtc_base/rtc_base_approved_generic/race_checker.o: cxx ../../rtc_base/race_checker.cc
+build obj/rtc_base/rtc_base_approved_generic/random.o: cxx ../../rtc_base/random.cc
+build obj/rtc_base/rtc_base_approved_generic/rate_limiter.o: cxx ../../rtc_base/rate_limiter.cc
+build obj/rtc_base/rtc_base_approved_generic/rate_statistics.o: cxx ../../rtc_base/rate_statistics.cc
+build obj/rtc_base/rtc_base_approved_generic/ratetracker.o: cxx ../../rtc_base/ratetracker.cc
+build obj/rtc_base/rtc_base_approved_generic/string_to_number.o: cxx ../../rtc_base/string_to_number.cc
+build obj/rtc_base/rtc_base_approved_generic/stringencode.o: cxx ../../rtc_base/stringencode.cc
+build obj/rtc_base/rtc_base_approved_generic/stringutils.o: cxx ../../rtc_base/stringutils.cc
+build obj/rtc_base/rtc_base_approved_generic/thread_checker_impl.o: cxx ../../rtc_base/thread_checker_impl.cc
+build obj/rtc_base/rtc_base_approved_generic/timestampaligner.o: cxx ../../rtc_base/timestampaligner.cc
+build obj/rtc_base/rtc_base_approved_generic/timeutils.o: cxx ../../rtc_base/timeutils.cc
+build obj/rtc_base/rtc_base_approved_generic/file_posix.o: cxx ../../rtc_base/file_posix.cc
+build obj/rtc_base/rtc_base_approved_generic/logging.o: cxx ../../rtc_base/logging.cc
+
+build obj/rtc_base/rtc_base_approved_generic.stamp: stamp obj/rtc_base/rtc_base_approved_generic/base64.o obj/rtc_base/rtc_base_approved_generic/bitbuffer.o obj/rtc_base/rtc_base_approved_generic/bitrateallocationstrategy.o obj/rtc_base/rtc_base_approved_generic/bufferqueue.o obj/rtc_base/rtc_base_approved_generic/bytebuffer.o obj/rtc_base/rtc_base_approved_generic/checks.o obj/rtc_base/rtc_base_approved_generic/copyonwritebuffer.o obj/rtc_base/rtc_base_approved_generic/criticalsection.o obj/rtc_base/rtc_base_approved_generic/event.o obj/rtc_base/rtc_base_approved_generic/event_tracer.o obj/rtc_base/rtc_base_approved_generic/file.o obj/rtc_base/rtc_base_approved_generic/flags.o obj/rtc_base/rtc_base_approved_generic/histogram_percentile_counter.o obj/rtc_base/rtc_base_approved_generic/location.o obj/rtc_base/rtc_base_approved_generic/pathutils.o obj/rtc_base/rtc_base_approved_generic/platform_file.o obj/rtc_base/rtc_base_approved_generic/platform_thread.o obj/rtc_base/rtc_base_approved_generic/race_checker.o obj/rtc_base/rtc_base_approved_generic/random.o obj/rtc_base/rtc_base_approved_generic/rate_limiter.o obj/rtc_base/rtc_base_approved_generic/rate_statistics.o obj/rtc_base/rtc_base_approved_generic/ratetracker.o obj/rtc_base/rtc_base_approved_generic/string_to_number.o obj/rtc_base/rtc_base_approved_generic/stringencode.o obj/rtc_base/rtc_base_approved_generic/stringutils.o obj/rtc_base/rtc_base_approved_generic/thread_checker_impl.o obj/rtc_base/rtc_base_approved_generic/timestampaligner.o obj/rtc_base/rtc_base_approved_generic/timeutils.o obj/rtc_base/rtc_base_approved_generic/file_posix.o obj/rtc_base/rtc_base_approved_generic/logging.o || obj/libwebrtc_common.a
