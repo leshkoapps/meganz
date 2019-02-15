@@ -27,6 +27,7 @@ SOURCES += src/attrmap.cpp \
     src/transferslot.cpp \
     src/treeproc.cpp \
     src/user.cpp \
+    src/useralerts.cpp \
     src/utils.cpp \
     src/logging.cpp \
     src/waiterbase.cpp  \
@@ -55,15 +56,62 @@ CONFIG(USE_MEGAAPI) {
   }
 }
 
-CONFIG(USE_LIBWEBSOCKETS) {
-    CONFIG += USE_LIBUV
-    DEFINES += USE_LIBWEBSOCKETS=1
+CONFIG(USE_AUTOCOMPLETE) {
+    SOURCES += src/autocomplete.cpp
+    HEADERS += include/mega/autocomplete.h
+    !win32 {
+        #to have autocomplete support, c++11 & libstdc++fs are required:
+        CONFIG+=c++11
+        LIBS+=-lstdc++fs
+    }
+}
 
-    exists($$MEGASDK_BASE_PATH/bindings/qt/3rdparty/libs/libwebsockets.a) {
-        LIBS += $$MEGASDK_BASE_PATH/bindings/qt/3rdparty/libs/libwebsockets.a -lcap
+CONFIG(USE_CONSOLE) {
+    win32 {
+
+        HEADERS += include/mega/win32/megaconsole.h
+        HEADERS += include/mega/win32/megaconsolewaiter.h
+
+        CONFIG(noreadline) {
+            DEFINES += NO_READLINE
+            SOURCES += src/win32/console.cpp
+            SOURCES += src/win32/consolewaiter.cpp
+        }
+        else {
+            DEFINES += USE_READLINE_STATIC
+            SOURCES += src/wincurl/console.cpp
+            SOURCES += src/wincurl/consolewaiter.cpp
+            LIBS += -lreadline
+        }
+        QMAKE_CXXFLAGS+=/Zc:__cplusplus /std:c++ #this will set _cplusplus correctly in MSVC >= 2017 15.7 Preview 3
     }
     else {
+        HEADERS += include/mega/posix/megaconsole.h
+        HEADERS += include/mega/posix/megaconsolewaiter.h
+        SOURCES += src/posix/console.cpp
+        SOURCES += src/posix/consolewaiter.cpp
+        LIBS += -lreadline
+    }
+}
+
+CONFIG(ENABLE_CHAT) {
+    CONFIG += USE_LIBUV
+
+    !macx {
+        exists($$MEGASDK_BASE_PATH/bindings/qt/3rdparty/libs/libwebsockets.a) {
+        LIBS += $$MEGASDK_BASE_PATH/bindings/qt/3rdparty/libs/libwebsockets.a -lcap
+        }
+        else {
         LIBS += -lwebsockets -lcap
+        }
+    }
+    else {
+        exists($$MEGASDK_BASE_PATH/bindings/qt/3rdparty/libs/libwebsockets.a) {
+        LIBS += $$MEGASDK_BASE_PATH/bindings/qt/3rdparty/libs/libwebsockets.a
+        }
+        else {
+        LIBS += -lwebsockets
+        }
     }
 }
 
@@ -119,9 +167,9 @@ CONFIG(USE_MEDIAINFO) {
 
 CONFIG(USE_LIBRAW) {
     DEFINES += HAVE_LIBRAW
-    INCLUDEPATH += $$MEGASDK_BASE_PATH/bindings/qt/3rdparty/include/libraw
 
     win32 {
+        DEFINES += LIBRAW_NODLL
         LIBS += -llibraw
     }
 
@@ -131,24 +179,24 @@ CONFIG(USE_LIBRAW) {
 
     unix:!macx {
         exists($$MEGASDK_BASE_PATH/bindings/qt/3rdparty/libs/libraw.a) {
-            LIBS += $$MEGASDK_BASE_PATH/bindings/qt/3rdparty/libs/libraw.a
+            LIBS += $$MEGASDK_BASE_PATH/bindings/qt/3rdparty/libs/libraw.a -fopenmp
         }
         else {
-            LIBS += -lraw
+            LIBS += -lraw -fopenmp
         }
     }
 }
 
 CONFIG(USE_FFMPEG) {
-    DEFINES += HAVE_FFMPEG
 
     unix:!macx {
         exists($$MEGASDK_BASE_PATH/bindings/qt/3rdparty/include/ffmpeg):exists($$MEGASDK_BASE_PATH/bindings/qt/3rdparty/lib/libavcodec.a) {
+        DEFINES += HAVE_FFMPEG
             INCLUDEPATH += $$MEGASDK_BASE_PATH/bindings/qt/3rdparty/include/ffmpeg
             FFMPEGLIBPATH = $$MEGASDK_BASE_PATH/bindings/qt/3rdparty/lib
         }
         else:exists(/usr/include/ffmpeg-mega) {
-
+            DEFINES += HAVE_FFMPEG
             INCLUDEPATH += /usr/include/ffmpeg-mega
             exists(/usr/lib64/libavcodec.a) {
                 FFMPEGLIBPATH = /usr/lib64
@@ -161,10 +209,8 @@ CONFIG(USE_FFMPEG) {
             }
         }
         else:packagesExist(ffmpeg)|packagesExist(libavcodec) {
+            DEFINES += HAVE_FFMPEG
             LIBS += -lavcodec -lavformat -lavutil -lswscale
-        }
-        else {
-            DEFINES -= HAVE_FFMPEG
         }
 
         FFMPEGSTATICLIBS = libavformat.a libavcodec.a libavutil.a libswscale.a
@@ -186,6 +232,7 @@ CONFIG(USE_FFMPEG) {
 
     }
     else { #win/mac
+        DEFINES += HAVE_FFMPEG
         INCLUDEPATH += $$MEGASDK_BASE_PATH/bindings/qt/3rdparty/include/ffmpeg
         LIBS += -lavcodec -lavformat -lavutil -lswscale
     }
@@ -206,12 +253,21 @@ CONFIG(USE_WEBRTC) {
                    $$MEGASDK_BASE_PATH/bindings/qt/3rdparty/webrtc/include/webrtc \
                    $$MEGASDK_BASE_PATH/bindings/qt/3rdparty/webrtc/include/third_party/boringssl/src/include \
                    $$MEGASDK_BASE_PATH/bindings/qt/3rdparty/webrtc/include/third_party/libyuv/include
-
+    !macx {
     exists($$MEGASDK_BASE_PATH/bindings/qt/3rdparty/libs/libwebrtc.a) {
         LIBS += $$MEGASDK_BASE_PATH/bindings/qt/3rdparty/libs/libwebrtc.a -ldl -lX11
     }
     else {
         LIBS += -lwebrtc -ldl -lX11
+    }
+    }
+    else {
+        exists($$MEGASDK_BASE_PATH/bindings/qt/3rdparty/libs/libwebrtc.a) {
+        LIBS += $$MEGASDK_BASE_PATH/bindings/qt/3rdparty/libs/libwebrtc.a -ldl
+        }
+        else {
+        LIBS += -lwebrtc -ldl
+        }
     }
 }
 
@@ -275,6 +331,7 @@ HEADERS  += include/mega.h \
             include/mega/treeproc.h \
             include/mega/types.h \
             include/mega/user.h \
+            include/mega/useralerts.h \
             include/mega/utils.h \
             include/mega/logging.h \
             include/mega/waiter.h \
@@ -313,7 +370,7 @@ win32 {
             include/mega/win32/megafs.h  \
             include/mega/win32/megawaiter.h
 
-    SOURCES += bindings/qt/3rdparty/libs/sqlite3.c
+    SOURCES += $$MEGASDK_BASE_PATH/bindings/qt/3rdparty/libs/sqlite3.c
 }
 
 unix {
@@ -336,9 +393,6 @@ CONFIG(qt) {
   SOURCES += src/gfx/qt.cpp src/thread/qtthread.cpp
 }
 else {
-    DEFINES += USE_FREEIMAGE
-    SOURCES += src/gfx/freeimage.cpp
-    LIBS += -lfreeimage
 
     win32 {
         SOURCES += src/thread/win32thread.cpp
@@ -349,9 +403,17 @@ else {
         LIBS += -lpthread
     }
 
-    macx {
-        INCLUDEPATH += $$MEGASDK_BASE_PATH/bindings/qt/3rdparty/include/FreeImage/Source
-        LIBS += $$MEGASDK_BASE_PATH/bindings/qt/3rdparty/libs/libfreeimage.a
+   !CONFIG(nofreeimage) {
+        DEFINES += USE_FREEIMAGE
+        SOURCES += src/gfx/freeimage.cpp
+
+        macx {
+            INCLUDEPATH += $$MEGASDK_BASE_PATH/bindings/qt/3rdparty/include/FreeImage/Source
+            LIBS += $$MEGASDK_BASE_PATH/bindings/qt/3rdparty/libs/libfreeimage.a
+        }
+        else {
+            LIBS += -lfreeimage
+        }
     }
 }
 

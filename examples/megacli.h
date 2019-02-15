@@ -90,7 +90,11 @@ struct DemoApp : public MegaApp
     
     void request_response_progress(m_off_t, m_off_t);
     
+    void prelogin_result(int version, string* email, string *salt, error e);
     void login_result(error);
+    void multifactorauthdisable_result(error);
+    void multifactorauthsetup_result(string *code, error e);
+    void multifactorauthcheck_result(int enabled);
 
     void ephemeral_result(error);
     void ephemeral_result(handle, const byte*);
@@ -114,6 +118,7 @@ struct DemoApp : public MegaApp
     virtual void confirmemaillink_result(error);
 
     void users_updated(User**, int);
+    void useralerts_updated(UserAlert::Base** ua, int count);
     void nodes_updated(Node**, int);
     void pcrs_updated(PendingContactRequest**, int);
     void nodes_current();
@@ -131,6 +136,10 @@ struct DemoApp : public MegaApp
     virtual void chattruncate_result(error);
     virtual void chatsettitle_result(error);
     virtual void chatpresenceurl_result(string *, error);
+    void chatlink_result(handle, error);
+    void chatlinkclose_result(error);
+    void chatlinkurl_result(handle, int, string*, string*, m_time_t, error);
+    void chatlinkjoin_result(error);
 
     void chats_updated(textchat_map*, int);
 

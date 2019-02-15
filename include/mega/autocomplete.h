@@ -1,5 +1,5 @@
 /**
-* @file win32/autocomplete.h
+* @file autocomplete.h
 * @brief Win32 console I/O autocomplete support
 *
 * (c) 2013-2018 by Mega Limited, Auckland, New Zealand
@@ -19,9 +19,13 @@
 * program.
 */
 
-#ifdef NO_READLINE
+#if !defined(__MINGW32__) && !defined(__ANDROID__) && ( (__cplusplus >= 201100L) || (defined(_MSC_VER) && _MSC_VER >= 1600) )
+// autocomplete for clients using c++11 - so far just megacli and megaclc on windows and linux.
+
 #ifndef MEGA_AUTOCOMPLETE_H
 #define MEGA_AUTOCOMPLETE_H 1
+
+#define HAVE_AUTOCOMPLETE 1
 
 #include "mega/types.h"
 #include <string>
@@ -41,12 +45,13 @@ namespace autocomplete {
         struct Completion {
             std::string s;
             bool caseInsensitive = false;
-            inline Completion(const std::string& str, bool b) : s(str), caseInsensitive(b) {}
+            bool couldExtend = false;
+            inline Completion(const std::string& str, bool b, bool b2 = true) : s(str), caseInsensitive(b), couldExtend(b2) {}
         };
 
         std::vector<Completion> completions;
-        void addCompletion(const std::string& s, bool caseInsenstive = false);
-        void addPathCompletion(std::string& f, const std::string& relativeRootPath, bool isFolder, char dir_sep, bool caseInsensitive);
+        void addCompletion(const std::string& s, bool caseInsenstive = false, bool couldextend = false);
+        void addPathCompletion(std::string&& f, const std::string& relativeRootPath, bool isFolder, char dir_sep, bool caseInsensitive);
 
         std::vector<std::pair<int, int>> wordPos;
 
@@ -65,6 +70,7 @@ namespace autocomplete {
             quoted_word(const std::string &, const quoting&);
             std::string s;
             quoting q;
+            string getQuoted();
         };
 
         std::vector<quoted_word> words;
@@ -93,6 +99,8 @@ namespace autocomplete {
 
         // output suitable for user 'help'
         virtual std::ostream& describe(std::ostream& s) const = 0;
+
+        virtual ~ACNode();
     };
 
     std::ostream& operator<<(std::ostream&, const ACNode&);
@@ -191,6 +199,15 @@ namespace autocomplete {
         bool match(ACState& s) const override;
     };
 
+    struct MEGA_API MegaContactEmail : public ACNode
+    {
+        MegaClient* client;
+        MegaContactEmail(MegaClient*);
+        bool addCompletions(ACState& s) override;
+        std::ostream& describe(std::ostream& s) const override;
+        bool match(ACState& s) const override;
+    };
+
     struct MEGA_API CompletionState
     {
         std::string line;
@@ -205,10 +222,11 @@ namespace autocomplete {
         size_t unixListCount = 0;
         unsigned calcUnixColumnWidthInGlyphs(int col, int rows);
         const string& unixColumnEntry(int row, int col, int rows);
+        void tidyCompletions();
     };
 
     // helper function - useful in megacli for now
-    ACState prepACState(const std::string line, size_t insertPos, ACN syntax, bool unixStyle);
+    ACState prepACState(const std::string line, size_t insertPos, bool unixStyle);
 
     // get a list of possible strings at the current cursor position
     CompletionState autoComplete(const std::string line, size_t insertPos, ACN syntax, bool unixStyle);
@@ -218,10 +236,10 @@ namespace autocomplete {
     void applyCompletion(CompletionState& s, bool forwards, unsigned consoleWidth, CompletionTextOut& consoleOutput);
 
     // execute the function attached to the matching syntax
-    void autoExec(const std::string line, size_t insertPos, ACN syntax, bool unixStyle, string& consoleOutput);
+    bool autoExec(const std::string line, size_t insertPos, ACN syntax, bool unixStyle, string& consoleOutput, bool reportNoMatch);
 
     // functions to bulid command descriptions
-    ACN either(ACN n1 = nullptr, ACN n2 = nullptr, ACN n3 = nullptr, ACN n4 = nullptr);
+    ACN either(ACN n1 = nullptr, ACN n2 = nullptr, ACN n3 = nullptr, ACN n4 = nullptr, ACN n5 = nullptr);
     ACN sequence(ACN n1 = nullptr, ACN n2 = nullptr, ACN n3 = nullptr, ACN n4 = nullptr, ACN n5 = nullptr, ACN n6 = nullptr, ACN n7 = nullptr, ACN n8 = nullptr);
     ACN text(const std::string s);
     ACN param(const std::string s);
@@ -235,6 +253,7 @@ namespace autocomplete {
     ACN remoteFSPath(MegaClient*, ::mega::handle*, const std::string descriptionPrefix = "");
     ACN remoteFSFile(MegaClient*, ::mega::handle*, const std::string descriptionPrefix = "");
     ACN remoteFSFolder(MegaClient*, ::mega::handle*, const std::string descriptionPrefix = "");
+    ACN contactEmail(MegaClient*);
 
 }}; //namespaces
 #endif

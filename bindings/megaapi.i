@@ -5,6 +5,10 @@
 #define ENABLE_CHAT
 #include "megaapi.h"
 
+#if defined(__ANDROID__)
+#include <ares.h>
+#endif
+
 #ifdef ENABLE_WEBRTC
 #include "webrtc/rtc_base/ssladapter.h"
 #include "webrtc/sdk/android/src/jni/classreferenceholder.h"
@@ -28,6 +32,7 @@ jmethodID ctorString = NULL;
 jmethodID getBytes = NULL;
 jclass applicationClass = NULL;
 jmethodID startVideoCaptureMID = NULL;
+jmethodID startVideoCaptureWithParametersMID = NULL;
 jmethodID stopVideoCaptureMID = NULL;
 jobject surfaceTextureHelper = NULL;
 
@@ -88,6 +93,12 @@ JNIEXPORT jint JNICALL JNI_OnLoad(JavaVM *jvm, void *reserved)
             jenv->ExceptionClear();
         }
 
+        startVideoCaptureWithParametersMID = jenv->GetStaticMethodID(applicationClass, "startVideoCaptureWithParameters", "(IIIJLorg/webrtc/SurfaceTextureHelper;)V");
+        if (!startVideoCaptureWithParametersMID)
+        {
+            jenv->ExceptionClear();
+        }
+
         stopVideoCaptureMID = jenv->GetStaticMethodID(applicationClass, "stopVideoCapture", "()V");
         if (!stopVideoCaptureMID)
         {
@@ -124,6 +135,10 @@ JNIEXPORT jint JNICALL JNI_OnLoad(JavaVM *jvm, void *reserved)
     {
         jenv->ExceptionClear();
     }
+#endif
+
+#if defined(__ANDROID__) && ARES_VERSION >= 0x010F00
+    ares_library_init_jvm(jvm);
 #endif
 
     return JNI_VERSION_1_4;
@@ -180,6 +195,7 @@ JNIEXPORT jint JNICALL JNI_OnLoad(JavaVM *jvm, void *reserved)
 %typemap(javaclassmodifiers) mega::TransferList "class";
 %typemap(javaclassmodifiers) mega::ShareList "class";
 %typemap(javaclassmodifiers) mega::UserList "class";
+%typemap(javaclassmodifiers) mega::UserAlertList "class";
 
 %typemap(out) char*
 %{
@@ -376,6 +392,9 @@ JNIEXPORT jint JNICALL JNI_OnLoad(JavaVM *jvm, void *reserved)
 %newobject mega::MegaContactRequestList::copy;
 %newobject mega::MegaStringList::copy;
 %newobject mega::MegaAchievementsDetails::copy;
+%newobject mega::MegaTimeZoneDetails::copy;
+%newobject mega::MegaUserAlert::copy;
+%newobject mega::MegaUserAlertList::copy;
 %newobject mega::MegaAchievementsDetails::getAwardEmails;
 %newobject mega::MegaRequest::getPublicMegaNode;
 %newobject mega::MegaTransfer::getPublicMegaNode;
@@ -405,6 +424,7 @@ JNIEXPORT jint JNICALL JNI_OnLoad(JavaVM *jvm, void *reserved)
 %newobject mega::MegaApi::getContactRequestByHandle;
 %newobject mega::MegaApi::getContacts;
 %newobject mega::MegaApi::getContact;
+%newobject mega::MegaApi::getUserAlerts;
 %newobject mega::MegaApi::getInShares;
 %newobject mega::MegaApi::getInSharesList;
 %newobject mega::MegaApi::getOutShares;
@@ -431,6 +451,7 @@ JNIEXPORT jint JNICALL JNI_OnLoad(JavaVM *jvm, void *reserved)
 %newobject mega::MegaApi::getAccountAuth;
 %newobject mega::MegaApi::authorizeNode;
 
+%newobject mega::MegaRequest::getMegaTimeZoneDetails;
 %newobject mega::MegaRequest::getMegaAccountDetails;
 %newobject mega::MegaRequest::getPricing;
 %newobject mega::MegaRequest::getMegaAchievementsDetails;

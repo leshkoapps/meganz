@@ -116,8 +116,8 @@ struct MEGA_API Transfer : public FileFingerprint
     // transfer state
     bool finished;
 
-    // cached temp URL for upload/download data
-    string cachedtempurl;
+    // temp URL for upload/download data.  It can be cached.  For uploads, a new url means any previously uploaded data is abandoned.
+    string tempurl;
 
     // context of the async fopen operation
     AsyncIOContext* asyncopencontext;
@@ -130,6 +130,8 @@ struct MEGA_API Transfer : public FileFingerprint
 
     // state of the transfer
     transferstate_t state;
+
+    bool skipserialization;
 
     Transfer(MegaClient*, direction_t);
     virtual ~Transfer();
@@ -151,7 +153,7 @@ public:
     static const uint64_t PRIORITY_STEP  = 0x0000000000010000ull;
 
     TransferList();
-    void addtransfer(Transfer* transfer);
+    void addtransfer(Transfer* transfer, bool startFirst = false);
     void removetransfer(Transfer *transfer);
     void movetransfer(Transfer *transfer, Transfer *prevTransfer);
     void movetransfer(Transfer *transfer, unsigned int position);
@@ -232,6 +234,9 @@ struct MEGA_API DirectReadNode
 {
     handle h;
     bool p;
+    string publicauth;
+    string privateauth;
+    string chatauth;
     m_off_t partiallen;
     dstime partialstarttime;
 
@@ -268,7 +273,7 @@ struct MEGA_API DirectReadNode
     // report failure to app and abort or retry all reads
     void retry(error, dstime = 0);
 
-    DirectReadNode(MegaClient*, handle, bool, SymmCipher*, int64_t);
+    DirectReadNode(MegaClient*, handle, bool, SymmCipher*, int64_t, const char*, const char*, const char*);
     ~DirectReadNode();
 };
 } // namespace

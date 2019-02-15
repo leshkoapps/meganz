@@ -67,8 +67,30 @@ using namespace mega;
     return self.megaNode->getName() ? [[NSString alloc] initWithUTF8String:self.megaNode->getName()] : nil;
 }
 
+- (NSString *)fingerprint {
+    if(!self.megaNode) return nil;
+    
+    return self.megaNode->getFingerprint() ? [[NSString alloc] initWithUTF8String:self.megaNode->getFingerprint()] : nil;
+}
+
 - (NSInteger)duration {
     return self.megaNode ? self.megaNode->getDuration() : -1;
+}
+
+- (NSInteger)width {
+    return self.megaNode ? self.megaNode->getWidth() : -1;
+}
+
+- (NSInteger)height {
+    return self.megaNode ? self.megaNode->getHeight(): -1;
+}
+
+- (NSInteger)shortFormat {
+    return self.megaNode ? self.megaNode->getShortformat() : -1;
+}
+
+- (NSInteger)videoCodecId {
+    return self.megaNode ? self.megaNode->getVideocodecid(): -1;
 }
 
 - (NSNumber *)latitude {
@@ -133,6 +155,10 @@ using namespace mega;
 
 - (MEGANode *)publicNode {
     return self.megaNode ? [[MEGANode alloc] initWithMegaNode:self.megaNode->getPublicNode() cMemoryOwn:YES] : nil;
+}
+
+- (uint64_t)owner {
+    return self.megaNode ? self.megaNode->getOwner() : ::mega::INVALID_HANDLE;
 }
 
 - (BOOL)isFile {

@@ -23,6 +23,11 @@
 #include "mega/posix/meganet.h"
 #include "mega/logging.h"
 
+#if defined(__ANDROID__) && ARES_VERSION >= 0x010F00
+#include <jni.h>
+extern JavaVM *MEGAjvm;
+#endif
+
 #define IPV6_RETRY_INTERVAL_DS 72000
 #define DNS_CACHE_TIMEOUT_DS 18000
 #define DNS_CACHE_EXPIRES 0
@@ -167,6 +172,12 @@ CurlHttpIO::CurlHttpIO()
 
     curl_global_init(CURL_GLOBAL_DEFAULT);
     ares_library_init(ARES_LIB_INIT_ALL);
+
+
+#if defined(__ANDROID__) && ARES_VERSION >= 0x010F00
+    initialize_android();
+#endif
+
     curlMutex.unlock();
 
     curlm[API] = curl_multi_init();
@@ -872,7 +883,7 @@ void CurlHttpIO::proxy_ready_callback(void* arg, int status, int, hostent* host)
     CurlHttpContext* httpctx = (CurlHttpContext*)arg;
     CurlHttpIO* httpio = httpctx->httpio;
 
-    LOG_verbose << "c-ares info received (proxy)";
+    LOG_debug << "c-ares info received (proxy)";
 
     httpctx->ares_pending--;
     if (!httpctx->ares_pending)
@@ -885,7 +896,7 @@ void CurlHttpIO::proxy_ready_callback(void* arg, int status, int, hostent* host)
     {
         if (!httpctx->ares_pending)
         {
-            LOG_verbose << "Proxy ready";
+            LOG_debug << "Proxy ready";
 
             // name resolution finished.
             // nothing more to do.
@@ -895,7 +906,7 @@ void CurlHttpIO::proxy_ready_callback(void* arg, int status, int, hostent* host)
         }
         else
         {
-            LOG_verbose << "Proxy ready. Waiting for c-ares";
+            LOG_debug << "Proxy ready. Waiting for c-ares";
         }
 
         return;
@@ -909,7 +920,7 @@ void CurlHttpIO::proxy_ready_callback(void* arg, int status, int, hostent* host)
             && (!httpctx->hostip.size() || host->h_addrtype == PF_INET6)
             && (host->h_addrtype != PF_INET6 || httpio->ipv6available()))
     {
-        LOG_verbose << "Received a valid IP for the proxy";
+        LOG_debug << "Received a valid IP for the proxy";
 
         // save the IP of the proxy
         char ip[INET6_ADDRSTRLEN];
@@ -931,7 +942,7 @@ void CurlHttpIO::proxy_ready_callback(void* arg, int status, int, hostent* host)
 
     if (!httpctx->ares_pending)
     {
-        LOG_verbose << "c-ares request finished";
+        LOG_debug << "c-ares request finished (proxy)";
 
         // name resolution finished
         // if the IP is valid, use it and continue sending requests.
@@ -974,7 +985,7 @@ void CurlHttpIO::proxy_ready_callback(void* arg, int status, int, hostent* host)
     }
     else
     {
-        LOG_verbose << "Waiting for the completion of the c-ares request (proxy)";
+        LOG_debug << "Waiting for the completion of the c-ares request (proxy)";
     }
 }
 
@@ -986,7 +997,7 @@ void CurlHttpIO::ares_completed_callback(void* arg, int status, int, struct host
     bool invalidcache = false;
     httpctx->ares_pending--;
 
-    LOG_verbose << "c-ares info received";
+    LOG_debug << "c-ares info received";
 
     // check if result is valid
     if (status == ARES_SUCCESS && host && host->h_addr_list[0])
@@ -994,7 +1005,7 @@ void CurlHttpIO::ares_completed_callback(void* arg, int status, int, struct host
         char ip[INET6_ADDRSTRLEN];
         mega_inet_ntop(host->h_addrtype, host->h_addr_list[0], ip, sizeof(ip));
 
-        LOG_verbose << "Received a valid IP for "<< httpctx->hostname << ": " << ip;
+        LOG_debug << "Received a valid IP for "<< httpctx->hostname << ": " << ip;
 
         httpio->inetstatus(true);
 
@@ -1035,7 +1046,7 @@ void CurlHttpIO::ares_completed_callback(void* arg, int status, int, struct host
 
         if (incache)
         {
-            LOG_verbose << "The current DNS cache record is still valid";
+            LOG_debug << "The current DNS cache record is still valid";
         }
         else if (invalidcache)
         {
@@ -1080,7 +1091,7 @@ void CurlHttpIO::ares_completed_callback(void* arg, int status, int, struct host
     }
     else if (status != ARES_SUCCESS)
     {
-        LOG_verbose << "c-ares error. code: " << status;
+        LOG_warn << "c-ares error. code: " << status;
     }
     else
     {
@@ -1100,7 +1111,7 @@ void CurlHttpIO::ares_completed_callback(void* arg, int status, int, struct host
 
     if (httpctx->curl)
     {
-        LOG_verbose << "Request already sent using a previous DNS response";
+        LOG_debug << "Request already sent using a previous DNS response";
         if (invalidcache && httpctx->isIPv6 == (host->h_addrtype == PF_INET6))
         {
             LOG_warn << "Cancelling request due to the detection of an invalid DNS cache record";
@@ -1152,7 +1163,7 @@ void CurlHttpIO::ares_completed_callback(void* arg, int status, int, struct host
     bool ares_pending = httpctx->ares_pending;
     if (httpctx->hostip.size())
     {
-        LOG_verbose << "Name resolution finished";
+        LOG_debug << "Name resolution finished";
 
         // if there is no proxy or we already have the IP of the proxy, send the request.
         // otherwise, queue the request until we get the IP of the proxy
@@ -1183,7 +1194,7 @@ void CurlHttpIO::ares_completed_callback(void* arg, int status, int, struct host
 
     if (ares_pending)
     {
-        LOG_verbose << "Waiting for the completion of the c-ares request";
+        LOG_debug << "Waiting for the completion of the c-ares request";
     }
 }
 
@@ -1230,16 +1241,16 @@ void CurlHttpIO::send_request(CurlHttpContext* httpctx)
             }
             memset((char *)safeurl.data() + sid, 'X', end - sid);
         }
-        LOG_debug << "POST target URL: " << safeurl;
+        LOG_debug << httpctx->req->logname << "POST target URL: " << safeurl;
     }
 
     if (req->binary)
     {
-        LOG_debug << "[sending " << (data ? len : req->out->size()) << " bytes of raw data]";
+        LOG_debug << httpctx->req->logname << "[sending " << (data ? len : req->out->size()) << " bytes of raw data]";
     }
     else
     {
-        LOG_debug << "Sending: " << *req->out;
+        LOG_debug << httpctx->req->logname << "Sending: " << *req->out;
     }
 
     httpctx->headers = clone_curl_slist(req->type == REQ_JSON ? httpio->contenttypejson : httpio->contenttypebinary);
@@ -1251,7 +1262,7 @@ void CurlHttpIO::send_request(CurlHttpContext* httpctx)
     }
     else if(httpctx->hostip.size())
     {
-        LOG_debug << "Using the IP of the hostname";
+        LOG_debug << "Using the IP of the hostname: " << httpctx->hostip;
         httpctx->posturl.replace(httpctx->posturl.find(httpctx->hostname), httpctx->hostname.size(), httpctx->hostip);
         httpctx->headers = curl_slist_append(httpctx->headers, httpctx->hostheader.c_str());
     }
@@ -1319,6 +1330,12 @@ void CurlHttpIO::send_request(CurlHttpContext* httpctx)
         if (httpio->maxspeed[GET] && httpio->maxspeed[GET] <= 102400)
         {
             curl_easy_setopt(curl, CURLOPT_BUFFERSIZE, 4096L);
+        }
+
+        if (req->minspeed)
+        {
+            curl_easy_setopt(curl, CURLOPT_LOW_SPEED_TIME, 60L);
+            curl_easy_setopt(curl, CURLOPT_LOW_SPEED_LIMIT, 30L);
         }
 
         if (!MegaClient::disablepkp && req->protect)
@@ -1734,7 +1751,7 @@ void CurlHttpIO::post(HttpReq* req, const char* data, unsigned len)
     {
         if (dnsEntry && dnsEntry->ipv6.size() && !dnsEntry->isIPv6Expired())
         {
-            LOG_debug << "DNS cache hit for " << httpctx->hostname << " (IPv6)";
+            LOG_debug << "DNS cache hit for " << httpctx->hostname << " (IPv6) " << dnsEntry->ipv6;
             std::ostringstream oss;
             httpctx->isIPv6 = true;
             httpctx->isCachedIp = true;
@@ -1753,7 +1770,7 @@ void CurlHttpIO::post(HttpReq* req, const char* data, unsigned len)
     {
         if (dnsEntry && dnsEntry->ipv4.size() && !dnsEntry->isIPv4Expired())
         {
-            LOG_debug << "DNS cache hit for " << httpctx->hostname << " (IPv4)";
+            LOG_debug << "DNS cache hit for " << httpctx->hostname << " (IPv4) " << dnsEntry->ipv4;
             httpctx->isIPv6 = false;
             httpctx->isCachedIp = true;
             httpctx->hostip = dnsEntry->ipv4;
@@ -1993,7 +2010,8 @@ bool CurlHttpIO::multidoio(CURLM *curlmhandle)
 
                 curl_easy_getinfo(msg->easy_handle, CURLINFO_RESPONSE_CODE, &req->httpstatus);
 
-                LOG_debug << "CURLMSG_DONE with HTTP status: " << req->httpstatus;
+                LOG_debug << "CURLMSG_DONE with HTTP status: " << req->httpstatus << " from "
+                          << (req->httpiohandle ? (((CurlHttpContext*)req->httpiohandle)->hostname + " - " + ((CurlHttpContext*)req->httpiohandle)->hostip) : "(unknown) ");
                 if (req->httpstatus)
                 {
                     if (req->method == METHOD_NONE)
@@ -2021,11 +2039,11 @@ bool CurlHttpIO::multidoio(CURLM *curlmhandle)
                     {
                         if (req->in.size() < 10240)
                         {
-                            LOG_debug << "Received: " << req->in.c_str();
+                            LOG_debug << req->logname << "Received: " << req->in.c_str();
                         }
                         else
                         {
-                            LOG_debug << "Received: " << req->in.substr(0, 5116).c_str() << " [...] " << req->in.substr(req->in.size() - 5116, string::npos).c_str();
+                            LOG_debug << req->logname << "Received: " << req->in.substr(0, 5116).c_str() << " [...] " << req->in.substr(req->in.size() - 5116, string::npos).c_str();
                         }
                     }
                 }
@@ -2523,6 +2541,7 @@ CURLcode CurlHttpIO::ssl_ctx_function(CURL*, void* sslctx, void*req)
    #define EVP_PKEY_get0_RSA(_pkey_) ((_pkey_)->pkey.rsa)
 #endif
 
+#if (OPENSSL_VERSION_NUMBER < 0x1010100fL) || defined (LIBRESSL_VERSION_NUMBER)
 const BIGNUM *RSA_get0_n(const RSA *rsa)
 {
 #if (OPENSSL_VERSION_NUMBER < 0x10100000L) || defined (LIBRESSL_VERSION_NUMBER)
@@ -2555,6 +2574,7 @@ const BIGNUM *RSA_get0_d(const RSA *rsa)
     return result;
 #endif
 }
+#endif
 
 // SSL public key pinning
 int CurlHttpIO::cert_verify_callback(X509_STORE_CTX* ctx, void* req)
@@ -2658,5 +2678,151 @@ SockInfo::SockInfo()
     handle = WSA_INVALID_EVENT;
 #endif
 }
+
+#if defined(__ANDROID__) && ARES_VERSION >= 0x010F00
+void CurlHttpIO::initialize_android()
+{
+    if (!MEGAjvm)
+    {
+        LOG_err << "No JVM found";
+        return;
+    }
+
+    bool detach = false;
+    try
+    {
+        JNIEnv *env;
+        int result = MEGAjvm->GetEnv((void **)&env, JNI_VERSION_1_4);
+        if (result == JNI_EDETACHED)
+        {
+            if (MEGAjvm->AttachCurrentThread(&env, NULL) != JNI_OK)
+            {
+                LOG_err << "Unable to attach the current thread";
+                return;
+            }
+            detach = true;
+        }
+        else if (result != JNI_OK)
+        {
+            LOG_err << "Unable to get JNI environment";
+            return;
+        }
+
+        jclass appGlobalsClass = env->FindClass("android/app/AppGlobals");
+        if (!appGlobalsClass)
+        {
+            env->ExceptionClear();
+            LOG_err << "Failed to get android/app/AppGlobals";
+            if (detach)
+            {
+                MEGAjvm->DetachCurrentThread();
+            }
+            return;
+        }
+
+        jmethodID getInitialApplicationMID = env->GetStaticMethodID(appGlobalsClass,"getInitialApplication","()Landroid/app/Application;");
+        if (!getInitialApplicationMID)
+        {
+            env->ExceptionClear();
+            LOG_err << "Failed to get getInitialApplication()";
+            if (detach)
+            {
+                MEGAjvm->DetachCurrentThread();
+            }
+            return;
+        }
+
+        jobject context = env->CallStaticObjectMethod(appGlobalsClass, getInitialApplicationMID);
+        if (!context)
+        {
+            env->ExceptionClear();
+            LOG_err << "Failed to get context";
+            if (detach)
+            {
+                MEGAjvm->DetachCurrentThread();
+            }
+            return;
+        }
+
+        jclass contextClass = env->FindClass("android/content/Context");
+        if (!contextClass)
+        {
+            env->ExceptionClear();
+            LOG_err << "Failed to get android/content/Context";
+            if (detach)
+            {
+                MEGAjvm->DetachCurrentThread();
+            }
+            return;
+        }
+
+        jmethodID getSystemServiceMID = env->GetMethodID(contextClass, "getSystemService", "(Ljava/lang/String;)Ljava/lang/Object;");
+        if (!getSystemServiceMID)
+        {
+            env->ExceptionClear();
+            LOG_err << "Failed to get getSystemService()";
+            if (detach)
+            {
+                MEGAjvm->DetachCurrentThread();
+            }
+            return;
+        }
+
+        jfieldID fid = env->GetStaticFieldID(contextClass, "CONNECTIVITY_SERVICE", "Ljava/lang/String;");
+        if (!fid)
+        {
+            env->ExceptionClear();
+            LOG_err << "Failed to get CONNECTIVITY_SERVICE";
+            if (detach)
+            {
+                MEGAjvm->DetachCurrentThread();
+            }
+            return;
+        }
+
+        jstring str = (jstring)env->GetStaticObjectField(contextClass, fid);
+        if (!str)
+        {
+            env->ExceptionClear();
+            LOG_err << "Failed to get CONNECTIVITY_SERVICE value";
+            if (detach)
+            {
+                MEGAjvm->DetachCurrentThread();
+            }
+            return;
+        }
+
+        jobject connectivityManager = env->CallObjectMethod(context, getSystemServiceMID, str);
+        if (!connectivityManager)
+        {
+            env->ExceptionClear();
+            LOG_err << "Failed to get connectivityManager";
+            if (detach)
+            {
+                MEGAjvm->DetachCurrentThread();
+            }
+            return;
+        }
+
+        ares_library_init_android(connectivityManager);
+
+        if (detach)
+        {
+            MEGAjvm->DetachCurrentThread();
+        }
+    }
+    catch (...)
+    {
+        try
+        {
+            if (detach)
+            {
+                MEGAjvm->DetachCurrentThread();
+            }
+        }
+        catch (...) { }
+    }
+}
+#endif
 
 } // namespace

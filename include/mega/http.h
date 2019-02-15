@@ -90,10 +90,10 @@ namespace mega {
 #define APISSLEXPONENTSIZE "\x03"
 #define APISSLEXPONENT "\x01\x00\x01"
 
-#define MEGA_DNS_SERVERS "2001:978:2:aa::20:2,154.53.224.130," \
-                         "2001:978:2:aa::21:2,154.53.224.134," \
-                         "2403:9800:c020::43,122.56.56.216," \
-                         "2405:f900:3e6a:1::103,103.244.183.5"
+#define MEGA_DNS_SERVERS "2001:678:25c:2215::554,89.44.169.136," \
+                         "2001:67c:1998:2212::13,31.216.148.13," \
+                         "2405:f900:3e6a:1::103,31.216.148.11," \
+                         "2403:9800:c020::43,122.56.56.216"
 
 class MEGA_API SpeedController
 {
@@ -149,7 +149,7 @@ struct MEGA_API HttpIO : public EventTrigger
 
     // timestamp of last data received (across all connections)
     dstime lastdata;
-
+    
     // download speed
     SpeedController downloadSpeedController;
     m_off_t downloadSpeed;
@@ -166,8 +166,8 @@ struct MEGA_API HttpIO : public EventTrigger
     // request timeout (ds)
     static const int REQUESTTIMEOUT;
 
-    // request timeout (ds)
-    static const int WAITREQUESTTIMEOUT;
+    // sc request timeout (ds)
+    static const int SCREQUESTTIMEOUT;
 
     // connection timeout (ds)
     static const int CONNECTTIMEOUT;
@@ -212,6 +212,7 @@ struct MEGA_API HttpReq
     string posturl;
 
     bool protect;
+    bool minspeed;
 
     bool sslcheckfailed;
     string sslfakeissuer;
@@ -241,6 +242,9 @@ struct MEGA_API HttpReq
     // while this request is in flight, points to the application's HttpIO
     // object - NULL otherwise
     HttpIO* httpio;
+
+    // identify different channels from different MegaClients etc in the log
+    string logname;
 
     // set url and content type for subsequent requests
     void setreq(const char*, contenttype_t);

@@ -71,6 +71,7 @@
 ../../include/mega/types.h
 ../../include/mega/user.h
 ../../include/mega/utils.h
+../../include/mega/useralerts.h
 ../../include/mega/waiter.h
 ../../include/mega/pendingcontactrequest.h
 ../../include/mega.h
@@ -100,6 +101,7 @@
 ../../src/win32/waiter.cpp
 ../../src/wp8/waiter.cpp
 ../../src/attrmap.cpp
+../../src/autocomplete.cpp
 ../../src/backofftimer.cpp
 ../../src/base64.cpp
 ../../src/command.cpp
@@ -133,6 +135,7 @@
 ../../src/transferslot.cpp
 ../../src/treeproc.cpp
 ../../src/user.cpp
+../../src/useralerts.cpp
 ../../src/utils.cpp
 ../../src/waiterbase.cpp
 ../../src/pendingcontactrequest.cpp

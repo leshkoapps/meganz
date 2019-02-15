@@ -118,6 +118,9 @@ struct MEGA_API Node : public NodeCore, FileFingerprint
     // display name (UTF-8)
     const char* displayname() const;
 
+    // display path from its root in the cloud (UTF-8)
+    string displaypath() const;
+
     // node attributes
     AttrMap attrs;
 
@@ -166,6 +169,7 @@ struct MEGA_API Node : public NodeCore, FileFingerprint
         bool pendingshares : 1;
         bool parent : 1;
         bool publiclink : 1;
+        bool newnode : 1;
     } changed;
     
     void setkey(const byte* = NULL);
@@ -296,6 +300,7 @@ struct MEGA_API LocalNode : public File
     // build full local path to this node
     void getlocalpath(string*, bool sdisable = false) const;
     void getlocalsubpath(string*) const;
+    string localnodedisplaypath(FileSystemAccess& fsa) const;
 
     // return child node by name
     LocalNode* childbyname(string*);
@@ -316,6 +321,7 @@ struct MEGA_API LocalNode : public File
 
     void setnameparent(LocalNode*, string*);
 
+    LocalNode();
     void init(Sync*, nodetype_t, LocalNode*, string*);
 
     virtual bool serialize(string*);

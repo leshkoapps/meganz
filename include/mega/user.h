@@ -67,6 +67,10 @@ struct MEGA_API User : public Cachable
         bool disableVersions : 1;   // disable fileversioning
         bool contactLinkVerification : 1; // Verify contact requests with contact links
         bool richPreviews : 1;  // enable messages with rich previews
+        bool lastPsa : 1;
+        bool rubbishTime : 1;   // days to keep nodes in rubbish bin before auto clean
+        bool storageState : 1;   // state of the storage (0 = green, 1 = orange, 2 = red)
+        bool geolocation : 1;   // enable send geolocations
     } changed;
 
     // user's public key
@@ -105,6 +109,7 @@ public:
     void removeattr(attr_t at);
 
     static string attr2string(attr_t at);
+    static string attr2longname(attr_t at);
     static attr_t string2attr(const char *name);
     static bool needversioning(attr_t at);
     static char scope(attr_t at);

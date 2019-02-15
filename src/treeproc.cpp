@@ -77,6 +77,10 @@ void TreeProcDel::proc(MegaClient* client, Node* n)
     n->changed.removed = true;
     n->tag = client->reqtag;
     client->notifynode(n);
+    if (n->owner != client->me)
+    {
+        client->useralerts.noteSharedNode(n->owner, n->type, 0, NULL);
+    }
 }
 
 void TreeProcApplyKey::proc(MegaClient *client, Node *n)
@@ -134,6 +138,15 @@ void LocalTreeProcUpdateTransfers::proc(MegaClient *, LocalNode *localnode)
     {
         LOG_debug << "Updating transfer path";
         localnode->prepare();
+    }
+}
+
+void LocalTreeProcUnlinkNodes::proc(MegaClient *, LocalNode *localnode)
+{
+    if (localnode->node)
+    {
+        localnode->node->localnode = NULL;
+        localnode->node = NULL;
     }
 }
 

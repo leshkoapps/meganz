@@ -40,7 +40,8 @@ extern JavaVM *MEGAjvm;
 #endif
 
 namespace mega {
-    
+using namespace std;
+
 #ifdef USE_IOS
     char* PosixFileSystemAccess::appbasepath = NULL;
 #endif
@@ -119,6 +120,7 @@ bool PosixFileAccess::sysstat(m_time_t* mtime, m_off_t* size)
     type = TYPE_UNKNOWN;
     if (!stat(localname.c_str(), &statbuf))
     {
+        errorcode = 0;
         if (S_ISDIR(statbuf.st_mode))
         {
             type = FOLDERNODE;
@@ -134,6 +136,7 @@ bool PosixFileAccess::sysstat(m_time_t* mtime, m_off_t* size)
         return true;
     }
 
+    errorcode = errno;
     return false;
 }
 
@@ -667,7 +670,7 @@ int PosixFileSystemAccess::checkevents(Waiter* w)
                 if (in->mask & (IN_CREATE | IN_DELETE | IN_MOVED_FROM
                               | IN_MOVED_TO | IN_CLOSE_WRITE | IN_EXCL_UNLINK))
                 {
-                    if ((in->mask & (IN_CREATE | IN_ISDIR)) != IN_CREATE)
+                    //if ((in->mask & (IN_CREATE | IN_ISDIR)) != IN_CREATE) //certain operations (e.g: QFile::copy, Qt 5.11) might produce IN_CREATE with no further IN_CLOSE_WRITE
                     {
                         it = wdnodes.find(in->wd);
 
@@ -798,6 +801,7 @@ int PosixFileSystemAccess::checkevents(Waiter* w)
     sync_list::iterator it;
     fd_set rfds;
     timeval tv = { 0 };
+    struct stat statbuf;
     static char rsrc[] = "/..namedfork/rsrc";
     static unsigned int rsrcsize = sizeof(rsrc) - 1;
 
@@ -869,6 +873,13 @@ int PosixFileSystemAccess::checkevents(Waiter* w)
                       && (psize < rsrcsize                                  // it isn't a resource fork
                           || memcmp(path + psize - rsrcsize, rsrc, rsrcsize)))
                         {
+                            if (!lstat(path, &statbuf) && S_ISLNK(statbuf.st_mode))
+                            {
+                                LOG_debug << "Link skipped:  " << path;
+                                paths[i] = NULL;
+                                break;
+                            }
+
                             paths[i] += (*it)->localroot.localname.size() + 1;
                             pathsync[i] = *it;
                             break;
@@ -973,8 +984,10 @@ bool PosixFileSystemAccess::renamelocal(string* oldname, string* newname, bool o
     transient_error = !existingandcare && (errno == ETXTBSY || errno == EBUSY);
 
     int e = errno;
-    LOG_warn << "Unable to move file: " << oldname->c_str() << " to " << newname->c_str() << ". Error code: " << e;
-
+    if (!skip_errorreport)
+    {
+        LOG_warn << "Unable to move file: " << oldname->c_str() << " to " << newname->c_str() << ". Error code: " << e;
+    }
     return false;
 }
 

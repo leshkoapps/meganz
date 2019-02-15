@@ -34,6 +34,9 @@ struct MEGA_API MegaApp
     // request response progress
     virtual void request_response_progress(m_off_t, m_off_t) { }
 
+    // prelogin result
+    virtual void prelogin_result(int, string*, string*, error) { }
+
     // login result
     virtual void login_result(error) { }
 
@@ -60,6 +63,7 @@ struct MEGA_API MegaApp
                                         const byte*, const byte*, const byte*,
                                         size_t) { }
     virtual void confirmsignuplink_result(error) { }
+    virtual void confirmsignuplink2_result(handle, const char*, const char*, error) { }
     virtual void setkeypair_result(error) { }
 
     // account credentials, properties and history
@@ -92,6 +96,9 @@ struct MEGA_API MegaApp
 
     // users have been added or updated
     virtual void users_updated(User**, int) { }
+
+    // alerts have been added or updated
+    virtual void useralerts_updated(UserAlert::Base**, int) { }
 
     // the account has been modified (upgraded/downgraded)
     virtual void account_updated() { }
@@ -227,6 +234,10 @@ struct MEGA_API MegaApp
 
     virtual void chats_updated(textchat_map *, int) { }
     virtual void richlinkrequest_result(string*, error) { }
+    virtual void chatlink_result(handle, error) { }
+    virtual void chatlinkurl_result(handle, int, string*, string*, int, m_time_t, error) { }
+    virtual void chatlinkclose_result(error) { }
+    virtual void chatlinkjoin_result(error) { }
 #endif
 
     // get mega-achievements
@@ -291,6 +302,8 @@ struct MEGA_API MegaApp
 
     virtual void notify_dbcommit() { }
 
+    virtual void notify_storage(int) { }
+
     virtual void notify_change_to_https() { }
 
     // account confirmation via signup link
@@ -323,8 +336,17 @@ struct MEGA_API MegaApp
     // multi-factor authentication disable
     virtual void multifactorauthdisable_result(error) { }
 
+    // fetch time zone
+    virtual void fetchtimezone_result(error, vector<string>*, vector<int>*, int) { }
+
     // keep me alive command for mobile apps
     virtual void keepmealive_result (error) { }
+
+    // get the current PSA
+    virtual void getpsa_result (error, int, string*, string*, string*, string*, string*) { }
+
+    // result of the user alert acknowledge request
+    virtual void acknowledgeuseralerts_result(error) { }
 
     virtual ~MegaApp() { }
 };

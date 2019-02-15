@@ -41,7 +41,7 @@ extern "C" {
 #endif
 
 #ifdef HAVE_LIBRAW
-#include <libraw.h>
+#include <libraw/libraw.h>
 #endif
 
 namespace mega {
@@ -470,9 +470,10 @@ QImage GfxProcQT::createThumbnail(QString imagePath)
 
 QImageReader *GfxProcQT::readbitmapQT(int &w, int &h, int &orientation, int &imageType, QString imagePath)
 {
-#ifdef HAVE_FFMPEG
     QFileInfo info(imagePath);
     QString ext = QString::fromUtf8(".%1.").arg(info.suffix()).toLower();
+
+#ifdef HAVE_FFMPEG
     if (strstr(GfxProcQT::supportedformatsFfmpeg(), ext.toUtf8().constData()))
     {
         imageType = TYPE_VIDEO;
@@ -629,7 +630,7 @@ QImageReader *GfxProcQT::readbitmapLibraw(int &w, int &h, int &orientation, QStr
 {
     LibRaw libRaw;
     int ret = libRaw.open_file(imagePath.toUtf8().constData());
-    if (ret > 0 || LIBRAW_FATAL_ERROR(ret)
+    if (ret != LIBRAW_SUCCESS
             || libRaw.imgdata.sizes.width <= 0
             || libRaw.imgdata.sizes.height <= 0)
     {
@@ -649,21 +650,31 @@ QImageReader *GfxProcQT::readbitmapLibraw(int &w, int &h, int &orientation, QStr
     if (imgdata.thumbnail.twidth > 0 && imgdata.thumbnail.theight > 0)
     {
         ret = libRaw.unpack_thumb();
-        if (ret == 0 || (ret < 0 && !LIBRAW_FATAL_ERROR(ret)))
+        if (ret == 0)
         {
             LOG_debug << "Extracting thumbnail from RAW image";
             output = libRaw.dcraw_make_mem_thumb();
+        }
+        else if (LIBRAW_FATAL_ERROR(ret))
+        {
+            LOG_debug << "Fatal error unpacking thumbnail";
+            return NULL;
         }
     }
 
     if (!output)
     {
         ret = libRaw.unpack();
-        if (ret == 0 || (ret < 0 && !LIBRAW_FATAL_ERROR(ret)))
+        if (ret == 0)
         {
             LOG_debug << "Extracting full RAW image";
             libRaw.dcraw_process();
             output = libRaw.dcraw_make_mem_image();
+        }
+        else if (LIBRAW_FATAL_ERROR(ret))
+        {
+            LOG_debug << "Fatal error unpacking image";
+            return NULL;
         }
     }
 
@@ -853,7 +864,7 @@ QImageReader *GfxProcQT::readbitmapFfmpeg(int &w, int &h, int &orientation, QStr
     }
 
     AVPixelFormat sourcePixelFormat = codecContext.pix_fmt;
-    AVPixelFormat targetPixelFormat = AV_PIX_FMT_RGB24;
+    AVPixelFormat targetPixelFormat = AV_PIX_FMT_RGB32;
     SwsContext* swsContext = sws_getContext(width, height, sourcePixelFormat,
                                             width, height, targetPixelFormat,
                                             SWS_FAST_BILINEAR, NULL, NULL, NULL);
@@ -988,8 +999,8 @@ QImageReader *GfxProcQT::readbitmapFfmpeg(int &w, int &h, int &orientation, QStr
 
                 if (scalingResult > 0)
                 {
-                    QImage image(width, height, QImage::Format_RGB888);
-                    if (avpicture_layout((AVPicture *)targetFrame, AV_PIX_FMT_RGB24,
+                    QImage image(width, height, QImage::Format_ARGB32);
+                    if (avpicture_layout((AVPicture *)targetFrame, targetPixelFormat,
                                     width, height, image.bits(), image.byteCount()) <= 0)
                     {
                         LOG_warn << "Error copying frame";

@@ -1,5 +1,5 @@
 /**
-* @file win32/autocomplete.cpp
+* @file autocomplete.cpp
 * @brief Win32 console I/O autocomplete support
 *
 * (c) 2013-2018 by Mega Limited, Auckland, New Zealand
@@ -19,18 +19,25 @@
 * program.
 */
 
-#ifdef NO_READLINE
+#if !defined(__MINGW32__) && !defined(__ANDROID__) && ( (__cplusplus >= 201100L) || (defined(_MSC_VER) && _MSC_VER >= 1600) )
+// autocomplete for clients using c++11 capabilities
 
-#include <mega/win32/autocomplete.h>
+#include <mega/autocomplete.h>
 #include <mega/megaclient.h>
 #include <cassert>
-#include <filesystem>
 #include <algorithm>
 
-namespace fs = std::experimental::filesystem;
-
-namespace mega {
-namespace autocomplete {
+#if (__cplusplus >= 201700L)
+    #include <filesystem>
+    namespace fs = std::filesystem;
+#else
+#ifdef WIN32
+    #include <filesystem>
+    namespace fs = std::experimental::filesystem;
+#else
+    #include <experimental/filesystem>
+    namespace fs = std::experimental::filesystem;
+#endif
 
 template<class T>
 static T clamp(T v, T lo, T hi)
@@ -50,6 +57,14 @@ static T clamp(T v, T lo, T hi)
     }
 }
 
+#endif
+
+
+namespace mega {
+namespace autocomplete {
+using namespace std;
+
+
 inline static bool icmp(char a, char b)
 {
     return(toupper(a) == toupper(b));
@@ -61,7 +76,7 @@ ACState::quoting::quoting()
 
 ACState::quoting::quoting(std::string& s)
 {
-    quoted = !s.empty() && s[0] == '\"' || s[0] == '\'';
+    quoted = (!s.empty() && s[0] == '\"') || (s[0] == '\'');
     if (quoted)
     {
         quote_char = s[0];
@@ -78,6 +93,7 @@ void ACState::quoting::applyQuotes(std::string& w)
     if (quoted && quote_char != 0)
     {
         // reapply quotes as the user had them
+        w.reserve(w.size() + 2);
         w.insert(0, 1, quote_char);
         w.push_back(quote_char);
     }
@@ -105,7 +121,14 @@ ACState::quoted_word::quoted_word(const std::string &str, const quoting& quot)
 {
 }
 
-void ACState::addCompletion(const std::string& s, bool caseInsensitive) 
+string ACState::quoted_word::getQuoted()
+{
+    string qs = s;
+    q.applyQuotes(qs);
+    return qs;
+}
+
+void ACState::addCompletion(const std::string& s, bool caseInsensitive, bool couldextend) 
 {
     // add if it matches the prefix. Doing the check here keeps subclasses simple
     assert(atCursor());
@@ -128,30 +151,44 @@ void ACState::addCompletion(const std::string& s, bool caseInsensitive)
             if ((s[0] == '-' && !prefix.empty() && prefix[0] == '-') ||
                 (s[0] != '-' && (prefix.empty() || prefix[0] != '-')))
             {
-                completions.emplace_back(s, caseInsensitive);
+                completions.emplace_back(s, caseInsensitive, couldextend);
             }
         }
     }
 }
 
-void ACState::addPathCompletion(std::string& f, const std::string& relativeRootPath, bool isFolder, char dir_sep, bool caseInsensitive)
+void ACState::addPathCompletion(std::string&& f, const std::string& relativeRootPath, bool isFolder, char dir_sep, bool caseInsensitive)
 {
     if (f.size() > relativeRootPath.size() && f.compare(0, relativeRootPath.size(), relativeRootPath) == 0)
     {
         f.erase(0, relativeRootPath.size());
     }
+    if (dir_sep != '\\')
+    {
+        string from = "\\";
+        string to(1,dir_sep);
+        size_t start_pos = 0;
+        while (( start_pos = f.find(from, start_pos)) != std::string::npos)
+        {
+            f.replace(start_pos, from.length(), to);
+            start_pos += to.length();
+        }
+    }
+
     if (unixStyle && isFolder)
     {
         f.push_back(dir_sep);
     }
-    addCompletion(f, caseInsensitive);
+    addCompletion(f, caseInsensitive, isFolder);
 }
-
-
 
 std::ostream& operator<<(std::ostream& s, const ACNode& n)
 {
     return n.describe(s);
+}
+
+ACNode::~ACNode()
+{
 }
 
 Optional::Optional(ACN n)
@@ -178,7 +215,7 @@ std::ostream& Optional::describe(std::ostream& s) const
     if (auto e = dynamic_cast<Either*>(subnode.get()))
     {
         std::ostringstream s2;
-        s2 << *subnode;
+        s2 << *e;
         std::string str = s2.str();
         if (str.size() >= 2 && str.front() == '(' && str.back() == ')')
         {
@@ -481,23 +518,39 @@ bool LocalFS::addCompletions(ACState& s)
 {
     if (s.atCursor())
     {
-        fs::path searchPath(s.word().s + (s.word().s.empty() || s.word().s.back() == '\\' ? "*" : ""));
+        fs::path searchPath = fs::u8path(s.word().s + (s.word().s.empty() || (s.word().s.back() == '\\'  || s.word().s.back() == '/' ) ? "*" : ""));
+#ifdef WIN32
+        char sep = (!s.word().s.empty() && s.word().s.find('/') != string::npos ) ?'/':'\\';
+#else
+        char sep = '/';
+#endif
         bool relative = !searchPath.is_absolute();
-        searchPath = relative ? fs::current_path() / searchPath : searchPath;
-        std::string cp = relative ? fs::current_path().u8string() + "\\" : "";
+        searchPath = relative ? (fs::current_path() /= searchPath) : searchPath;
+        std::string cp = relative ? fs::current_path().u8string() + sep : "";
         if ((searchPath.filename() == ".." || searchPath.filename() == ".") && fs::exists(searchPath))
         {
-            s.addPathCompletion(searchPath.u8string(), cp, true, '\\', true);
+            s.addPathCompletion(searchPath.u8string(), cp, true, sep, true);
         }
         else
         {
             searchPath.remove_filename(); // iterate the whole directory, and filter
-            for (fs::directory_iterator iter(searchPath); iter != fs::directory_iterator(); ++iter)
+#ifdef WIN32
+            std::string spath = searchPath.u8string();
+            if (spath.back() == ':')
             {
-                if (reportFolders && fs::is_directory(iter->status()) ||
-                    reportFiles && fs::is_regular_file(iter->status()))
+                searchPath = spath.append("\\");
+            }
+#endif
+
+            if (fs::exists(searchPath) && fs::is_directory(searchPath))
+            {
+                for (fs::directory_iterator iter(searchPath); iter != fs::directory_iterator(); ++iter)
                 {
-                    s.addPathCompletion(iter->path().u8string(), cp, fs::is_directory(iter->status()), '\\', true);
+                    if ((reportFolders && fs::is_directory(iter->status())) ||
+                        (reportFiles && fs::is_regular_file(iter->status())))
+                    {
+                        s.addPathCompletion(iter->path().u8string(), cp, fs::is_directory(iter->status()), sep, true);
+                    }
                 }
             }
         }
@@ -531,12 +584,50 @@ std::ostream& LocalFS::describe(std::ostream& s) const
 }
 
 MegaFS::MegaFS(bool files, bool folders, MegaClient* c, ::mega::handle* curDirHandle, const std::string descriptionPrefix)
-    : reportFiles(files)
-    , reportFolders(folders)
-    , client(c)
+    : client(c)
     , cwd(curDirHandle)
+    , reportFiles(files)
+    , reportFolders(folders)
     , descPref(descriptionPrefix)
 {
+}
+
+Node* addShareRootCompletions(ACState& s, MegaClient* client, string& pathprefix)
+{
+    const string& path = s.word().s;
+    string::size_type t = path.find_first_of(":/");
+
+    if (t == string::npos || path[t] == ':')
+    {
+        for (const user_map::value_type& u : client->users)
+        {
+            if (t == string::npos && !u.second.sharing.empty())
+            {
+                string str;
+                s.addCompletion(u.second.email + ":", true, true);
+            }
+            else if (u.second.email == path.substr(0, t))
+            {
+                string::size_type pos = path.find_first_of("/", t + 1);
+                for (handle h : u.second.sharing)
+                {
+                    if (Node* n = client->nodebyhandle(h))
+                    {
+                        if (pos == string::npos)
+                        {
+                            s.addPathCompletion(path.substr(0, t + 1) + n->displayname(), "", n->type != FILENODE, '/', false);
+                        }
+                        else if (n->displayname() == path.substr(t + 1, pos - t - 1))
+                        {
+                            pathprefix = path.substr(0, pos + 1);
+                            return n;
+                        }
+                    }
+                }
+            }
+        }
+    }
+    return NULL;
 }
 
 bool MegaFS::addCompletions(ACState& s)
@@ -549,12 +640,40 @@ bool MegaFS::addCompletions(ACState& s)
             std::string pathprefix;
             if (!s.word().s.empty() && s.word().s[0] == '/')
             {
-                pathprefix += "/";
-                n = client->nodebyhandle(client->rootnodes[0]);
+                if (s.word().s.size() >= 2 && s.word().s[1] == '/')
+                {
+                    if (s.word().s.size() >= 5 && !strncmp(s.word().s.c_str(), "//in/", 5))
+                    {
+                        pathprefix = "//in/";
+                        n = client->nodebyhandle(client->rootnodes[1]);
+                    }
+                    else if (s.word().s.size() >= 6 && !strncmp(s.word().s.c_str(), "//bin/", 6))
+                    {
+                        pathprefix = "//bin/";
+                        n = client->nodebyhandle(client->rootnodes[2]);
+                    }
+                    else
+                    {
+                        s.addPathCompletion(string("//bin"), "", true, '/', false);
+                        s.addPathCompletion(string("//in"), "", true, '/', false);
+                        return true;
+                    }
+                }
+                else
+                {
+                    pathprefix = "/";
+                    n = client->nodebyhandle(client->rootnodes[0]);
+                }
             }
-            else if (*cwd != UNDEF)
+            else
             {
-                n = client->nodebyhandle(*cwd);
+                n = addShareRootCompletions(s, client, pathprefix);
+
+                if (!n && *cwd != UNDEF)
+                {
+                    n = client->nodebyhandle(*cwd);
+                    pathprefix.clear();
+                }
             }
 
             // drill down folders
@@ -589,8 +708,7 @@ bool MegaFS::addCompletions(ACState& s)
             std::string leaf = s.word().s.substr(pathprefix.size(), std::string::npos);
             if (n && (leaf == "." || (leaf == ".." && n->type != ROOTNODE)))
             {
-                std::string f = s.word().s;
-                s.addPathCompletion(f, "", true, '/', false);
+                s.addPathCompletion(string(s.word().s), "", true, '/', false);
             }
             else
             {
@@ -599,8 +717,8 @@ bool MegaFS::addCompletions(ACState& s)
                 {
                     for (Node* subnode : n->children)
                     {
-                        if (reportFolders && subnode->type == FOLDERNODE ||
-                            reportFiles && subnode->type == FILENODE)
+                        if ((reportFolders && subnode->type == FOLDERNODE) ||
+                            (reportFiles && subnode->type == FILENODE))
                         {
                             s.addPathCompletion(pathprefix + subnode->displayname(), "", subnode->type == FOLDERNODE, '/', false);
                         }
@@ -636,6 +754,55 @@ std::ostream& MegaFS::describe(std::ostream& s) const
 {
     return s << descPref << (reportFiles ? (reportFolders ? "remotepath" : "remotefile") : "remotefolder");
 }
+
+MegaContactEmail::MegaContactEmail(MegaClient* c)
+    : client(c)
+{
+}
+
+bool MegaContactEmail::addCompletions(ACState& s)
+{
+    if (s.atCursor())
+    {
+        if (client)
+        {
+            for (const user_map::value_type& u : client->users)
+            {
+                if (u.second.show == VISIBLE)
+                {
+                    s.addCompletion(u.second.email, true);
+                }
+            }
+        }
+        return true;
+    }
+    else
+    {
+        // don't let an option be misinterpreted as an email.  Emails beginning with a '-' (prob not legal anyway) will need to be quoted
+        bool stop = s.word().s.empty() || s.word().s.at(0) == '-';
+        s.i += stop ? 0 : 1;
+        return stop;
+    }
+}
+
+bool MegaContactEmail::match(ACState& s) const
+{
+    if (s.i < s.words.size())
+    {
+        if (!s.word().s.empty() && s.word().s[0] != '-')
+        {
+            s.i += 1;
+            return true;
+        }
+    }
+    return false;
+}
+
+std::ostream& MegaContactEmail::describe(std::ostream& s) const
+{
+    return s << "<email>";
+}
+
 
 std::pair<int, int> identifyNextWord(const std::string& line, int startPos)
 {
@@ -693,7 +860,7 @@ std::pair<int, int> identifyNextWord(const std::string& line, int startPos)
     return ret;
 }
 
-ACState prepACState(const std::string line, size_t insertPos, ACN syntax, bool unixStyle)
+ACState prepACState(const std::string line, size_t insertPos, bool unixStyle)
 {
     if (insertPos == std::string::npos)
     {
@@ -740,7 +907,7 @@ ACState prepACState(const std::string line, size_t insertPos, ACN syntax, bool u
 
 CompletionState autoComplete(const std::string line, size_t insertPos, ACN syntax, bool unixStyle)
 {
-    ACState acs = prepACState(line, insertPos, syntax, unixStyle);
+    ACState acs = prepACState(line, insertPos, unixStyle);
 
     acs.i = 0;
     syntax->addCompletions(acs);
@@ -751,16 +918,21 @@ CompletionState autoComplete(const std::string line, size_t insertPos, ACN synta
     cs.originalWord = acs.words.back();
     cs.completions = acs.completions;
     cs.unixStyle = acs.unixStyle;
-
+    cs.tidyCompletions();
 
     return cs;
 }
 
-void autoExec(const std::string line, size_t insertPos, ACN syntax, bool unixStyle, string& consoleOutput)
+bool autoExec(const std::string line, size_t insertPos, ACN syntax, bool unixStyle, string& consoleOutput, bool reportNoMatch)
 {
-    ACState acs = prepACState(line, insertPos, syntax, unixStyle);
+    ACState acs = prepACState(line, insertPos, unixStyle);
 
-    if (!acs.words.empty() && (acs.words[0].s.size() || acs.words.size() > 1))
+    while (!acs.words.empty() && acs.words.back().s.empty() && !acs.words.back().q.quoted)
+    {
+        acs.words.pop_back();
+    }
+
+    if (!acs.words.empty())
     {
         if (auto e = dynamic_cast<autocomplete::Either*>(syntax.get()))
         {
@@ -787,6 +959,10 @@ void autoExec(const std::string line, size_t insertPos, ACN syntax, bool unixSty
             }
             if (v.empty())
             {
+                if (!reportNoMatch)
+                {
+                    return false;
+                }
                 conout << "Invalid syntax";
                 if (firstWordMatches.empty())
                 {
@@ -823,6 +999,7 @@ void autoExec(const std::string line, size_t insertPos, ACN syntax, bool unixSty
             consoleOutput = conout.str();
         }
     }
+    return true;
 }
 
 
@@ -872,6 +1049,13 @@ unsigned CompletionState::calcUnixColumnWidthInGlyphs(int col, int rows)
     return width;
 }
 
+void CompletionState::tidyCompletions()
+{
+    // sort and eliminate duplicates
+    std::sort(completions.begin(), completions.end(), [](const ACState::Completion& c1, const ACState::Completion& c2) { return c1.s < c2.s; });
+    completions.erase(std::unique(completions.begin(), completions.end(), [](const ACState::Completion& c1, const ACState::Completion& c2) { return c1.s == c2.s; }), completions.end());
+}
+
 void applyCompletion(CompletionState& s, bool forwards, unsigned consoleWidth, CompletionTextOut& textOut)
 {
     if (!s.completions.empty())
@@ -885,9 +1069,15 @@ void applyCompletion(CompletionState& s, bool forwards, unsigned consoleWidth, C
             auto& c = s.completions[index];
             std::string w = c.s;
             s.originalWord.q.applyQuotes(w);
+            w += (s.completions.size() == 1 && !c.couldExtend) ? " " : "";
             s.line.replace(s.wordPos.first, s.wordPos.second - s.wordPos.first, w);
             s.wordPos.second = int(w.size() + s.wordPos.first);
             s.lastAppliedIndex = index;
+
+            if (s.completions.size()==1)
+            {
+                s.active = false;
+            }
         }
         else
         {
@@ -910,6 +1100,7 @@ void applyCompletion(CompletionState& s, bool forwards, unsigned consoleWidth, C
                     }
                 }
                 s.originalWord.q.applyQuotes(exactChars);
+                exactChars += (s.completions.size() == 1 && !s.completions[0].couldExtend) ? " " : "";
                 s.line.replace(s.wordPos.first, s.wordPos.second - s.wordPos.first, exactChars);
                 s.wordPos.second = int(exactChars.size() + s.wordPos.first);
                 s.firstPressDone = true;
@@ -994,14 +1185,19 @@ void applyCompletion(CompletionState& s, bool forwards, unsigned consoleWidth, C
     }
 }
 
-
-ACN either(ACN n1, ACN n2, ACN n3, ACN n4)
+ACN either(ACN n1, ACN n2, ACN n3, ACN n4, ACN n5)
 {
+#if (__cplusplus < 201400L)
+    auto n = std::unique_ptr<Either>(new Either());
+#else
     auto n = std::make_unique<Either>();
+#endif
+
     n->Add(n1);
     n->Add(n2);
     n->Add(n3);
     n->Add(n4);
+    n->Add(n5);
     return n;
 }
 
@@ -1076,6 +1272,10 @@ ACN remoteFSFolder(MegaClient* client, ::mega::handle* cwd, const std::string de
     return ACN(new MegaFS(false, true, client, cwd, descriptionPrefix));
 }
 
+ACN contactEmail(MegaClient* client)
+{
+    return ACN(new MegaContactEmail(client));
+}
 
 }}; //namespaces
 

@@ -56,6 +56,8 @@ Transfer::Transfer(MegaClient* cclient, direction_t ctype)
     priority = 0;
     state = TRANSFERSTATE_NONE;
 
+    skipserialization = false;
+
     faputcompletion_it = client->faputcompletion.end();
     transfers_it = client->transfers[type].end();
 }
@@ -162,18 +164,9 @@ bool Transfer::serialize(string *d)
         d->append((const char*)&hasUltoken, sizeof(char));
     }
 
-    if (slot)
-    {
-        ll = (unsigned short)slot->tempurl.size();
-        d->append((char*)&ll, sizeof(ll));
-        d->append(slot->tempurl.data(), ll);
-    }
-    else
-    {
-        ll = (unsigned short)cachedtempurl.size();
-        d->append((char*)&ll, sizeof(ll));
-        d->append(cachedtempurl.data(), ll);
-    }
+    ll = (unsigned short)tempurl.size();
+    d->append((char*)&ll, sizeof(ll));
+    d->append(tempurl.data(), ll);
 
     char s = state;
     d->append((const char*)&s, sizeof(s));
@@ -307,7 +300,7 @@ Transfer *Transfer::unserialize(MegaClient *client, string *d, transfer_map* tra
         return NULL;
     }
 
-    t->cachedtempurl.assign(ptr, ll);
+    t->tempurl.assign(ptr, ll);
     ptr += ll;
 
     char state = MemAccess::get<char>(ptr);
@@ -367,34 +360,44 @@ void Transfer::failed(error e, dstime timeleft)
 
     LOG_debug << "Transfer failed with error " << e;
 
-    if (!timeleft || e != API_EOVERQUOTA)
+    if (slot && slot->delayedchunk)
+    {
+        int creqtag = client->reqtag;
+        client->reqtag = 0;
+        client->sendevent(99442, "Upload with delayed chunks failed");
+        client->reqtag = creqtag;
+    }
+
+    if (e != API_EOVERQUOTA)
     {
         bt.backoff();
+        state = TRANSFERSTATE_RETRYING;
+        client->app->transfer_failed(this, e, timeleft);
+        client->looprequested = true;
     }
     else
     {
-        bt.backoff(timeleft);
-        LOG_debug << "backoff: " << timeleft;
-        client->overquotauntil = Waiter::ds + timeleft;
+        bt.backoff(timeleft ? timeleft : NEVER);
+        client->activateoverquota(timeleft);
+        if (!slot)
+        {
+            client->app->transfer_failed(this, e, timeleft);
+        }
     }
-
-    state = TRANSFERSTATE_RETRYING;
-    client->looprequested = true;
-    client->app->transfer_failed(this, e, timeleft);
 
     for (file_list::iterator it = files.begin(); it != files.end(); it++)
     {
         if ( (*it)->failed(e)
                 || (e == API_ENOENT // putnodes returned -9, file-storage server unavailable
                     && type == PUT
-                    && slot && slot->tempurl.empty()
+                    && slot && slot->transfer->tempurl.empty()
                     && failcount < 16) )
         {
             defer = true;
         }
     }
 
-    cachedtempurl.clear();
+    tempurl.clear();
     if (type == PUT)
     {
         chunkmacs.clear();
@@ -411,7 +414,7 @@ void Transfer::failed(error e, dstime timeleft)
         }
     }
 
-    if (defer && !(e == API_EOVERQUOTA && !timeleft))
+    if (defer)
     {        
         failcount++;
         delete slot;
@@ -656,7 +659,7 @@ void Transfer::complete()
                                 LocalNode *localNode = sync->localnodebypath(NULL, &localname);
                                 if (localNode)
                                 {
-                                    LOG_debug << "Overwritting a local synced file. Moving the previous one to debris";
+                                    LOG_debug << "Overwriting a local synced file. Moving the previous one to debris";
 
                                     // try to move to local debris
                                     if(!sync->movetolocaldebris(&localname))
@@ -893,8 +896,20 @@ void Transfer::complete()
     else
     {
         LOG_debug << "Upload complete: " << (files.size() ? files.front()->name : "NO_FILES") << " " << files.size();
-        delete slot->fa;
-        slot->fa = NULL;
+
+        if (slot->fa)
+        {
+            if (slot->delayedchunk)
+            {
+                int creqtag = client->reqtag;
+                client->reqtag = 0;
+                client->sendevent(99443, "Upload with delayed chunks completed");
+                client->reqtag = creqtag;
+            }
+
+            delete slot->fa;
+            slot->fa = NULL;
+        }
 
         // files must not change during a PUT transfer
         for (file_list::iterator it = files.begin(); it != files.end(); )
@@ -1009,11 +1024,11 @@ void Transfer::completefiles()
 
 m_off_t Transfer::nextpos()
 {
-    while (chunkmacs.find(ChunkedHash::chunkfloor(pos)) != chunkmacs.end())
+    while (chunkmacs.find(ChunkedHash::chunkfloor(pos)) != chunkmacs.end() && pos < size)
     {    
         if (chunkmacs[ChunkedHash::chunkfloor(pos)].finished)
         {
-            pos = ChunkedHash::chunkceil(pos);
+            pos = ChunkedHash::chunkceil(pos, size);
         }
         else
         {
@@ -1025,12 +1040,27 @@ m_off_t Transfer::nextpos()
     return pos;
 }
 
-DirectReadNode::DirectReadNode(MegaClient* cclient, handle ch, bool cp, SymmCipher* csymmcipher, int64_t cctriv)
+DirectReadNode::DirectReadNode(MegaClient* cclient, handle ch, bool cp, SymmCipher* csymmcipher, int64_t cctriv, const char *privauth, const char *pubauth, const char *cauth)
 {
     client = cclient;
 
     p = cp;
     h = ch;
+
+    if (privauth)
+    {
+        privateauth = privauth;
+    }
+
+    if (pubauth)
+    {
+        publicauth = pubauth;
+    }
+
+    if (cauth)
+    {
+        chatauth = cauth;
+    }
 
     symmcipher = *csymmcipher;
     ctriv = cctriv;
@@ -1454,7 +1484,7 @@ TransferList::TransferList()
     currentpriority = PRIORITY_START;
 }
 
-void TransferList::addtransfer(Transfer *transfer)
+void TransferList::addtransfer(Transfer *transfer, bool startFirst)
 {
     if (transfer->state != TRANSFERSTATE_PAUSED)
     {
@@ -1463,10 +1493,21 @@ void TransferList::addtransfer(Transfer *transfer)
 
     if (!transfer->priority)
     {
-        currentpriority += PRIORITY_STEP;
-        transfer->priority = currentpriority;
-        assert(!transfers[transfer->type].size() || transfers[transfer->type][transfers[transfer->type].size() - 1]->priority < transfer->priority);
-        transfers[transfer->type].push_back(transfer);
+        if (startFirst && transfers[transfer->type].size())
+        {
+            transfer_list::iterator dstit = transfers[transfer->type].begin();
+            transfer->priority = (*dstit)->priority - PRIORITY_STEP;
+            prepareIncreasePriority(transfer, transfers[transfer->type].end(), dstit);
+            transfers[transfer->type].push_front(transfer);
+        }
+        else
+        {
+            currentpriority += PRIORITY_STEP;
+            transfer->priority = currentpriority;
+            assert(!transfers[transfer->type].size() || transfers[transfer->type][transfers[transfer->type].size() - 1]->priority < transfer->priority);
+            transfers[transfer->type].push_back(transfer);
+        }
+
         client->transfercacheadd(transfer);
     }
     else
@@ -1716,8 +1757,10 @@ error TransferList::pause(Transfer *transfer, bool enable)
     {
         if (transfer->slot)
         {
-            transfer->bt.arm();
-            transfer->cachedtempurl = transfer->slot->tempurl;
+            if (transfer->client->ststatus != STORAGE_RED || transfer->type == GET)
+            {
+                transfer->bt.arm();
+            }
             delete transfer->slot;
         }
         transfer->state = TRANSFERSTATE_PAUSED;
@@ -1804,8 +1847,10 @@ void TransferList::prepareIncreasePriority(Transfer *transfer, transfer_list::it
 
         if (lastActiveTransfer)
         {
-            lastActiveTransfer->bt.arm();
-            lastActiveTransfer->cachedtempurl = lastActiveTransfer->slot->tempurl;
+            if (lastActiveTransfer->client->ststatus != STORAGE_RED || lastActiveTransfer->type == GET)
+            {
+                lastActiveTransfer->bt.arm();
+            }
             delete lastActiveTransfer->slot;
             lastActiveTransfer->state = TRANSFERSTATE_QUEUED;
             client->transfercacheadd(lastActiveTransfer);
@@ -1823,8 +1868,10 @@ void TransferList::prepareDecreasePriority(Transfer *transfer, transfer_list::it
         {
             if (!(*cit)->slot && isReady(*cit))
             {
-                transfer->bt.arm();
-                transfer->cachedtempurl = (*it)->slot->tempurl;
+                if (transfer->client->ststatus != STORAGE_RED || transfer->type == GET)
+                {
+                    transfer->bt.arm();
+                }
                 delete transfer->slot;
                 transfer->state = TRANSFERSTATE_QUEUED;
                 break;

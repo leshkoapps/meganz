@@ -24,6 +24,7 @@
 #import "MEGAPricing.h"
 #import "MEGAAchievementsDetails.h"
 #import "MEGAFolderInfo.h"
+#import "MEGATimeZoneDetails.h"
 
 typedef NS_ENUM (NSInteger, MEGARequestType) {
     MEGARequestTypeLogin,
@@ -125,6 +126,12 @@ typedef NS_ENUM (NSInteger, MEGARequestType) {
     MEGARequestTypeMultiFactorAuthCheck,
     MEGARequestTypeMultiFactorAuthGet,
     MEGARequestTypeMultiFactorAuthSet,
+    MEGARequestTypeAddBackup,
+    MEGARequestTypeRemoveBackup,
+    MEGARequestTypeTimer,
+    MEGARequestTypeAbortCurrentBackup,
+    MEGARequestTypeFetchTimeZone,
+    MEGARequestTypeGetPSA,
     TotalOfRequestTypes
 };
 
@@ -242,7 +249,6 @@ typedef NS_ENUM (NSInteger, MEGANodeAccessLevel) {
  *
  * This value is valid for these requests:
  * - [MEGASdk createAccountWithEmail:password:name:] - Returns the name of the user
- * - [MEGASdk fastCreateAccountWithEmail:password:name:] - Returns the name of the user
  * - [MEGASdk createFolderWithName:parent:] - Returns the name of the new folder
  * - [MEGASdk renameNode:newName:] - Returns the new name for the node
  *
@@ -263,7 +269,6 @@ typedef NS_ENUM (NSInteger, MEGANodeAccessLevel) {
  * - [MEGASdk fastLoginWithEmail:password:] - Returns the email of the account
  * - [MEGASdk loginToFolderLink:] - Returns the string "FOLDER"
  * - [MEGASdk createAccountWithEmail:password:name:] - Returns the name of the user
- * - [MEGASdk fastCreateAccountWithEmail:password:name] - Returns the name of the user
  * - [MEGASdk shareNode:withUser:level:] - Returns the handle of the folder to share
  * - [MEGASdk getAvatarUser:destinationFilePath:] - Returns the email of the user to get the avatar
  * - [MEGASdk removeContactWithEmail:] - Returns the email of the contact
@@ -305,7 +310,6 @@ typedef NS_ENUM (NSInteger, MEGANodeAccessLevel) {
  *
  * This value is valid for these requests:
  * - [MEGASdk fastLoginWithEmail:password:] - Returns the base64pwKey parameter
- * - [MEGASdk fastCreateAccountWithEmail:password:name] - Returns the base64pwKey parameter
  * - [MEGASdk fastConfirmAccountWithLink:base64pwkey:] - Returns the base64pwKey parameter
  *
  */
@@ -433,6 +437,19 @@ typedef NS_ENUM (NSInteger, MEGANodeAccessLevel) {
  *
  */
 @property (readonly, nonatomic) MEGAAchievementsDetails *megaAchievementsDetails;
+
+/**
+ * @brief Get details about timezones and the current default
+ *
+ * This value is valid for these request in onRequestFinish when the
+ * error code is MEGAErrorTypeApiOk:
+ * - [MEGASdk fetchTimeZones] - Details about timezones and the current default
+ *
+ * In any other case, this function returns NULL.
+ *
+ * @return Details about timezones and the current default
+ */
+@property (readonly, nonatomic) MEGATimeZoneDetails *megaTimeZoneDetails;
 
 /**
  * @brief Information about the contents of a folder

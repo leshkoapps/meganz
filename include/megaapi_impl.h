@@ -82,7 +82,7 @@ public:
     MegaMutex(bool recursive) : PosixMutex(recursive) { }
 };
 class MegaSemaphore : public PosixSemaphore {};
-#elif defined(_WIN32) && !defined(WINDOWS_PHONE)
+#elif defined(_WIN32) && !defined(USE_CPPTHREAD) && !defined(WINDOWS_PHONE)
 class MegaThread : public Win32Thread {};
 class MegaMutex : public Win32Mutex
 {
@@ -229,7 +229,7 @@ public:
 
     void update();
     void start(bool skip = false);
-    void removeexceeding();
+    void removeexceeding(bool currentoneOK);
     void abortCurrent();
 
     // MegaBackup interface
@@ -243,6 +243,8 @@ public:
     int getState() const;
     long long getNextStartTime(long long oldStartTimeAbsolute = -1) const;
     bool getAttendPastBackups() const;
+    MegaTransferList *getFailedTransfers();
+
 
     // MegaBackup setters
     void setLocalFolder(const std::string &value);
@@ -299,7 +301,7 @@ protected:
     handle currentHandle;
     std::string currentName;
     std::list<std::string> pendingFolders;
-    std::list<MegaTransfer *> failedTransfers;
+    std::vector<MegaTransfer *> failedTransfers;
     int recursive;
     int pendingTransfers;
     int pendingTags;
@@ -331,6 +333,7 @@ public:
     virtual void onRequestFinish(MegaApi* api, MegaRequest *request, MegaError *e);
     virtual void onTransferStart(MegaApi *api, MegaTransfer *transfer);
     virtual void onTransferUpdate(MegaApi *api, MegaTransfer *transfer);
+    virtual void onTransferTemporaryError(MegaApi *, MegaTransfer *t, MegaError* e);
     virtual void onTransferFinish(MegaApi* api, MegaTransfer *transfer, MegaError *e);
 
     long long getNumberFolders() const;
@@ -389,9 +392,9 @@ class MegaNodePrivate : public MegaNode, public Cachable
     public:
         MegaNodePrivate(const char *name, int type, int64_t size, int64_t ctime, int64_t mtime,
                         MegaHandle nodeMegaHandle, std::string *nodekey, std::string *attrstring, std::string *fileattrstring,
-                        const char *fingerprint, MegaHandle parentHandle = INVALID_HANDLE,
+                        const char *fingerprint, MegaHandle owner, MegaHandle parentHandle = INVALID_HANDLE,
                         const char *privateauth = NULL, const char *publicauth = NULL, bool isPublic = true,
-                        bool isForeign = false);
+                        bool isForeign = false, const char *chatauth = NULL);
 
         MegaNodePrivate(MegaNode *node);
         virtual ~MegaNodePrivate();
@@ -402,6 +405,10 @@ class MegaNodePrivate : public MegaNode, public Cachable
         MegaStringList *getCustomAttrNames();
         virtual const char *getCustomAttr(const char* attrName);
         virtual int getDuration();
+        virtual int getWidth();
+        virtual int getHeight();
+        virtual int getShortformat();
+        virtual int getVideocodecid();
         virtual double getLatitude();
         virtual double getLongitude();
         virtual char *getBase64Handle();
@@ -436,15 +443,17 @@ class MegaNodePrivate : public MegaNode, public Cachable
         virtual MegaNodeList *getChildren();
         virtual void setPrivateAuth(const char *privateAuth);
         void setPublicAuth(const char *publicAuth);
+        void setChatAuth(const char *chatAuth);
         void setForeign(bool foreign);
         void setChildren(MegaNodeList *children);
         void setName(const char *newName);
         virtual std::string* getPublicAuth();
+        virtual const char *getChatAuth();
         virtual bool isShared();
         virtual bool isOutShare();
         virtual bool isInShare();
         std::string* getSharekey();
-
+        virtual MegaHandle getOwner() const;
 
 #ifdef ENABLE_SYNC
         virtual bool isSyncDeleted();
@@ -475,6 +484,7 @@ class MegaNodePrivate : public MegaNode, public Cachable
         std::string fileattrstring;
         std::string privateAuth;
         std::string publicAuth;
+        const char *chatAuth;
         int tag;
         int changed;
         struct {
@@ -488,9 +498,14 @@ class MegaNodePrivate : public MegaNode, public Cachable
         PublicLink *plink;
         std::string *sharekey;   // for plinks of folders
         int duration;
+        int width;
+        int height;
+        int shortformat;
+        int videocodecid;
         double latitude;
         double longitude;
         MegaNodeList *children;
+        MegaHandle owner;
 
 #ifdef ENABLE_SYNC
         bool syncdeleted;
@@ -523,6 +538,48 @@ class MegaUserPrivate : public MegaUser
         int64_t ctime;
         int changed;
         int tag;
+};
+
+class MegaUserAlertPrivate : public MegaUserAlert
+{
+public:
+    MegaUserAlertPrivate(UserAlert::Base* user, MegaClient* mc);
+    //MegaUserAlertPrivate(const MegaUserAlertPrivate&); // default copy works for this type
+    virtual MegaUserAlert* copy() const;
+
+    virtual unsigned getId() const;
+    virtual bool getSeen() const;
+    virtual bool getRelevant() const;
+    virtual int getType() const;
+    virtual const char *getTypeString() const;
+    virtual MegaHandle getUserHandle() const;
+    virtual MegaHandle getNodeHandle() const;
+    virtual const char* getEmail() const;
+    virtual const char* getPath() const;
+    virtual const char* getName() const;
+    virtual const char* getHeading() const;
+    virtual const char* getTitle() const;
+    virtual int64_t getNumber(unsigned index) const;
+    virtual int64_t getTimestamp(unsigned index) const;
+    virtual const char* getString(unsigned index) const;
+    virtual bool isOwnChange() const;
+
+protected:
+    unsigned id;
+    bool seen;
+    bool relevant;
+    int type;
+    int tag;
+    string heading;
+    string title;
+    handle userHandle;
+    string email;
+    handle nodeHandle;
+    string nodePath;
+    string nodeName;
+    vector<int64_t> numbers;
+    vector<int64_t> timestamps;
+    vector<string> extraStrings;
 };
 
 class MegaHandleListPrivate : public MegaHandleList
@@ -597,6 +654,8 @@ class MegaTransferPrivate : public MegaTransfer, public Cachable
         void setPublicNode(MegaNode *publicNode, bool copyChildren = false);
         void setSyncTransfer(bool syncTransfer);
         void setSourceFileTemporary(bool temporary);
+        void setStartFirst(bool startFirst);
+        void setBackupTransfer(bool backupTransfer);
         void setStreamingTransfer(bool streamingTransfer);
         void setLastBytes(char *lastBytes);
         void setLastError(MegaError e);
@@ -634,6 +693,8 @@ class MegaTransferPrivate : public MegaTransfer, public Cachable
         virtual bool isStreamingTransfer() const;
         virtual bool isFinished() const;
         virtual bool isSourceFileTemporary() const;
+        virtual bool shouldStartFirst() const;
+        virtual bool isBackupTransfer() const;
         virtual char *getLastBytes() const;
         virtual MegaError getLastError() const;
         virtual bool isFolderTransfer() const;
@@ -660,6 +721,8 @@ class MegaTransferPrivate : public MegaTransfer, public Cachable
             bool syncTransfer : 1;
             bool streamingTransfer : 1;
             bool temporarySourceFile : 1;
+            bool startFirst : 1;
+            bool backupTransfer : 1;
         };
 
         int64_t startTime;
@@ -739,6 +802,27 @@ protected:
     long long currentSize;
     long long versionsSize;
 };
+
+class MegaTimeZoneDetailsPrivate : public MegaTimeZoneDetails
+{
+public:
+    MegaTimeZoneDetailsPrivate(vector<string>* timeZones, vector<int> *timeZoneOffsets, int defaultTimeZone);
+    MegaTimeZoneDetailsPrivate(const MegaTimeZoneDetailsPrivate *timeZoneDetails);
+
+    virtual ~MegaTimeZoneDetailsPrivate();
+    virtual MegaTimeZoneDetails *copy() const;
+
+    virtual int getNumTimeZones() const;
+    virtual const char *getTimeZone(int index) const;
+    virtual int getTimeOffset(int index) const;
+    virtual int getDefault() const;
+
+protected:
+    int defaultTimeZone;
+    vector<string> timeZones;
+    vector<int> timeZoneOffsets;
+};
+
 
 class MegaContactRequestPrivate : public MegaContactRequest
 {
@@ -917,6 +1001,7 @@ class MegaRequestPrivate : public MegaRequest
                         int months, int amount, const char *currency, const char *description, const char *iosid, const char *androidid);
         void setProxy(Proxy *proxy);
         Proxy *getProxy();
+        void setTimeZoneDetails(MegaTimeZoneDetails *timeZoneDetails);
 
         virtual int getType() const;
         virtual const char *getRequestString() const;
@@ -952,6 +1037,7 @@ class MegaRequestPrivate : public MegaRequest
         AccountDetails * getAccountDetails() const;
         virtual MegaAchievementsDetails *getMegaAchievementsDetails() const;
         AchievementsDetails *getAchievementsDetails() const;
+        MegaTimeZoneDetails *getMegaTimeZoneDetails () const;
 
 #ifdef ENABLE_CHAT
         virtual MegaTextChatPeerList *getMegaTextChatPeerList() const;
@@ -978,6 +1064,7 @@ protected:
         AccountDetails *accountDetails;
         MegaPricingPrivate *megaPricing;
         AchievementsDetails *achievementsDetails;
+        MegaTimeZoneDetails *timeZoneDetails;
         int type;
         MegaHandle nodeHandle;
         const char* link;
@@ -1267,8 +1354,10 @@ public:
     virtual bool isGroup() const;
     virtual MegaHandle getOriginatingUser() const;
     virtual const char *getTitle() const;
+    virtual const char *getUnifiedKey() const;
     virtual int64_t getCreationTime() const;
     virtual bool isArchived() const;
+    virtual bool isPublicChat() const;
 
     virtual bool hasChanged(int changeType) const;
     virtual int getChanges() const;
@@ -1283,9 +1372,11 @@ private:
     bool group;
     handle ou;
     string title;
+    string unifiedKey;
     int changed;
     int tag;
     bool archived;
+    bool publicchat;
     int64_t ts;
 };
 
@@ -1320,6 +1411,7 @@ public:
     virtual MegaStringList *getKeys() const;
     virtual void set(const char *key, const char *value);
     virtual int size() const;
+    const string_map *getMap() const;
 
 protected:
     MegaStringMapPrivate(const MegaStringMapPrivate *megaStringMap);
@@ -1437,6 +1529,24 @@ class MegaContactRequestListPrivate : public MegaContactRequestList
         MegaContactRequest** list;
         int s;
 };
+
+class MegaUserAlertListPrivate : public MegaUserAlertList
+{
+public:
+    MegaUserAlertListPrivate();
+    MegaUserAlertListPrivate(UserAlert::Base** newlist, int size, MegaClient* mc);
+    MegaUserAlertListPrivate(const MegaUserAlertListPrivate &userList);
+    virtual ~MegaUserAlertListPrivate();
+    virtual MegaUserAlertList *copy() const;
+    virtual MegaUserAlert* get(int i) const;
+    virtual int size() const;
+
+protected:
+    MegaUserAlertListPrivate(MegaUserAlertListPrivate *userList);
+    MegaUserAlert** list;
+    int s;
+};
+
 
 struct MegaFile : public File
 {
@@ -1640,7 +1750,6 @@ class MegaApiImpl : public MegaApp
         MegaUserList *getCurrentUsers();
 
         //Utils
-        char *getBase64PwKey(const char *password);
         long long getSDKtime();
         char *getStringHash(const char* base64pwkey, const char* inBuf);
         void getSessionTransferURL(const char *path, MegaRequestListener *listener);
@@ -1651,12 +1760,16 @@ class MegaApiImpl : public MegaApp
         static char *userHandleToBase64(MegaHandle handle);
         static const char* ebcEncryptKey(const char* encryptionKey, const char* plainKey);
         void retryPendingConnections(bool disconnect = false, bool includexfers = false, MegaRequestListener* listener = NULL);
+        void setDnsServers(const char *dnsServers, MegaRequestListener* listener = NULL);
         static void addEntropy(char* data, unsigned int size);
         static string userAttributeToString(int);
+        static string userAttributeToLongName(int);
+        static int userAttributeFromString(const char *name);
         static char userAttributeToScope(int);
         static void setStatsID(const char *id);
 
         bool serverSideRubbishBinAutopurgeEnabled();
+        bool appleVoipPushEnabled();
 
         bool multiFactorAuthAvailable();
         void multiFactorAuthCheck(const char *email, MegaRequestListener *listener = NULL);
@@ -1667,6 +1780,8 @@ class MegaApiImpl : public MegaApp
         void multiFactorAuthChangePassword(const char *oldPassword, const char *newPassword, const char* pin, MegaRequestListener *listener = NULL);
         void multiFactorAuthChangeEmail(const char *email, const char* pin, MegaRequestListener *listener = NULL);
         void multiFactorAuthCancelAccount(const char* pin, MegaRequestListener *listener = NULL);
+
+        void fetchTimeZone(MegaRequestListener *listener = NULL);
 
         //API requests
         void login(const char* email, const char* password, MegaRequestListener *listener = NULL);
@@ -1686,7 +1801,6 @@ class MegaApiImpl : public MegaApp
         void queryTransferQuota(long long size, MegaRequestListener *listener = NULL);
         void createAccount(const char* email, const char* password, const char* name, MegaRequestListener *listener = NULL);
         void createAccount(const char* email, const char* password, const char* firstname, const char* lastname, MegaRequestListener *listener = NULL);
-        void fastCreateAccount(const char* email, const char *base64pwkey, const char* name, MegaRequestListener *listener = NULL);
         void resumeCreateAccount(const char* sid, MegaRequestListener *listener = NULL);
         void sendSignupLink(const char* email, const char *name, const char *password, MegaRequestListener *listener = NULL);
         void fastSendSignupLink(const char *email, const char *base64pwkey, const char *name, MegaRequestListener *listener = NULL);
@@ -1720,6 +1834,8 @@ class MegaApiImpl : public MegaApp
         static void setLogToConsole(bool enable);
         static void log(int logLevel, const char* message, const char *filename = NULL, int line = -1);
 
+        void setLoggingName(const char* loggingName);
+
         void createFolder(const char* name, MegaNode *parent, MegaRequestListener *listener = NULL);
         bool createLocalFolder(const char *path);
         void moveNode(MegaNode* node, MegaNode* newParent, MegaRequestListener *listener = NULL);
@@ -1752,13 +1868,13 @@ class MegaApiImpl : public MegaApp
         static char *getUserAvatarColor(const char *userhandle);
         void getUserAttribute(MegaUser* user, int type, MegaRequestListener *listener = NULL);
         void getUserAttribute(const char* email_or_handle, int type, MegaRequestListener *listener = NULL);
+        void getChatUserAttribute(const char* email_or_handle, int type, const char* ph, MegaRequestListener *listener = NULL);
         void getUserAttr(const char* email_or_handle, int type, const char *dstFilePath, int number = 0, MegaRequestListener *listener = NULL);
+        void getChatUserAttr(const char* email_or_handle, int type, const char *dstFilePath, const char *ph = NULL, int number = 0, MegaRequestListener *listener = NULL);
         void setUserAttribute(int type, const char* value, MegaRequestListener *listener = NULL);
         void setUserAttribute(int type, const MegaStringMap* value, MegaRequestListener *listener = NULL);
-        void enableRichPreviews(bool enable, MegaRequestListener *listener = NULL);
-        void isRichPreviewsEnabled(MegaRequestListener *listener = NULL);
-        void shouldShowRichLinkWarning(MegaRequestListener *listener = NULL);
-        void setRichLinkWarningCounterValue(int value, MegaRequestListener *listener = NULL);
+        void getRubbishBinAutopurgePeriod(MegaRequestListener *listener = NULL);
+        void setRubbishBinAutopurgePeriod(int days, MegaRequestListener *listener = NULL);
         void getUserEmail(MegaHandle handle, MegaRequestListener *listener = NULL);
         void setCustomNodeAttribute(MegaNode *node, const char *attrName, const char *value, MegaRequestListener *listener = NULL);
         void setNodeDuration(MegaNode *node, int secs, MegaRequestListener *listener = NULL);
@@ -1767,9 +1883,9 @@ class MegaApiImpl : public MegaApp
         void disableExport(MegaNode *node, MegaRequestListener *listener = NULL);
         void fetchNodes(MegaRequestListener *listener = NULL);
         void getPricing(MegaRequestListener *listener = NULL);
-        void getPaymentId(handle productHandle, MegaRequestListener *listener = NULL);
+        void getPaymentId(handle productHandle, handle lastPublicHandle, MegaRequestListener *listener = NULL);
         void upgradeAccount(MegaHandle productHandle, int paymentMethod, MegaRequestListener *listener = NULL);
-        void submitPurchaseReceipt(int gateway, const char* receipt, MegaRequestListener *listener = NULL);
+        void submitPurchaseReceipt(int gateway, const char* receipt, MegaHandle lastPublicHandle, MegaRequestListener *listener = NULL);
         void creditCardStore(const char* address1, const char* address2, const char* city,
                              const char* province, const char* country, const char *postalcode,
                              const char* firstname, const char* lastname, const char* creditcard,
@@ -1813,9 +1929,9 @@ class MegaApiImpl : public MegaApp
         void startUpload(const char* localPath, MegaNode *parent, MegaTransferListener *listener=NULL);
         void startUpload(const char* localPath, MegaNode *parent, int64_t mtime, MegaTransferListener *listener=NULL);
         void startUpload(const char* localPath, MegaNode* parent, const char* fileName, MegaTransferListener *listener = NULL);
-        void startUpload(const char* localPath, MegaNode* parent, const char* fileName,  int64_t mtime, int folderTransferTag = 0, const char *appData = NULL, bool isSourceFileTemporary = false, MegaTransferListener *listener = NULL);
+        void startUpload(bool startFirst, const char* localPath, MegaNode* parent, const char* fileName, int64_t mtime, int folderTransferTag, bool isBackup, const char *appData, bool isSourceFileTemporary, MegaTransferListener *listener);
         void startDownload(MegaNode* node, const char* localPath, MegaTransferListener *listener = NULL);
-        void startDownload(MegaNode *node, const char* target, long startPos, long endPos, int folderTransferTag, const char *appData, MegaTransferListener *listener);
+        void startDownload(bool startFirst, MegaNode *node, const char* target, int folderTransferTag, const char *appData, MegaTransferListener *listener);
         void startStreaming(MegaNode* node, m_off_t startPos, m_off_t size, MegaTransferListener *listener);
         void retryTransfer(MegaTransfer *transfer, MegaTransferListener *listener = NULL);
         void cancelTransfer(MegaTransfer *transfer, MegaRequestListener *listener=NULL);
@@ -1874,6 +1990,7 @@ class MegaApiImpl : public MegaApp
         string getLocalPath(MegaNode *node);
         long long getNumLocalNodes();
         bool isSyncable(const char *path, long long size);
+        bool isInsideSync(MegaNode *node);
         bool is_syncable(Sync*, const char*, string*);
         bool is_syncable(long long size);
         int isNodeSyncable(MegaNode *megaNode);
@@ -1927,6 +2044,8 @@ class MegaApiImpl : public MegaApp
         MegaContactRequest *getContactRequestByHandle(MegaHandle handle);
         MegaUserList* getContacts();
         MegaUser* getContact(const char* uid);
+        MegaUserAlertList* getUserAlerts();
+        int getNumUnreadUserAlerts();
         MegaNodeList *getInShares(MegaUser* user);
         MegaNodeList *getInShares();
         MegaShareList *getInSharesList();
@@ -1978,9 +2097,9 @@ class MegaApiImpl : public MegaApp
 
         long long getBandwidthOverquotaDelay();
 
-        MegaNodeList* search(MegaNode* node, const char* searchString, bool recursive = 1);
+        MegaNodeList* search(MegaNode* node, const char* searchString, bool recursive = 1, int order = MegaApi::ORDER_NONE);
         bool processMegaTree(MegaNode* node, MegaTreeProcessor* processor, bool recursive = 1);
-        MegaNodeList* search(const char* searchString);
+        MegaNodeList* search(const char* searchString, int order = MegaApi::ORDER_NONE);
 
         MegaNode *createForeignFileNode(MegaHandle handle, const char *key, const char *name, m_off_t size, m_off_t mtime,
                                        MegaHandle parentHandle, const char *privateauth, const char *publicauth);
@@ -1989,6 +2108,7 @@ class MegaApiImpl : public MegaApp
 
         MegaNode *authorizeNode(MegaNode *node);
         void authorizeMegaNodePrivate(MegaNodePrivate *node);
+        MegaNode *authorizeChatNode(MegaNode *node, const char *cauth);
 
         const char *getVersion();
         char *getOperatingSystemVersion();
@@ -2005,6 +2125,10 @@ class MegaApiImpl : public MegaApp
         void contactLinkDelete(MegaHandle handle, MegaRequestListener *listener = NULL);
 
         void keepMeAlive(int type, bool enable, MegaRequestListener *listener = NULL);
+        void acknowledgeUserAlerts(MegaRequestListener *listener = NULL);
+
+        void getPSA(MegaRequestListener *listener = NULL);
+        void setPSA(int id, MegaRequestListener *listener = NULL);
 
         void disableGfxFeatures(bool disable);
         bool areGfxFeaturesDisabled();
@@ -2117,8 +2241,8 @@ class MegaApiImpl : public MegaApp
 #endif
 
 #ifdef ENABLE_CHAT
-        void createChat(bool group, MegaTextChatPeerList *peers, MegaRequestListener *listener = NULL);
-        void inviteToChat(MegaHandle chatid, MegaHandle uh, int privilege, const char *title = NULL, MegaRequestListener *listener = NULL);
+        void createChat(bool group, bool publicchat, MegaTextChatPeerList *peers, const MegaStringMap *userKeyMap = NULL, const char *title = NULL, MegaRequestListener *listener = NULL);
+        void inviteToChat(MegaHandle chatid, MegaHandle uh, int privilege, bool openMode, const char *unifiedKey = NULL, const char *title = NULL, MegaRequestListener *listener = NULL);
         void removeFromChat(MegaHandle chatid, MegaHandle uh = INVALID_HANDLE, MegaRequestListener *listener = NULL);
         void getUrlChat(MegaHandle chatid, MegaRequestListener *listener = NULL);
         void grantAccessInChat(MegaHandle chatid, MegaNode *n, MegaHandle uh,  MegaRequestListener *listener = NULL);
@@ -2126,9 +2250,10 @@ class MegaApiImpl : public MegaApp
         void updateChatPermissions(MegaHandle chatid, MegaHandle uh, int privilege, MegaRequestListener *listener = NULL);
         void truncateChat(MegaHandle chatid, MegaHandle messageid, MegaRequestListener *listener = NULL);
         void setChatTitle(MegaHandle chatid, const char *title, MegaRequestListener *listener = NULL);
+        void setChatUnifiedKey(MegaHandle chatid, const char *unifiedKey, MegaRequestListener *listener = NULL);
         void getChatPresenceURL(MegaRequestListener *listener = NULL);
         void registerPushNotification(int deviceType, const char *token, MegaRequestListener *listener = NULL);
-        void sendChatStats(const char *data, MegaRequestListener *listener = NULL);
+        void sendChatStats(const char *data, int port, MegaRequestListener *listener = NULL);
         void sendChatLogs(const char *data, const char *aid, MegaRequestListener *listener = NULL);
         MegaTextChatList *getChatList();
         MegaHandleList *getAttachmentAccess(MegaHandle chatid, MegaHandle h);
@@ -2136,6 +2261,16 @@ class MegaApiImpl : public MegaApp
         const char* getFileAttribute(MegaHandle h);
         void archiveChat(MegaHandle chatid, int archive, MegaRequestListener *listener = NULL);
         void requestRichPreview(const char *url, MegaRequestListener *listener = NULL);
+        void chatLinkHandle(MegaHandle chatid, bool del, bool createifmissing, MegaRequestListener *listener = NULL);
+        void getChatLinkURL(MegaHandle publichandle, MegaRequestListener *listener = NULL);
+        void chatLinkClose(MegaHandle chatid, const char *title, MegaRequestListener *listener = NULL);
+        void chatLinkJoin(MegaHandle publichandle, const char *unifiedkey, MegaRequestListener *listener = NULL);
+        void enableRichPreviews(bool enable, MegaRequestListener *listener = NULL);
+        void isRichPreviewsEnabled(MegaRequestListener *listener = NULL);
+        void shouldShowRichLinkWarning(MegaRequestListener *listener = NULL);
+        void setRichLinkWarningCounterValue(int value, MegaRequestListener *listener = NULL);
+        void enableGeolocation(MegaRequestListener *listener = NULL);
+        void isGeolocationEnabled(MegaRequestListener *listener = NULL);
 #endif
 
         void getAccountAchievements(MegaRequestListener *listener = NULL);
@@ -2178,6 +2313,7 @@ protected:
         void fireOnRequestTemporaryError(MegaRequestPrivate *request, MegaError e);
         bool fireOnTransferData(MegaTransferPrivate *transfer);
         void fireOnUsersUpdate(MegaUserList *users);
+        void fireOnUserAlertsUpdate(MegaUserAlertList *alerts);
         void fireOnNodesUpdate(MegaNodeList *nodes);
         void fireOnAccountUpdate();
         void fireOnContactRequestsUpdate(MegaContactRequestList *requests);
@@ -2272,6 +2408,7 @@ protected:
         MegaError *activeError;
         MegaNodeList *activeNodes;
         MegaUserList *activeUsers;
+        MegaUserAlertList *activeUserAlerts;
         MegaContactRequestList *activeContactRequests;
         string appKey;
 
@@ -2285,6 +2422,7 @@ protected:
         virtual void request_response_progress(m_off_t, m_off_t);
 
         // login result
+        virtual void prelogin_result(int, string*, string*, error);
         virtual void login_result(error);
         virtual void logout_result(error);
         virtual void userdata_result(string*, string*, string*, handle, error);
@@ -2307,14 +2445,22 @@ protected:
         virtual void multifactorauthcheck_result(int);
         virtual void multifactorauthdisable_result(error);
 
+        // fetch time zone
+        virtual void fetchtimezone_result(error, vector<string>*, vector<int>*, int);
+
         // keep me alive feature
-        virtual void keepmealive_result (error);
+        virtual void keepmealive_result(error);
+        virtual void acknowledgeuseralerts_result(error);
+
+        // get the current PSA
+        virtual void getpsa_result (error, int, string*, string*, string*, string*, string*);
 
         // account creation
         virtual void sendsignuplink_result(error);
         virtual void querysignuplink_result(error);
         virtual void querysignuplink_result(handle, const char*, const char*, const byte*, const byte*, const byte*, size_t);
         virtual void confirmsignuplink_result(error);
+        virtual void confirmsignuplink2_result(handle, const char*, const char*, error);
         virtual void setkeypair_result(error);
 
         // account credentials, properties and history
@@ -2328,6 +2474,7 @@ protected:
         virtual void unlinkversions_result(error);
         virtual void nodes_updated(Node**, int);
         virtual void users_updated(User**, int);
+        virtual void useralerts_updated(UserAlert::Base**, int);
         virtual void account_updated();
         virtual void pcrs_updated(PendingContactRequest**, int);
 
@@ -2337,6 +2484,7 @@ protected:
         // user attribute update notification
         virtual void userattr_update(User*, int, const char*);
 
+        virtual void nodes_current();
 
         virtual void fetchnodes_result(error);
         virtual void putnodes_result(error, targettype_t, NewNode*);
@@ -2420,7 +2568,6 @@ protected:
         virtual void getprivatekey_result(error, const byte *privk = NULL, const size_t len_privk = 0);
         virtual void confirmrecoverylink_result(error);
         virtual void confirmcancellink_result(error);
-        virtual void validatepassword_result(error);
         virtual void getemaillink_result(error);
         virtual void confirmemaillink_result(error);
         virtual void getversion_result(int, const char*, error);
@@ -2446,6 +2593,10 @@ protected:
 
         virtual void chats_updated(textchat_map *, int);
         virtual void richlinkrequest_result(string*, error);
+        virtual void chatlink_result(handle, error);
+        virtual void chatlinkurl_result(handle, int, string*, string*, int, m_time_t, error);
+        virtual void chatlinkclose_result(error);
+        virtual void chatlinkjoin_result(error);
 #endif
 
 #ifdef ENABLE_SYNC
@@ -2485,6 +2636,9 @@ protected:
 
         // notify about db commit
         virtual void notify_dbcommit();
+
+        // notify about a storage event
+        virtual void notify_storage(int);
 
         // notify about an automatic change to HTTPS
         virtual void notify_change_to_https();
@@ -2769,6 +2923,8 @@ public:
     std::string nodekey;
     std::string nodename;
     m_off_t nodesize;
+    std::string nodepubauth;
+    std::string nodeprivauth;
     int resultCode;
 
 

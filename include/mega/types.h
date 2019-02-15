@@ -45,17 +45,24 @@ typedef char __static_check_01__[sizeof(bool) == sizeof(char) ? 1 : -1];
 #include "mega/posix/megasys.h"
 #endif
 
+#ifdef USE_CRYPTOPP
+#include <cryptopp/config.h> // so we can test CRYPTO_VERSION below
+#endif
+
 // signed 64-bit generic offset
 typedef int64_t m_off_t;
 
 // opaque filesystem fingerprint
 typedef uint64_t fsfp_t;
 
-#if USE_CRYPTOPP && (CRYPTOPP_VERSION >= 600) && (__cplusplus >= 201103L)
-    using byte = CryptoPP::byte;
-#else
-    typedef unsigned char byte;
+namespace mega {
+// within ::mega namespace, byte is unsigned char (avoids ambiguity when std::byte from c++17 and perhaps other defined ::byte are available)
+#if defined(USE_CRYPTOPP) && (CRYPTOPP_VERSION >= 600) && ((__cplusplus >= 201103L) || (__RPCNDR_H_VERSION__ == 500))
+using byte = CryptoPP::byte;
+#elif __RPCNDR_H_VERSION__ != 500
+typedef unsigned char byte;
 #endif
+}
 
 #ifdef USE_CRYPTOPP
 #include "mega/crypto/cryptopp.h"
@@ -65,8 +72,24 @@ typedef uint64_t fsfp_t;
 
 #include "mega/crypto/sodium.h"
 
+#include <string>
+
 namespace mega {
-using namespace std;
+
+// import these select types into the namespace directly, to avoid adding std::byte from c++17
+using std::string;
+using std::map;
+using std::set;
+using std::list;
+using std::vector;
+using std::pair;
+using std::multimap;
+using std::deque;
+using std::multiset;
+using std::queue;
+using std::streambuf;
+using std::ostringstream;
+
 
 // forward declaration
 struct AttrMap;
@@ -100,6 +123,10 @@ struct Proxy;
 struct PendingContactRequest;
 class TransferList;
 struct Achievement;
+namespace UserAlert
+{
+    struct Base;
+}
 
 #define EOO 0
 
@@ -313,6 +340,7 @@ typedef set<pair<handle, handle> > handlepair_set;
 // node and user vectors
 typedef vector<struct NodeCore*> nodecore_vector;
 typedef vector<struct User*> user_vector;
+typedef vector<UserAlert::Base*> useralert_vector;
 typedef vector<struct PendingContactRequest*> pcr_vector;
 
 // actual user data (indexed by userid)
@@ -421,7 +449,11 @@ typedef enum {
     ATTR_PWD_REMINDER = 15,     // private, non-encrypted - char array in B64 - non-versioned
     ATTR_DISABLE_VERSIONS = 16, // private, non-encrypted - char array in B64 - non-versioned
     ATTR_CONTACT_LINK_VERIFICATION = 17,  // private, non-encrypted - char array in B64 - non-versioned
-    ATTR_RICH_PREVIEWS = 18      // private - byte array
+    ATTR_RICH_PREVIEWS = 18,     // private - byte array
+    ATTR_RUBBISH_TIME = 19,      // private, non-encrypted - char array in B64 - non-versioned
+    ATTR_LAST_PSA = 20,          // private - char array
+    ATTR_STORAGE_STATE = 21,     // private - non-encrypted - char array in B64 - non-versioned
+    ATTR_GEOLOCATION = 22        // private - byte array
 } attr_t;
 typedef map<attr_t, string> userattr_map;
 
@@ -455,12 +487,17 @@ struct TextChat : public Cachable
     int shard;
     userpriv_vector *userpriv;
     bool group;
-    string title;   // byte array
+    string title;        // byte array
+    string unifiedKey;   // byte array
     handle ou;
     m_time_t ts;     // creation time
     attachments_map attachedNodes;
-    byte flags; // currently only used for "archive" flag at first bit
+    bool publicchat;  // whether the chat is public or private
 
+private:        // use setter to modify these members
+    byte flags;     // currently only used for "archive" flag at first bit
+
+public:
     int tag;    // source tag, to identify own changes
 
     TextChat();
@@ -477,6 +514,7 @@ struct TextChat : public Cachable
     {
         bool attachments : 1;
         bool flags : 1;
+        bool mode : 1;
     } changed;
 
     // return false if failed
@@ -484,6 +522,7 @@ struct TextChat : public Cachable
     bool setFlag(bool value, uint8_t offset = 0xFF);
     bool setFlags(byte newFlags);
     bool isFlagSet(uint8_t offset) const;
+    bool setMode(bool publicchat);
 
 };
 typedef vector<TextChat*> textchat_vector;
@@ -495,6 +534,8 @@ typedef enum { RECOVER_WITH_MASTERKEY = 9, RECOVER_WITHOUT_MASTERKEY = 10, CANCE
 typedef enum { EMAIL_REMOVED = 0, EMAIL_PENDING_REMOVED = 1, EMAIL_PENDING_ADDED = 2, EMAIL_FULLY_ACCEPTED = 3 } emailstatus_t;
 
 typedef enum { RETRY_NONE = 0, RETRY_CONNECTIVITY = 1, RETRY_SERVERS_BUSY = 2, RETRY_API_LOCK = 3, RETRY_RATE_LIMIT = 4, RETRY_LOCAL_LOCK = 5, RETRY_UNKNOWN = 6} retryreason_t;
+
+typedef enum { STORAGE_GREEN = 0, STORAGE_ORANGE = 1, STORAGE_RED = 2, STORAGE_CHANGE = 3 } storagestatus_t;
 
 typedef unsigned int achievement_class_id;
 typedef map<achievement_class_id, Achievement> achievements_map;

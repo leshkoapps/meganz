@@ -36,6 +36,7 @@
 #include "pubkeyaction.h"
 #include "pendingcontactrequest.h"
 #include "mediafileattribute.h"
+#include "useralerts.h"
 
 namespace mega {
 
@@ -194,14 +195,26 @@ public:
     // encrypted master key
     string k;
 
+    // version of the account
+    int accountversion;
+
+    // salt of the account (for v2 accounts)
+    string accountsalt;
+
     // timestamp of the creation of the account
     m_time_t accountsince;
 
-    // multi-factor authentication globally enabled
+    // Global Multi-Factor Authentication enabled
     bool gmfa_enabled;
 
-    // server-side Rubbish-bin autopurging enabled
+    // Server-Side Rubbish-bin Scheduler enabled (autopurging)
     bool ssrs_enabled;
+
+    // New Secure Registration method enabled
+    bool nsr_enabled;
+
+    // Account has VOIP push enabled (only for Apple)
+    bool aplvp_enabled;
 
 #ifdef ENABLE_CHAT
     // all chats
@@ -234,12 +247,26 @@ public:
 
     // full account confirmation/creation support
     void sendsignuplink(const char*, const char*, const byte*);
+
+    string sendsignuplink2(const char*, const char *, const char*);
+    void resendsignuplink2(const char*, const char *);
+
     void querysignuplink(const byte*, unsigned);
     void confirmsignuplink(const byte*, unsigned, uint64_t);
+    void confirmsignuplink2(const byte*, unsigned);
     void setkeypair();
+
+    // prelogin: e-mail
+    void prelogin(const char*);
 
     // user login: e-mail, pwkey
     void login(const char*, const byte*, const char* = NULL);
+
+    // user login: e-mail, password, salt
+    void login2(const char*, const char*, string *, const char* = NULL);
+
+    // user login: e-mail, derivedkey, 2FA pin
+    void login2(const char*, const byte*, const char* = NULL);
 
     // user login: e-mail, pwkey, emailhash
     void fastlogin(const char*, const byte*, uint64_t);
@@ -292,7 +319,7 @@ public:
     error encryptlink(const char* link, const char* pwd, string *encryptedLink);
 
     // change login password
-    error changepw(const byte*, const char *pin = NULL);
+    error changepw(const char *password, const char *pin = NULL);
 
     // load all trees: nodes, shares, contacts
     void fetchnodes(bool nocache = false);
@@ -334,7 +361,7 @@ public:
     error rename(Node*, Node*, syncdel_t = SYNCDEL_NONE, handle = UNDEF);
 
     // start/stop/pause file transfer
-    bool startxfer(direction_t, File*, bool skipdupes = false);
+    bool startxfer(direction_t, File*, bool skipdupes = false, bool startfirst = false, bool donotpersist = false);
     void stopxfer(File* f);
     void pausexfers(direction_t, bool, bool = false);
 
@@ -346,7 +373,7 @@ public:
 
     // enqueue/abort direct read
     void pread(Node*, m_off_t, m_off_t, void*);
-    void pread(handle, SymmCipher* key, int64_t, m_off_t, m_off_t, void*, bool = false);
+    void pread(handle, SymmCipher* key, int64_t, m_off_t, m_off_t, void*, bool = false,  const char* = NULL, const char* = NULL, const char* = NULL);
     void preadabort(Node*, m_off_t = -1, m_off_t = -1);
     void preadabort(handle, m_off_t = -1, m_off_t = -1);
 
@@ -373,7 +400,7 @@ public:
 
     // add nodes to specified parent node (complete upload, copy files, make
     // folders)
-    void putnodes(handle, NewNode*, int);
+    void putnodes(handle, NewNode*, int, const char * = NULL);
 
     // send files/folders to user
     void putnodes(const char*, NewNode*, int);
@@ -397,7 +424,7 @@ public:
     void getua(User* u, const attr_t at = ATTR_UNKNOWN, int ctag = -1);
 
     // queue a user attribute retrieval (for non-contacts)
-    void getua(const char* email_handle, const attr_t at = ATTR_UNKNOWN, int ctag = -1);
+    void getua(const char* email_handle, const attr_t at = ATTR_UNKNOWN, const char *ph = NULL, int ctag = -1);
 
     // retrieve the email address of a user
     void getUserEmail(const char *uid);
@@ -462,7 +489,7 @@ public:
     void gelbrequest(const char*, int, int);
 
     // send chat stats
-    void sendchatstats(const char*);
+    void sendchatstats(const char*, int port);
 
     // send chat logs with user's annonymous id
     void sendchatlogs(const char*, const char*);
@@ -489,13 +516,13 @@ public:
     void purchase_begin();
 
     // add item to basket
-    void purchase_additem(int, handle, unsigned, const char *, unsigned, const char *, const char *);
+    void purchase_additem(int, handle, unsigned, const char *, unsigned, const char *, handle = UNDEF);
 
     // submit purchased products for payment
     void purchase_checkout(int);
 
     // submit purchase receipt for verification
-    void submitpurchasereceipt(int, const char*);
+    void submitpurchasereceipt(int, const char*, handle lph = UNDEF);
 
     // store credit card
     error creditcardstore(const char *);
@@ -514,6 +541,7 @@ public:
 
     // send event
     void sendevent(int, const char *);
+    void sendevent(int, const char *, int tag);
 
     // clean rubbish bin
     void cleanrubbishbin();
@@ -521,13 +549,16 @@ public:
     // determine if more transfers fit in the pipeline
     bool moretransfers(direction_t);
 
+    // change the storage status
+    bool setstoragestatus(storagestatus_t);
+
 #ifdef ENABLE_CHAT
 
     // create a new chat with multiple users and different privileges
-    void createChat(bool group, const userpriv_vector *userpriv);
+    void createChat(bool group, bool publicchat, const userpriv_vector *userpriv = NULL, const string_map *userkeymap = NULL, const char *title = NULL);
 
     // invite a user to a chat
-    void inviteToChat(handle chatid, handle uh, int priv, const char *title = NULL);
+    void inviteToChat(handle chatid, handle uh, int priv, const char *unifiedkey = NULL, const char *title = NULL);
 
     // remove a user from a chat
     void removeFromChat(handle chatid, handle uh);
@@ -563,6 +594,18 @@ public:
 
     // request meta information from an url (title, description, icon)
     void richlinkrequest(const char*);
+
+    // create/get or delete chat-link
+    void chatlink(handle chatid, bool del, bool createifmissing);
+
+    // get the URL for chat-link
+    void chatlinkurl(handle publichandle);
+
+    // convert public chat into private chat
+    void chatlinkclose(handle chatid, const char *title);
+
+    // auto-join publicchat
+    void chatlinkjoin(handle publichandle, const char *unifiedkey);
 #endif
 
     // get mega achievements
@@ -581,6 +624,7 @@ public:
 
     // report an event to the API logger
     void reportevent(const char*, const char* = NULL);
+    void reportevent(const char*, const char*, int tag);
 
     // set max download speed
     bool setmaxdownloadspeed(m_off_t bpslimit);
@@ -627,6 +671,9 @@ public:
     // timestamp until the bandwidth is overquota in deciseconds, related to Waiter::ds
     m_time_t overquotauntil;
 
+    // storage status
+    storagestatus_t ststatus;
+
     // root URL for API requests
     static string APIURL;
 
@@ -648,6 +695,15 @@ public:
     // number of ongoing asynchronous fopen
     int asyncfopens;
 
+    // list of notifications to display to the user; includes items already seen
+    UserAlerts useralerts;
+
+    // true if user data is cached
+    bool cachedug;
+
+    // backoff for the expiration of cached user data
+    BackoffTimer btugexpiration;
+
 private:
     BackoffTimer btcs;
     BackoffTimer btbadhost;
@@ -667,7 +723,6 @@ private:
 
     // notify URL for new server-client commands
     string scnotifyurl;
-    dstime scnotifyurlts;
 
     // unique request ID
     char reqid[10];
@@ -731,9 +786,10 @@ private:
     void sc_userattr();
     bool sc_shares();
     bool sc_upgrade();
+    void sc_paymentreminder();
     void sc_opc();
     void sc_ipc();
-    void sc_upc();
+    void sc_upc(bool incoming);
     void sc_ph();
     void sc_se();
 #ifdef ENABLE_CHAT
@@ -742,6 +798,7 @@ private:
     void sc_chatflags();
 #endif
     void sc_uac();
+    void sc_la();
 
     void init();
 
@@ -771,7 +828,7 @@ private:
     bool isprivatehandle(handle*);
     
     // add direct read
-    void queueread(handle, bool, SymmCipher*, int64_t, m_off_t, m_off_t, void*);
+    void queueread(handle, bool, SymmCipher*, int64_t, m_off_t, m_off_t, void*, const char* = NULL, const char* = NULL, const char* = NULL);
     
     // execute pending direct reads
     bool execdirectreads();
@@ -944,6 +1001,9 @@ public:
     // default number of seconds to wait after a bandwidth overquota
     static dstime DEFAULT_BW_OVERQUOTA_BACKOFF_SECS;
 
+    // number of seconds to invalidate the cached user data
+    static dstime USER_DATA_EXPIRATION_BACKOFF_SECS;
+
     // initial state load in progress?
     bool fetchingnodes;
     int fetchnodestag;
@@ -958,7 +1018,7 @@ public:
 
     void purgenodes(node_vector* = NULL);
     void purgeusers(user_vector* = NULL);
-    bool readusers(JSON*);
+    bool readusers(JSON*, bool actionpackets);
 
     user_vector usernotify;
     void notifyuser(User*);
@@ -1103,6 +1163,10 @@ public:
 
     // process localnode subtree
     void proclocaltree(LocalNode*, LocalTreeProc*);
+
+    // unlink the LocalNode from the corresponding node
+    // if the associated local file or folder still exists
+    void unlinkifexists(LocalNode*, FileAccess*, string*);
 #endif
 
     // recursively cancel transfers in a subtree
@@ -1172,6 +1236,7 @@ public:
     bool warnlevel();
 
     Node* childnodebyname(Node*, const char*, bool = false);
+    vector<Node*> childnodesbyname(Node*, const char*, bool = false);
 
     // purge account state and abort server-client connection
     void purgenodesusersabortsc();
@@ -1183,6 +1248,7 @@ public:
     static const int SESSIONHANDLE = 8;
     static const int PURCHASEHANDLE = 8;
     static const int CONTACTLINKHANDLE = 6;
+    static const int CHATLINKHANDLE = 6;
 
     // max new nodes per request
     static const int MAX_NEWNODES = 2000;
@@ -1226,6 +1292,9 @@ public:
     // binary session ID
     string sid;
 
+    // distinguish activity from different MegaClients in logs
+    string clientname;
+
     // apply keys
     int applykeys();
 
@@ -1237,7 +1306,7 @@ public:
     User* finduser(handle, int = 0);
     User* ownuser();
     void mapuser(handle, const char*);
-    void discarduser(handle);
+    void discarduser(handle, bool = true);
     void discarduser(const char*);
     void mappcr(handle, PendingContactRequest*);
     bool discardnotifieduser(User *);
@@ -1295,7 +1364,7 @@ public:
     void getprivatekey(const char *code);
 
     // confirm a recovery link to restore the account
-    void confirmrecoverylink(const char *code, const char *email, const byte *pwkey, const byte *masterkey = NULL);
+    void confirmrecoverylink(const char *code, const char *email, const char *password, const byte *masterkey = NULL, int accountversion = 1);
 
     // request a link to cancel the account
     void getcancellink(const char *email, const char* = NULL);
@@ -1327,7 +1396,18 @@ public:
     // multi-factor authentication disable
     void multifactorauthdisable(const char*);
 
+    // fetch time zone
+    void fetchtimezone();
+
     void keepmealive(int, bool enable = true);
+
+    void getpsa();
+
+    // tells the API the user has seen existing alerts
+    void acknowledgeuseralerts();
+
+    // manage overquota errors
+    void activateoverquota(dstime timeleft);
 
     // achievements enabled for the account
     bool achievements_enabled;
@@ -1341,9 +1421,20 @@ public:
     // true if user has disabled fileversioning
     bool versions_disabled;
 
+    // the SDK is trying to log out
+    int loggingout;
+
     MegaClient(MegaApp*, Waiter*, HttpIO*, FileSystemAccess*, DbAccess*, GfxProc*, const char*, const char*);
     ~MegaClient();
 };
 } // namespace
+
+#if __cplusplus < 201100L
+#define char_is_not_digit std::not1(std::ptr_fun(static_cast<int(*)(int)>(std::isdigit)))
+#define char_is_not_space std::not1(std::ptr_fun<int, int>(std::isspace))
+#else
+#define char_is_not_digit [](char c) { return !std::isdigit(c); }
+#define char_is_not_space [](char c) { return !std::isspace(c); }
+#endif
 
 #endif

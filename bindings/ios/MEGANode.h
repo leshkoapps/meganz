@@ -38,7 +38,9 @@ typedef NS_ENUM(NSUInteger, MEGANodeChangeType) {
     MEGANodeChangeTypeInShare        = 0x20,
     MEGANodeChangeTypeOutShare       = 0x40,
     MEGANodeChangeTypeParent         = 0x80,
-    MEGANodeChangeTypePendingShare   = 0x100
+    MEGANodeChangeTypePendingShare   = 0x100,
+    MEGANodeChangeTypePublicLink     = 0x200,
+    MEGANodeChangeTypeNew            = 0x400
 };
 
 /**
@@ -91,9 +93,39 @@ typedef NS_ENUM(NSUInteger, MEGANodeChangeType) {
 @property (readonly, nonatomic) NSString *name;
 
 /**
+ * @brief The fingerprint (Base64-encoded) of the node
+ *
+ * Only files have a fingerprint, and there could be files without it.
+ * If the node doesn't have a fingerprint, this funtion returns nil
+ *
+ * Base64-encoded fingerprint of the node, or nil it the node doesn't have a fingerprint.
+ */
+@property (readonly, nonatomic) NSString *fingerprint;
+
+/**
  * @brief Duration of the node for audio/video files, in seconds. -1 if not set.
  */
 @property (readonly, nonatomic) NSInteger duration;
+
+/**
+ * @brief Width of the node for video files, in pixels. -1 if not set.
+ */
+@property (readonly, nonatomic) NSInteger width;
+
+/**
+ * @brief Height of the node for video files, in pixels. -1 if not set.
+ */
+@property (readonly, nonatomic) NSInteger height;
+
+/**
+ * @brief ShortCode of the node for video files. -1 if not set.
+ */
+@property (readonly, nonatomic) NSInteger shortFormat;
+
+/**
+ * @brief VideoCodecId of the node for video files. -1 if not set.
+ */
+@property (readonly, nonatomic) NSInteger videoCodecId;
 
 /**
  * @brief Attribute of the node representing the latitude coordinate in its decimal
@@ -211,6 +243,11 @@ typedef NS_ENUM(NSUInteger, MEGANodeChangeType) {
  * has not been exported, it returns nil.
  */
 @property (readonly, nonatomic) NSString *publicLink;
+
+/**
+ * @brief The handle of the owner of the node.
+ */
+@property (readonly, nonatomic) uint64_t owner;
 
 /**
  * @brief Creates a copy of this MEGANode object.

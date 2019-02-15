@@ -92,6 +92,10 @@ public class MegaApiJava {
     public final static int USER_ATTR_DISABLE_VERSIONS = MegaApi.USER_ATTR_DISABLE_VERSIONS;
     public final static int USER_ATTR_CONTACT_LINK_VERIFICATION = MegaApi.USER_ATTR_CONTACT_LINK_VERIFICATION;
     public final static int USER_ATTR_RICH_PREVIEWS = MegaApi.USER_ATTR_RICH_PREVIEWS;
+    public final static int USER_ATTR_RUBBISH_TIME = MegaApi.USER_ATTR_RUBBISH_TIME;
+    public final static int USER_ATTR_LAST_PSA = MegaApi.USER_ATTR_LAST_PSA;
+    public final static int USER_ATTR_STORAGE_STATE = MegaApi.USER_ATTR_STORAGE_STATE;
+    public final static int USER_ATTR_GEOLOCATION = MegaApi.USER_ATTR_GEOLOCATION;
 
     public final static int NODE_ATTR_DURATION = MegaApi.NODE_ATTR_DURATION;
     public final static int NODE_ATTR_COORDINATES = MegaApi.NODE_ATTR_COORDINATES;
@@ -113,6 +117,10 @@ public class MegaApiJava {
     public final static int TRANSFER_METHOD_AUTO_NORMAL = MegaApi.TRANSFER_METHOD_AUTO_NORMAL;
     public final static int TRANSFER_METHOD_AUTO_ALTERNATIVE = MegaApi.TRANSFER_METHOD_AUTO_ALTERNATIVE;
 
+    public final static int PUSH_NOTIFICATION_ANDROID = MegaApi.PUSH_NOTIFICATION_ANDROID;
+    public final static int PUSH_NOTIFICATION_IOS_VOIP = MegaApi.PUSH_NOTIFICATION_IOS_VOIP;
+    public final static int PUSH_NOTIFICATION_IOS_STD = MegaApi.PUSH_NOTIFICATION_IOS_STD;
+
     public final static int PASSWORD_STRENGTH_VERYWEAK = MegaApi.PASSWORD_STRENGTH_VERYWEAK;
     public final static int PASSWORD_STRENGTH_WEAK = MegaApi.PASSWORD_STRENGTH_WEAK;
     public final static int PASSWORD_STRENGTH_MEDIUM = MegaApi.PASSWORD_STRENGTH_MEDIUM;
@@ -127,6 +135,13 @@ public class MegaApiJava {
     public final static int RETRY_LOCAL_LOCK = MegaApi.RETRY_LOCAL_LOCK;
     public final static int RETRY_UNKNOWN = MegaApi.RETRY_UNKNOWN;
 
+    public final static int KEEP_ALIVE_CAMERA_UPLOADS = MegaApi.KEEP_ALIVE_CAMERA_UPLOADS;
+
+    public final static int STORAGE_STATE_GREEN = MegaApi.STORAGE_STATE_GREEN;
+    public final static int STORAGE_STATE_ORANGE = MegaApi.STORAGE_STATE_ORANGE;
+    public final static int STORAGE_STATE_RED = MegaApi.STORAGE_STATE_RED;
+    public final static int STORAGE_STATE_CHANGE = MegaApi.STORAGE_STATE_CHANGE;
+
     public final static int ORDER_NONE = MegaApi.ORDER_NONE;
     public final static int ORDER_DEFAULT_ASC = MegaApi.ORDER_DEFAULT_ASC;
     public final static int ORDER_DEFAULT_DESC = MegaApi.ORDER_DEFAULT_DESC;
@@ -138,6 +153,11 @@ public class MegaApiJava {
     public final static int ORDER_MODIFICATION_DESC = MegaApi.ORDER_MODIFICATION_DESC;
     public final static int ORDER_ALPHABETICAL_ASC = MegaApi.ORDER_ALPHABETICAL_ASC;
     public final static int ORDER_ALPHABETICAL_DESC = MegaApi.ORDER_ALPHABETICAL_DESC;
+
+    public final static int TCP_SERVER_DENY_ALL = MegaApi.TCP_SERVER_DENY_ALL;
+    public final static int TCP_SERVER_ALLOW_ALL = MegaApi.TCP_SERVER_ALLOW_ALL;
+    public final static int TCP_SERVER_ALLOW_CREATED_LOCAL_LINKS = MegaApi.TCP_SERVER_ALLOW_CREATED_LOCAL_LINKS;
+    public final static int TCP_SERVER_ALLOW_LAST_LOCAL_LINK = MegaApi.TCP_SERVER_ALLOW_LAST_LOCAL_LINK;
 
     public final static int HTTP_SERVER_DENY_ALL = MegaApi.HTTP_SERVER_DENY_ALL;
     public final static int HTTP_SERVER_ALLOW_ALL = MegaApi.HTTP_SERVER_ALLOW_ALL;
@@ -371,22 +391,6 @@ public class MegaApiJava {
     /****************************************************************************************************/
 
     /**
-     * Generates a private key based on the access password.
-     * <p>
-     * This is a time consuming operation (particularly for low-end mobile devices). As the resulting key is
-     * required to log in, this function allows to do this step in a separate function. You should run this function
-     * in a background thread, to prevent UI hangs. The resulting key can be used in MegaApiJava.fastLogin().
-     * 
-     * @param password
-     *            Access password.
-     * @return Base64-encoded private key.
-     * @deprecated Legacy function soon to be removed.
-     */
-    @Deprecated public String getBase64PwKey(String password) {
-        return megaApi.getBase64PwKey(password);
-    }
-
-    /**
      * Generates a hash based in the provided private key and email.
      * <p>
      * This is a time consuming operation (especially for low-end mobile devices). Since the resulting key is
@@ -498,6 +502,26 @@ public class MegaApiJava {
      */
     public void retryPendingConnections() {
         megaApi.retryPendingConnections();
+    }
+
+    /**
+     * Check if server-side Rubbish Bin autopurging is enabled for the current account
+     * @return True if this feature is enabled. Otherwise false.
+     */
+    public boolean serverSideRubbishBinAutopurgeEnabled(){
+        return megaApi.serverSideRubbishBinAutopurgeEnabled();
+    }
+
+    /**
+     * Check if multi-factor authentication can be enabled for the current account.
+     *
+     * It's needed to be logged into an account and with the nodes loaded (login + fetchNodes) before
+     * using this function. Otherwise it will always return false.
+     *
+     * @return True if multi-factor authentication can be enabled for the current account, otherwise false.
+     */
+    public boolean multiFactorAuthAvailable () {
+        return megaApi.multiFactorAuthAvailable();
     }
 
     /**
@@ -778,6 +802,35 @@ public class MegaApiJava {
      */
     public void multiFactorAuthCancelAccount(String pin){
         megaApi.multiFactorAuthCancelAccount(pin);
+    }
+
+    /**
+     * Fetch details related to time zones and the current default
+     *
+     * The associated request type with this request is MegaRequest::TYPE_FETCH_TIMEZONE.
+     *
+     * Valid data in the MegaRequest object received in onRequestFinish when the error code
+     * is MegaError::API_OK:
+     * - MegaRequest::getMegaTimeZoneDetails - Returns details about timezones and the current default
+     *
+     * @param listener MegaRequestListener to track this request
+     */
+    void fetchTimeZone(MegaRequestListenerInterface listener){
+        megaApi.fetchTimeZone(createDelegateRequestListener(listener));
+    }
+
+    /**
+     * Fetch details related to time zones and the current default
+     *
+     * The associated request type with this request is MegaRequest::TYPE_FETCH_TIMEZONE.
+     *
+     * Valid data in the MegaRequest object received in onRequestFinish when the error code
+     * is MegaError::API_OK:
+     * - MegaRequest::getMegaTimeZoneDetails - Returns details about timezones and the current default
+     *
+     */
+    void fetchTimeZone(){
+        megaApi.fetchTimeZone();
     }
 
     /**
@@ -1192,52 +1245,6 @@ public class MegaApiJava {
      */
     public void resumeCreateAccount(String sid) {
         megaApi.resumeCreateAccount(sid);
-    }
-
-    /**
-     * Initialize the creation of a new MEGA account with precomputed keys.
-     * <p>
-     * The associated request type with this request is MegaRequest.TYPE_CREATE_ACCOUNT.
-     * Valid data in the MegaRequest object received on callbacks: <br>
-     * - MegaRequest.getEmail() - Returns the email for the account. <br>
-     * - MegaRequest.getPrivateKey() - Returns the private key calculated with MegaApiJava.getBase64PwKey(). <br>
-     * - MegaRequest.getName() - Returns the name of the user.
-     * <p>
-     * If this request succeed, a confirmation email will be sent to the users.
-     * If an account with the same email already exists, you will get the error code
-     * MegaError.API_EEXIST in onRequestFinish().
-     * 
-     * @param email
-     *            Email for the account.
-     * @param base64pwkey
-     *            Private key calculated with MegMegaApiJavaaApi.getBase64PwKey().
-     * @param name
-     *            Name of the user.
-     * @param listener
-     *            MegaRequestListener to track this request.
-     *
-     * @deprecated This function is deprecated and will eventually be removed. Instead,
-     * use the new version with firstname and lastname.
-     */
-    public void fastCreateAccount(String email, String base64pwkey, String name, MegaRequestListenerInterface listener) {
-        megaApi.fastCreateAccount(email, base64pwkey, name, createDelegateRequestListener(listener));
-    }
-
-    /**
-     * Initialize the creation of a new MEGA account with precomputed keys.
-     *
-     * @param email
-     *            Email for the account.
-     * @param base64pwkey
-     *            Private key calculated with MegaApiJava.getBase64PwKey().
-     * @param name
-     *            Name of the user.
-     *
-     * @deprecated This function is deprecated and will eventually be removed. Instead,
-     * use the new version with firstname and lastname.
-     */
-    public void fastCreateAccount(String email, String base64pwkey, String name) {
-        megaApi.fastCreateAccount(email, base64pwkey, name);
     }
 
     /**
@@ -1698,6 +1705,117 @@ public class MegaApiJava {
         megaApi.contactLinkDelete(handle);
     }
 
+    /**
+     * Get the next PSA (Public Service Announcement) that should be shown to the user
+     *
+     * After the PSA has been accepted or dismissed by the user, app should
+     * use MegaApi::setPSA to notify API servers about this event and
+     * do not get the same PSA again in the next call to this function.
+     *
+     * The associated request type with this request is MegaRequest::TYPE_GET_PSA.
+     *
+     * Valid data in the MegaRequest object received in onRequestFinish when the error code
+     * is MegaError::API_OK:
+     * - MegaRequest::getNumber - Returns the id of the PSA (useful to call MegaApi::setPSA later)
+     * - MegaRequest::getName - Returns the title of the PSA
+     * - MegaRequest::getText - Returns the text of the PSA
+     * - MegaRequest::getFile - Returns the URL of the image of the PSA
+     * - MegaRequest::getPassword - Returns the text for the possitive button (or an empty string)
+     * - MegaRequest::getLink - Returns the link for the possitive button (or an empty string)
+     *
+     * If there isn't any new PSA to show, onRequestFinish will be called with the error
+     * code MegaError::API_ENOENT
+     *
+     * @param listener MegaRequestListener to track this request
+     * @see MegaApi::setPSA
+     */
+    void getPSA(MegaRequestListenerInterface listener){
+        megaApi.getPSA(createDelegateRequestListener(listener));
+    }
+
+    /**
+     * Get the next PSA (Public Service Announcement) that should be shown to the user
+     *
+     * After the PSA has been accepted or dismissed by the user, app should
+     * use MegaApi::setPSA to notify API servers about this event and
+     * do not get the same PSA again in the next call to this function.
+     *
+     * The associated request type with this request is MegaRequest::TYPE_GET_PSA.
+     *
+     * Valid data in the MegaRequest object received in onRequestFinish when the error code
+     * is MegaError::API_OK:
+     * - MegaRequest::getNumber - Returns the id of the PSA (useful to call MegaApi::setPSA later)
+     * - MegaRequest::getName - Returns the title of the PSA
+     * - MegaRequest::getText - Returns the text of the PSA
+     * - MegaRequest::getFile - Returns the URL of the image of the PSA
+     * - MegaRequest::getPassword - Returns the text for the possitive button (or an empty string)
+     * - MegaRequest::getLink - Returns the link for the possitive button (or an empty string)
+     *
+     * If there isn't any new PSA to show, onRequestFinish will be called with the error
+     * code MegaError::API_ENOENT
+     *
+     * @see MegaApi::setPSA
+     */
+    void getPSA(){
+        megaApi.getPSA();
+    }
+
+    /**
+     * Notify API servers that a PSA (Public Service Announcement) has been already seen
+     *
+     * The associated request type with this request is MegaRequest::TYPE_SET_ATTR_USER.
+     *
+     * Valid data in the MegaRequest object received on callbacks:
+     * - MegaRequest::getParamType - Returns the value MegaApi::USER_ATTR_LAST_PSA
+     * - MegaRequest::getText - Returns the id passed in the first parameter (as a string)
+     *
+     * @param id Identifier of the PSA
+     * @param listener MegaRequestListener to track this request
+     *
+     * @see MegaApi::getPSA
+     */
+    void setPSA(int id, MegaRequestListenerInterface listener){
+        megaApi.setPSA(id, createDelegateRequestListener(listener));
+    }
+
+    /**
+     * Notify API servers that a PSA (Public Service Announcement) has been already seen
+     *
+     * The associated request type with this request is MegaRequest::TYPE_SET_ATTR_USER.
+     *
+     * Valid data in the MegaRequest object received on callbacks:
+     * - MegaRequest::getParamType - Returns the value MegaApi::USER_ATTR_LAST_PSA
+     * - MegaRequest::getText - Returns the id passed in the first parameter (as a string)
+     *
+     * @param id Identifier of the PSA
+     *
+     * @see MegaApi::getPSA
+     */
+    void setPSA(int id){
+        megaApi.setPSA(id);
+    }
+
+    /**
+     * Command to acknowledge user alerts.
+     *
+     * Other clients will be notified that alerts to this point have been seen.
+     *
+     * @param listener MegaRequestListener to track this request
+     */
+    public void acknowledgeUserAlerts(MegaRequestListenerInterface listener){
+        megaApi.acknowledgeUserAlerts(createDelegateRequestListener(listener));
+    }
+
+    /**
+     * Command to acknowledge user alerts.
+     *
+     * Other clients will be notified that alerts to this point have been seen.
+     *
+     * @see MegaApi::getUserAlerts
+     */
+    public void acknowledgeUserAlerts(){
+        megaApi.acknowledgeUserAlerts();
+    }
 
     /**
      * Returns the email of the currently open account.
@@ -2738,21 +2856,58 @@ public class MegaApiJava {
 
     /**
      * Get an attribute of a MegaUser.
-     * <p>
-     * The associated request type with this request is MegaRequest.TYPE_GET_ATTR_USER
-     * Valid data in the MegaRequest object received on callbacks: <br>
-     * - MegaRequest.getParamType() - Returns the attribute type.
-     * <p>
-     * Valid data in the MegaRequest object received in onRequestFinish() when the error code
-     * is MegaError.API_OK: <br>
-     * - MegaRequest.getText() - Returns the value of the attribute.
      *
-     * @param user MegaUser to get the attribute
-     * @param type Attribute type. Valid values are: <br>
-     * MegaApi.USER_ATTR_FIRSTNAME = 1 Get the firstname of the user. <br>
-     * MegaApi.USER_ATTR_LASTNAME = 2 Get the lastname of the user.
+     * User attributes can be private or public. Private attributes are accessible only by
+     * your own user, while public ones are retrievable by any of your contacts.
      *
-     * @param listener MegaRequestListenerInterface to track this request.
+     * The associated request type with this request is MegaRequest::TYPE_GET_ATTR_USER
+     * Valid data in the MegaRequest object received on callbacks:
+     * - MegaRequest::getParamType - Returns the attribute type
+     *
+     * Valid data in the MegaRequest object received in onRequestFinish when the error code
+     * is MegaError::API_OK:
+     * - MegaRequest::getText - Returns the value for public attributes
+     * - MegaRequest::getMegaStringMap - Returns the value for private attributes
+     *
+     * @param user MegaUser to get the attribute. If this parameter is set to NULL, the attribute
+     * is obtained for the active account
+     * @param type Attribute type
+     *
+     * Valid values are:
+     *
+     * MegaApi::USER_ATTR_FIRSTNAME = 1
+     * Get the firstname of the user (public)
+     * MegaApi::USER_ATTR_LASTNAME = 2
+     * Get the lastname of the user (public)
+     * MegaApi::USER_ATTR_AUTHRING = 3
+     * Get the authentication ring of the user (private)
+     * MegaApi::USER_ATTR_LAST_INTERACTION = 4
+     * Get the last interaction of the contacts of the user (private)
+     * MegaApi::USER_ATTR_ED25519_PUBLIC_KEY = 5
+     * Get the public key Ed25519 of the user (public)
+     * MegaApi::USER_ATTR_CU25519_PUBLIC_KEY = 6
+     * Get the public key Cu25519 of the user (public)
+     * MegaApi::USER_ATTR_KEYRING = 7
+     * Get the key ring of the user: private keys for Cu25519 and Ed25519 (private)
+     * MegaApi::USER_ATTR_SIG_RSA_PUBLIC_KEY = 8
+     * Get the signature of RSA public key of the user (public)
+     * MegaApi::USER_ATTR_SIG_CU255_PUBLIC_KEY = 9
+     * Get the signature of Cu25519 public key of the user (public)
+     * MegaApi::USER_ATTR_LANGUAGE = 14
+     * Get the preferred language of the user (private, non-encrypted)
+     * MegaApi::USER_ATTR_PWD_REMINDER = 15
+     * Get the password-reminder-dialog information (private, non-encrypted)
+     * MegaApi::USER_ATTR_DISABLE_VERSIONS = 16
+     * Get whether user has versions disabled or enabled (private, non-encrypted)
+     * MegaApi::USER_ATTR_RICH_PREVIEWS = 18
+     * Get whether user generates rich-link messages or not (private)
+     * MegaApi::USER_ATTR_RUBBISH_TIME = 19
+     * Get number of days for rubbish-bin cleaning scheduler (private non-encrypted)
+     * MegaApi::USER_ATTR_STORAGE_STATE = 21
+     * Get the state of the storage (private non-encrypted)
+     * MegaApi::USER_ATTR_GEOLOCATION = 22
+     * Get whether the user has enabled send geolocation messages (private)
+     * @param listener MegaRequestListener to track this request
      */
     public void getUserAttribute(MegaUser user, int type, MegaRequestListenerInterface listener) {
         megaApi.getUserAttribute(user, type, createDelegateRequestListener(listener));
@@ -2761,17 +2916,66 @@ public class MegaApiJava {
     /**
      * Get an attribute of a MegaUser.
      *
-     * @param user MegaUser to get the attribute.
-     * @param type Attribute type. Valid values are: <br>
-     * MegaApi.USER_ATTR_FIRSTNAME = 1 Get the firstname of the user. <br>
-     * MegaApi.USER_ATTR_LASTNAME = 2 Get the lastname of the user.
+     * User attributes can be private or public. Private attributes are accessible only by
+     * your own user, while public ones are retrievable by any of your contacts.
+     *
+     * The associated request type with this request is MegaRequest::TYPE_GET_ATTR_USER
+     * Valid data in the MegaRequest object received on callbacks:
+     * - MegaRequest::getParamType - Returns the attribute type
+     *
+     * Valid data in the MegaRequest object received in onRequestFinish when the error code
+     * is MegaError::API_OK:
+     * - MegaRequest::getText - Returns the value for public attributes
+     * - MegaRequest::getMegaStringMap - Returns the value for private attributes
+     *
+     * @param user MegaUser to get the attribute. If this parameter is set to NULL, the attribute
+     * is obtained for the active account
+     * @param type Attribute type
+     *
+     * Valid values are:
+     *
+     * MegaApi::USER_ATTR_FIRSTNAME = 1
+     * Get the firstname of the user (public)
+     * MegaApi::USER_ATTR_LASTNAME = 2
+     * Get the lastname of the user (public)
+     * MegaApi::USER_ATTR_AUTHRING = 3
+     * Get the authentication ring of the user (private)
+     * MegaApi::USER_ATTR_LAST_INTERACTION = 4
+     * Get the last interaction of the contacts of the user (private)
+     * MegaApi::USER_ATTR_ED25519_PUBLIC_KEY = 5
+     * Get the public key Ed25519 of the user (public)
+     * MegaApi::USER_ATTR_CU25519_PUBLIC_KEY = 6
+     * Get the public key Cu25519 of the user (public)
+     * MegaApi::USER_ATTR_KEYRING = 7
+     * Get the key ring of the user: private keys for Cu25519 and Ed25519 (private)
+     * MegaApi::USER_ATTR_SIG_RSA_PUBLIC_KEY = 8
+     * Get the signature of RSA public key of the user (public)
+     * MegaApi::USER_ATTR_SIG_CU255_PUBLIC_KEY = 9
+     * Get the signature of Cu25519 public key of the user (public)
+     * MegaApi::USER_ATTR_LANGUAGE = 14
+     * Get the preferred language of the user (private, non-encrypted)
+     * MegaApi::USER_ATTR_PWD_REMINDER = 15
+     * Get the password-reminder-dialog information (private, non-encrypted)
+     * MegaApi::USER_ATTR_DISABLE_VERSIONS = 16
+     * Get whether user has versions disabled or enabled (private, non-encrypted)
+     * MegaApi::USER_ATTR_RICH_PREVIEWS = 18
+     * Get whether user generates rich-link messages or not (private)
+     * MegaApi::USER_ATTR_RUBBISH_TIME = 19
+     * Get number of days for rubbish-bin cleaning scheduler (private non-encrypted)
+     * MegaApi::USER_ATTR_STORAGE_STATE = 21
+     * Get the state of the storage (private non-encrypted)
+     * MegaApi::USER_ATTR_GEOLOCATION = 22
+     * Get whether the user has enabled send geolocation messages (private)
      */
     public void getUserAttribute(MegaUser user, int type) {
         megaApi.getUserAttribute(user, type);
     }
-    
+
     /**
-     * Get an attribute of any user in MEGA.
+     * @brief Get an attribute of any user in MEGA.
+     *
+     * User attributes can be private or public. Private attributes are accessible only by
+     * your own user, while public ones are retrievable by any of your contacts.
      *
      * The associated request type with this request is MegaRequest::TYPE_GET_ATTR_USER
      * Valid data in the MegaRequest object received on callbacks:
@@ -2780,38 +2984,103 @@ public class MegaApiJava {
      *
      * Valid data in the MegaRequest object received in onRequestFinish when the error code
      * is MegaError::API_OK:
-     * - MegaRequest::getText - Returns the value of the attribute
+     * - MegaRequest::getText - Returns the value for public attributes
+     * - MegaRequest::getMegaStringMap - Returns the value for private attributes
      *
-     * @param user email_or_user Email or user handle (Base64 encoded) to get the attribute.
+     * @param email_or_handle Email or user handle (Base64 encoded) to get the attribute.
      * If this parameter is set to NULL, the attribute is obtained for the active account.
      * @param type Attribute type
      *
      * Valid values are:
      *
      * MegaApi::USER_ATTR_FIRSTNAME = 1
-     * Get the firstname of the user
+     * Get the firstname of the user (public)
      * MegaApi::USER_ATTR_LASTNAME = 2
-     * Get the lastname of the user
-     *
-     * @param listener MegaRequestListenerInterface to track this request
+     * Get the lastname of the user (public)
+     * MegaApi::USER_ATTR_AUTHRING = 3
+     * Get the authentication ring of the user (private)
+     * MegaApi::USER_ATTR_LAST_INTERACTION = 4
+     * Get the last interaction of the contacts of the user (private)
+     * MegaApi::USER_ATTR_ED25519_PUBLIC_KEY = 5
+     * Get the public key Ed25519 of the user (public)
+     * MegaApi::USER_ATTR_CU25519_PUBLIC_KEY = 6
+     * Get the public key Cu25519 of the user (public)
+     * MegaApi::USER_ATTR_KEYRING = 7
+     * Get the key ring of the user: private keys for Cu25519 and Ed25519 (private)
+     * MegaApi::USER_ATTR_SIG_RSA_PUBLIC_KEY = 8
+     * Get the signature of RSA public key of the user (public)
+     * MegaApi::USER_ATTR_SIG_CU255_PUBLIC_KEY = 9
+     * Get the signature of Cu25519 public key of the user (public)
+     * MegaApi::USER_ATTR_LANGUAGE = 14
+     * Get the preferred language of the user (private, non-encrypted)
+     * MegaApi::USER_ATTR_PWD_REMINDER = 15
+     * Get the password-reminder-dialog information (private, non-encrypted)
+     * MegaApi::USER_ATTR_DISABLE_VERSIONS = 16
+     * Get whether user has versions disabled or enabled (private, non-encrypted)
+     * MegaApi::USER_ATTR_RUBBISH_TIME = 19
+     * Get number of days for rubbish-bin cleaning scheduler (private non-encrypted)
+     * MegaApi::USER_ATTR_STORAGE_STATE = 21
+     * Get the state of the storage (private non-encrypted)
+     * MegaApi::USER_ATTR_GEOLOCATION = 22
+     * Get whether the user has enabled send geolocation messages (private)
+     * @param listener MegaRequestListener to track this request
      */
     public void getUserAttribute(String email_or_handle, int type, MegaRequestListenerInterface listener) {
     	megaApi.getUserAttribute(email_or_handle, type, createDelegateRequestListener(listener));
     }
-    
+
     /**
-     * Get an attribute of any user in MEGA.
-     * 
-     * @param user email_or_user Email or user handle (Base64 encoded) to get the attribute.
+     * @brief Get an attribute of any user in MEGA.
+     *
+     * User attributes can be private or public. Private attributes are accessible only by
+     * your own user, while public ones are retrievable by any of your contacts.
+     *
+     * The associated request type with this request is MegaRequest::TYPE_GET_ATTR_USER
+     * Valid data in the MegaRequest object received on callbacks:
+     * - MegaRequest::getParamType - Returns the attribute type
+     * - MegaRequest::getEmail - Returns the email or the handle of the user (the provided one as parameter)
+     *
+     * Valid data in the MegaRequest object received in onRequestFinish when the error code
+     * is MegaError::API_OK:
+     * - MegaRequest::getText - Returns the value for public attributes
+     * - MegaRequest::getMegaStringMap - Returns the value for private attributes
+     *
+     * @param email_or_handle Email or user handle (Base64 encoded) to get the attribute.
      * If this parameter is set to NULL, the attribute is obtained for the active account.
      * @param type Attribute type
      *
      * Valid values are:
      *
      * MegaApi::USER_ATTR_FIRSTNAME = 1
-     * Get the firstname of the user
+     * Get the firstname of the user (public)
      * MegaApi::USER_ATTR_LASTNAME = 2
-     * Get the lastname of the user
+     * Get the lastname of the user (public)
+     * MegaApi::USER_ATTR_AUTHRING = 3
+     * Get the authentication ring of the user (private)
+     * MegaApi::USER_ATTR_LAST_INTERACTION = 4
+     * Get the last interaction of the contacts of the user (private)
+     * MegaApi::USER_ATTR_ED25519_PUBLIC_KEY = 5
+     * Get the public key Ed25519 of the user (public)
+     * MegaApi::USER_ATTR_CU25519_PUBLIC_KEY = 6
+     * Get the public key Cu25519 of the user (public)
+     * MegaApi::USER_ATTR_KEYRING = 7
+     * Get the key ring of the user: private keys for Cu25519 and Ed25519 (private)
+     * MegaApi::USER_ATTR_SIG_RSA_PUBLIC_KEY = 8
+     * Get the signature of RSA public key of the user (public)
+     * MegaApi::USER_ATTR_SIG_CU255_PUBLIC_KEY = 9
+     * Get the signature of Cu25519 public key of the user (public)
+     * MegaApi::USER_ATTR_LANGUAGE = 14
+     * Get the preferred language of the user (private, non-encrypted)
+     * MegaApi::USER_ATTR_PWD_REMINDER = 15
+     * Get the password-reminder-dialog information (private, non-encrypted)
+     * MegaApi::USER_ATTR_DISABLE_VERSIONS = 16
+     * Get whether user has versions disabled or enabled (private, non-encrypted)
+     * MegaApi::USER_ATTR_RUBBISH_TIME = 19
+     * Get number of days for rubbish-bin cleaning scheduler (private non-encrypted)
+     * MegaApi::USER_ATTR_STORAGE_STATE = 21
+     * Get the state of the storage (private non-encrypted)
+     * MegaApi::USER_ATTR_GEOLOCATION = 22
+     * Get whether the user has enabled send geolocation messages (private)
      */
     public void getUserAttribute(String email_or_handle, int type) {
     	megaApi.getUserAttribute(email_or_handle, type);
@@ -2819,32 +3088,112 @@ public class MegaApiJava {
 
     /**
      * Get an attribute of the current account.
-     * <p>
-     * The associated request type with this request is MegaRequest.TYPE_GET_ATTR_USER.
-     * Valid data in the MegaRequest object received on callbacks: <br>
-     * - MegaRequest.getParamType() - Returns the attribute type.
-     * <p>
-     * Valid data in the MegaRequest object received in onRequestFinish() when the error code
-     * is MegaError.API_OK: <br>
-     * - MegaRequest.getText() - Returns the value of the attribute.
      *
-     * @param type Attribute type. Valid values are: <br>
+     * User attributes can be private or public. Private attributes are accessible only by
+     * your own user, while public ones are retrievable by any of your contacts.
      *
-     * MegaApi.USER_ATTR_FIRSTNAME = 1 Get the firstname of the user. <br>
-     * MegaApi.USER_ATTR_LASTNAME = 2 Get the lastname of the user.
+     * The associated request type with this request is MegaRequest::TYPE_GET_ATTR_USER
+     * Valid data in the MegaRequest object received on callbacks:
+     * - MegaRequest::getParamType - Returns the attribute type
      *
-     * @param listener MegaRequestListenerInterface to track this request.
+     * Valid data in the MegaRequest object received in onRequestFinish when the error code
+     * is MegaError::API_OK:
+     * - MegaRequest::getText - Returns the value for public attributes
+     * - MegaRequest::getMegaStringMap - Returns the value for private attributes
+     *
+     * @param type Attribute type
+     *
+     * Valid values are:
+     *
+     * MegaApi::USER_ATTR_FIRSTNAME = 1
+     * Get the firstname of the user (public)
+     * MegaApi::USER_ATTR_LASTNAME = 2
+     * Get the lastname of the user (public)
+     * MegaApi::USER_ATTR_AUTHRING = 3
+     * Get the authentication ring of the user (private)
+     * MegaApi::USER_ATTR_LAST_INTERACTION = 4
+     * Get the last interaction of the contacts of the user (private)
+     * MegaApi::USER_ATTR_ED25519_PUBLIC_KEY = 5
+     * Get the public key Ed25519 of the user (public)
+     * MegaApi::USER_ATTR_CU25519_PUBLIC_KEY = 6
+     * Get the public key Cu25519 of the user (public)
+     * MegaApi::USER_ATTR_KEYRING = 7
+     * Get the key ring of the user: private keys for Cu25519 and Ed25519 (private)
+     * MegaApi::USER_ATTR_SIG_RSA_PUBLIC_KEY = 8
+     * Get the signature of RSA public key of the user (public)
+     * MegaApi::USER_ATTR_SIG_CU255_PUBLIC_KEY = 9
+     * Get the signature of Cu25519 public key of the user (public)
+     * MegaApi::USER_ATTR_LANGUAGE = 14
+     * Get the preferred language of the user (private, non-encrypted)
+     * MegaApi::USER_ATTR_PWD_REMINDER = 15
+     * Get the password-reminder-dialog information (private, non-encrypted)
+     * MegaApi::USER_ATTR_DISABLE_VERSIONS = 16
+     * Get whether user has versions disabled or enabled (private, non-encrypted)
+     * MegaApi::USER_ATTR_RICH_PREVIEWS = 18
+     * Get whether user generates rich-link messages or not (private)
+     * MegaApi::USER_ATTR_RUBBISH_TIME = 19
+     * Get number of days for rubbish-bin cleaning scheduler (private non-encrypted)
+     * MegaApi::USER_ATTR_STORAGE_STATE = 21
+     * Get the state of the storage (private non-encrypted)
+     * MegaApi::USER_ATTR_GEOLOCATION = 22
+     * Get whether the user has enabled send geolocation messages (private)
+     * @param listener MegaRequestListener to track this request
      */
     public void getUserAttribute(int type, MegaRequestListenerInterface listener) {
         megaApi.getUserAttribute(type, createDelegateRequestListener(listener));
     }
 
     /**
-     * Get an attribute of the current account.
+     * @brief Get an attribute of the current account.
      *
-     * @param type Attribute type. Valid values are: <br>
-     * MegaApi.USER_ATTR_FIRSTNAME = 1 Get the firstname of the user. <br>
-     * MegaApi.USER_ATTR_LASTNAME = 2 Get the lastname of the user.
+     * User attributes can be private or public. Private attributes are accessible only by
+     * your own user, while public ones are retrievable by any of your contacts.
+     *
+     * The associated request type with this request is MegaRequest::TYPE_GET_ATTR_USER
+     * Valid data in the MegaRequest object received on callbacks:
+     * - MegaRequest::getParamType - Returns the attribute type
+     *
+     * Valid data in the MegaRequest object received in onRequestFinish when the error code
+     * is MegaError::API_OK:
+     * - MegaRequest::getText - Returns the value for public attributes
+     * - MegaRequest::getMegaStringMap - Returns the value for private attributes
+     *
+     * @param type Attribute type
+     *
+     * Valid values are:
+     *
+     * MegaApi::USER_ATTR_FIRSTNAME = 1
+     * Get the firstname of the user (public)
+     * MegaApi::USER_ATTR_LASTNAME = 2
+     * Get the lastname of the user (public)
+     * MegaApi::USER_ATTR_AUTHRING = 3
+     * Get the authentication ring of the user (private)
+     * MegaApi::USER_ATTR_LAST_INTERACTION = 4
+     * Get the last interaction of the contacts of the user (private)
+     * MegaApi::USER_ATTR_ED25519_PUBLIC_KEY = 5
+     * Get the public key Ed25519 of the user (public)
+     * MegaApi::USER_ATTR_CU25519_PUBLIC_KEY = 6
+     * Get the public key Cu25519 of the user (public)
+     * MegaApi::USER_ATTR_KEYRING = 7
+     * Get the key ring of the user: private keys for Cu25519 and Ed25519 (private)
+     * MegaApi::USER_ATTR_SIG_RSA_PUBLIC_KEY = 8
+     * Get the signature of RSA public key of the user (public)
+     * MegaApi::USER_ATTR_SIG_CU255_PUBLIC_KEY = 9
+     * Get the signature of Cu25519 public key of the user (public)
+     * MegaApi::USER_ATTR_LANGUAGE = 14
+     * Get the preferred language of the user (private, non-encrypted)
+     * MegaApi::USER_ATTR_PWD_REMINDER = 15
+     * Get the password-reminder-dialog information (private, non-encrypted)
+     * MegaApi::USER_ATTR_DISABLE_VERSIONS = 16
+     * Get whether user has versions disabled or enabled (private, non-encrypted)
+     * MegaApi::USER_ATTR_RICH_PREVIEWS = 18
+     * Get whether user generates rich-link messages or not (private)
+     * MegaApi::USER_ATTR_RUBBISH_TIME = 19
+     * Get number of days for rubbish-bin cleaning scheduler (private non-encrypted)
+     * MegaApi::USER_ATTR_STORAGE_STATE = 21
+     * Get the state of the storage (private non-encrypted)
+     * MegaApi::USER_ATTR_GEOLOCATION = 22
+     * Get whether the user has enabled send geolocation messages (private)
      */
     public void getUserAttribute(int type) {
         megaApi.getUserAttribute(type);
@@ -2999,41 +3348,55 @@ public class MegaApiJava {
     }
 
     /**
-     * Set an attribute of the current user.
-     * <p>
-     * The associated request type with this request is MegaRequest.TYPE_SET_ATTR_USER.
-     * Valid data in the MegaRequest object received on callbacks: <br>
-     * - MegaRequest.getParamType() - Returns the attribute type. <br>
-     * - MegaRequest.getFile() - Returns the new value for the attribute.
-     * 
-     * @param type
-     *            Attribute type. Valid values are: <br>
-     * 
-     *            USER_ATTR_FIRSTNAME = 1.
-     *            Change the firstname of the user. <br>
-     *            USER_ATTR_LASTNAME = 2.
-     *            Change the lastname of the user.
-     * @param value
-     *            New attribute value.
-     * @param listener
-     *            MegaRequestListenerInterface to track this request.
+     * Set a private attribute of the current user
+     *
+     * The associated request type with this request is MegaRequest::TYPE_SET_ATTR_USER
+     * Valid data in the MegaRequest object received on callbacks:
+     * - MegaRequest::getParamType - Returns the attribute type
+     * - MegaRequest::getMegaStringMap - Returns the new value for the attribute
+     *
+     * @param type Attribute type
+     *
+     * Valid values are:
+     *
+     * MegaApi::USER_ATTR_AUTHRING = 3
+     * Get the authentication ring of the user (private)
+     * MegaApi::USER_ATTR_LAST_INTERACTION = 4
+     * Get the last interaction of the contacts of the user (private)
+     * MegaApi::USER_ATTR_KEYRING = 7
+     * Get the key ring of the user: private keys for Cu25519 and Ed25519 (private)
+     * MegaApi::USER_ATTR_RICH_PREVIEWS = 18
+     * Get whether user generates rich-link messages or not (private)
+     *
+     * @param value New attribute value
+     * @param listener MegaRequestListener to track this request
      */
     public void setUserAttribute(int type, String value, MegaRequestListenerInterface listener) {
         megaApi.setUserAttribute(type, value, createDelegateRequestListener(listener));
     }
 
     /**
-     * Set an attribute of the current user.
-     * 
-     * @param type
-     *            Attribute type. Valid values are: <br>
-     * 
-     *            USER_ATTR_FIRSTNAME = 1.
-     *            Change the firstname of the user. <br>
-     *            USER_ATTR_LASTNAME = 2.
-     *            Change the lastname of the user. <br>
-     * @param value
-     *            New attribute value.
+     * Set a private attribute of the current user
+     *
+     * The associated request type with this request is MegaRequest::TYPE_SET_ATTR_USER
+     * Valid data in the MegaRequest object received on callbacks:
+     * - MegaRequest::getParamType - Returns the attribute type
+     * - MegaRequest::getMegaStringMap - Returns the new value for the attribute
+     *
+     * @param type Attribute type
+     *
+     * Valid values are:
+     *
+     * MegaApi::USER_ATTR_AUTHRING = 3
+     * Get the authentication ring of the user (private)
+     * MegaApi::USER_ATTR_LAST_INTERACTION = 4
+     * Get the last interaction of the contacts of the user (private)
+     * MegaApi::USER_ATTR_KEYRING = 7
+     * Get the key ring of the user: private keys for Cu25519 and Ed25519 (private)
+     * MegaApi::USER_ATTR_RICH_PREVIEWS = 18
+     * Get whether user generates rich-link messages or not (private)
+     *
+     * @param value New attribute value
      */
     public void setUserAttribute(int type, String value) {
         megaApi.setUserAttribute(type, value);
@@ -3381,6 +3744,47 @@ public class MegaApiJava {
     }
 
     /**
+     * Get the payment URL for an upgrade
+     *
+     * The associated request type with this request is MegaRequest::TYPE_GET_PAYMENT_ID
+     * Valid data in the MegaRequest object received on callbacks:
+     * - MegaRequest::getNodeHandle - Returns the handle of the product
+     *
+     * Valid data in the MegaRequest object received in onRequestFinish when the error code
+     * is MegaError::API_OK:
+     * - MegaRequest::getLink - Payment ID
+     *
+     * @param productHandle Handle of the product (see MegaApi::getPricing)
+     * @param lastPublicHandle Last public handle accessed by the user in the last 24h
+     * @param listener MegaRequestListener to track this request
+     *
+     * @see MegaApi::getPricing
+     */
+    public void getPaymentId(long productHandle, long lastPublicHandle, MegaRequestListenerInterface listener) {
+        megaApi.getPaymentId(productHandle, lastPublicHandle, createDelegateRequestListener(listener));
+    }
+
+    /**
+     * Get the payment URL for an upgrade
+     *
+     * The associated request type with this request is MegaRequest::TYPE_GET_PAYMENT_ID
+     * Valid data in the MegaRequest object received on callbacks:
+     * - MegaRequest::getNodeHandle - Returns the handle of the product
+     *
+     * Valid data in the MegaRequest object received in onRequestFinish when the error code
+     * is MegaError::API_OK:
+     * - MegaRequest::getLink - Payment ID
+     *
+     * @param productHandle Handle of the product (see MegaApi::getPricing)
+     * @param lastPublicHandle Last public handle accessed by the user in the last 24h
+     *
+     * @see MegaApi::getPricing
+     */
+    public void getPaymentId(long productHandle, long lastPublicHandle) {
+        megaApi.getPaymentId(productHandle, lastPublicHandle);
+    }
+
+    /**
      * Upgrade an account.
      *
      * @param productHandle Product handle to purchase.
@@ -3450,6 +3854,78 @@ public class MegaApiJava {
      */
     public void submitPurchaseReceipt(String receipt) {
         megaApi.submitPurchaseReceipt(receipt);
+    }
+
+    /**
+     * Submit a purchase receipt for verification
+     *
+     * The associated request type with this request is MegaRequest::TYPE_SUBMIT_PURCHASE_RECEIPT
+     *
+     * @param gateway Payment gateway
+     * Currently supported payment gateways are:
+     * - MegaApi::PAYMENT_METHOD_ITUNES = 2
+     * - MegaApi::PAYMENT_METHOD_GOOGLE_WALLET = 3
+     * - MegaApi::PAYMENT_METHOD_WINDOWS_STORE = 13
+     *
+     * @param receipt Purchase receipt
+     * @param listener MegaRequestListener to track this request
+     */
+    public void submitPurchaseReceipt(int gateway, String receipt, MegaRequestListenerInterface listener) {
+        megaApi.submitPurchaseReceipt(gateway, receipt, createDelegateRequestListener(listener));
+    }
+
+    /**
+     * Submit a purchase receipt for verification
+     *
+     * The associated request type with this request is MegaRequest::TYPE_SUBMIT_PURCHASE_RECEIPT
+     *
+     * @param gateway Payment gateway
+     * Currently supported payment gateways are:
+     * - MegaApi::PAYMENT_METHOD_ITUNES = 2
+     * - MegaApi::PAYMENT_METHOD_GOOGLE_WALLET = 3
+     * - MegaApi::PAYMENT_METHOD_WINDOWS_STORE = 13
+     *
+     * @param receipt Purchase receipt
+     */
+    public void submitPurchaseReceipt(int gateway, String receipt) {
+        megaApi.submitPurchaseReceipt(gateway, receipt);
+    }
+
+    /**
+     * Submit a purchase receipt for verification
+     *
+     * The associated request type with this request is MegaRequest::TYPE_SUBMIT_PURCHASE_RECEIPT
+     *
+     * @param gateway Payment gateway
+     * Currently supported payment gateways are:
+     * - MegaApi::PAYMENT_METHOD_ITUNES = 2
+     * - MegaApi::PAYMENT_METHOD_GOOGLE_WALLET = 3
+     * - MegaApi::PAYMENT_METHOD_WINDOWS_STORE = 13
+     *
+     * @param receipt Purchase receipt
+     * @param lastPublicHandle Last public handle accessed by the user in the last 24h
+     * @param listener MegaRequestListener to track this request
+     */
+    public void submitPurchaseReceipt(int gateway, String receipt, long lastPublicHandle, MegaRequestListenerInterface listener) {
+        megaApi.submitPurchaseReceipt(gateway, receipt, lastPublicHandle, createDelegateRequestListener(listener));
+    }
+
+    /**
+     * Submit a purchase receipt for verification
+     *
+     * The associated request type with this request is MegaRequest::TYPE_SUBMIT_PURCHASE_RECEIPT
+     *
+     * @param gateway Payment gateway
+     * Currently supported payment gateways are:
+     * - MegaApi::PAYMENT_METHOD_ITUNES = 2
+     * - MegaApi::PAYMENT_METHOD_GOOGLE_WALLET = 3
+     * - MegaApi::PAYMENT_METHOD_WINDOWS_STORE = 13
+     *
+     * @param receipt Purchase receipt
+     * @param lastPublicHandle Last public handle accessed by the user in the last 24h
+     */
+    public void submitPurchaseReceipt(int gateway, String receipt, long lastPublicHandle) {
+        megaApi.submitPurchaseReceipt(gateway, receipt, lastPublicHandle);
     }
 
     /**
@@ -3599,6 +4075,27 @@ public class MegaApiJava {
      */
     public void masterKeyExported(MegaRequestListenerInterface listener){
         megaApi.masterKeyExported(createDelegateRequestListener(listener));
+    }
+
+    /**
+     * Check if the master key has been exported
+     *
+     * The associated request type with this request is MegaRequest::TYPE_GET_ATTR_USER
+     * Valid data in the MegaRequest object received on callbacks:
+     * - MegaRequest::getParamType - Returns the attribute type MegaApi::USER_ATTR_PWD_REMINDER
+     *
+     * Valid data in the MegaRequest object received in onRequestFinish when the error code
+     * is MegaError::API_OK:
+     * - MegaRequest::getAccess - Returns true if the master key has been exported
+     *
+     * If the corresponding user attribute is not set yet, the request will fail with the
+     * error code MegaError::API_ENOENT.
+     *
+     * @param listener MegaRequestListener to track this request
+     */
+
+    public void isMasterKeyExported (MegaRequestListenerInterface listener) {
+        megaApi.isMasterKeyExported(createDelegateRequestListener(listener));
     }
 
     /**
@@ -3827,6 +4324,72 @@ public class MegaApiJava {
      */
     public void setRichLinkWarningCounterValue(int value){
         megaApi.setRichLinkWarningCounterValue(value);
+    }
+
+    /**
+     * Enable the sending of geolocation messages
+     *
+     * The associated request type with this request is MegaRequest::TYPE_SET_ATTR_USER
+     * Valid data in the MegaRequest object received on callbacks:
+     * - MegaRequest::getParamType - Returns the attribute type MegaApi::USER_ATTR_GEOLOCATION
+     *
+     * @param listener MegaRequestListener to track this request
+     */
+    public void enableGeolocation(MegaRequestListenerInterface listener){
+        megaApi.enableGeolocation(createDelegateRequestListener(listener));
+    }
+
+    /**
+     * Check if the sending of geolocation messages is enabled
+     *
+     * The associated request type with this request is MegaRequest::TYPE_GET_ATTR_USER
+     * Valid data in the MegaRequest object received on callbacks:
+     * - MegaRequest::getParamType - Returns the attribute type MegaApi::USER_ATTR_GEOLOCATION
+     *
+     * Sending a Geolocation message is enabled if the MegaRequest object, received in onRequestFinish,
+     * has error code MegaError::API_OK. In other cases, send geolocation messages is not enabled and
+     * the application has to answer before send a message of this type.
+     *
+     * @param listener MegaRequestListener to track this request
+     */
+    public void isGeolocationEnabled(MegaRequestListenerInterface listener){
+        megaApi.isGeolocationEnabled(createDelegateRequestListener(listener));
+    }
+
+    /**
+     * Get the number of days for rubbish-bin cleaning scheduler
+     *
+     * The associated request type with this request is MegaRequest::TYPE_GET_ATTR_USER
+     * Valid data in the MegaRequest object received on callbacks:
+     * - MegaRequest::getParamType - Returns the attribute type MegaApi::USER_ATTR_RUBBISH_TIME
+     *
+     * Valid data in the MegaRequest object received in onRequestFinish when the error code
+     * is MegaError::API_OK:
+     * - MegaRequest::getNumber - Returns the days for rubbish-bin cleaning scheduler.
+     * Zero means that the rubbish-bin cleaning scheduler is disabled (only if the account is PRO)
+     * Any negative value means that the configured value is invalid.
+     *
+     * @param listener MegaRequestListener to track this request
+     */
+    public void getRubbishBinAutopurgePeriod(MegaRequestListenerInterface listener){
+        megaApi.getRubbishBinAutopurgePeriod(createDelegateRequestListener(listener));
+    }
+
+    /**
+     * Set the number of days for rubbish-bin cleaning scheduler
+     *
+     * The associated request type with this request is MegaRequest::TYPE_SET_ATTR_USER
+     * Valid data in the MegaRequest object received on callbacks:
+     * - MegaRequest::getParamType - Returns the attribute type MegaApi::USER_ATTR_RUBBISH_TIME
+     * - MegaRequest::getNumber - Returns the days for rubbish-bin cleaning scheduler passed as parameter
+     *
+     * @param days Number of days for rubbish-bin cleaning scheduler. It must be >= 0.
+     * The value zero disables the rubbish-bin cleaning scheduler (only for PRO accounts).
+     *
+     * @param listener MegaRequestListener to track this request
+     */
+    public void setRubbishBinAutopurgePeriod(int days, MegaRequestListenerInterface listener){
+        megaApi.setRubbishBinAutopurgePeriod(days, createDelegateRequestListener(listener));
     }
 
     /**
@@ -4298,6 +4861,78 @@ public class MegaApiJava {
     }
 
     /**
+     * Upload a file or a folder, saving custom app data during the transfer
+     * @param localPath Local path of the file or folder
+     * @param parent Parent node for the file or folder in the MEGA account
+     * @param appData Custom app data to save in the MegaTransfer object
+     * The data in this parameter can be accessed using MegaTransfer::getAppData in callbacks
+     * related to the transfer. If a transfer is started with exactly the same data
+     * (local path and target parent) as another one in the transfer queue, the new transfer
+     * fails with the error API_EEXISTS and the appData of the new transfer is appended to
+     * the appData of the old transfer, using a '!' separator if the old transfer had already
+     * appData.
+     * @param listener MegaTransferListener to track this transfer
+     */
+    public void startUploadWithData(String localPath, MegaNode parent, String appData, MegaTransferListenerInterface listener){
+        megaApi.startUploadWithData(localPath, parent, appData, createDelegateTransferListener(listener));
+    }
+
+    /**
+     * Upload a file or a folder, saving custom app data during the transfer
+     * @param localPath Local path of the file or folder
+     * @param parent Parent node for the file or folder in the MEGA account
+     * @param appData Custom app data to save in the MegaTransfer object
+     * The data in this parameter can be accessed using MegaTransfer::getAppData in callbacks
+     * related to the transfer. If a transfer is started with exactly the same data
+     * (local path and target parent) as another one in the transfer queue, the new transfer
+     * fails with the error API_EEXISTS and the appData of the new transfer is appended to
+     * the appData of the old transfer, using a '!' separator if the old transfer had already
+     * appData.
+     */
+    public void startUploadWithData(String localPath, MegaNode parent, String appData){
+        megaApi.startUploadWithData(localPath, parent, appData);
+    }
+
+    /**
+     * Upload a file or a folder, putting the transfer on top of the upload queue
+     * @param localPath Local path of the file or folder
+     * @param parent Parent node for the file or folder in the MEGA account
+     * @param appData Custom app data to save in the MegaTransfer object
+     * The data in this parameter can be accessed using MegaTransfer::getAppData in callbacks
+     * related to the transfer. If a transfer is started with exactly the same data
+     * (local path and target parent) as another one in the transfer queue, the new transfer
+     * fails with the error API_EEXISTS and the appData of the new transfer is appended to
+     * the appData of the old transfer, using a '!' separator if the old transfer had already
+     * appData.
+     * @param isSourceTemporary Pass the ownership of the file to the SDK, that will DELETE it when the upload finishes.
+     * This parameter is intended to automatically delete temporary files that are only created to be uploaded.
+     * Use this parameter with caution. Set it to true only if you are sure about what are you doing.
+     * @param listener MegaTransferListener to track this transfer
+     */
+    public void startUploadWithTopPriority(String localPath, MegaNode parent, String appData, boolean isSourceTemporary, MegaTransferListenerInterface listener){
+        megaApi.startUploadWithTopPriority(localPath, parent, appData, isSourceTemporary, createDelegateTransferListener(listener));
+    }
+
+    /**
+     * Upload a file or a folder, putting the transfer on top of the upload queue
+     * @param localPath Local path of the file or folder
+     * @param parent Parent node for the file or folder in the MEGA account
+     * @param appData Custom app data to save in the MegaTransfer object
+     * The data in this parameter can be accessed using MegaTransfer::getAppData in callbacks
+     * related to the transfer. If a transfer is started with exactly the same data
+     * (local path and target parent) as another one in the transfer queue, the new transfer
+     * fails with the error API_EEXISTS and the appData of the new transfer is appended to
+     * the appData of the old transfer, using a '!' separator if the old transfer had already
+     * appData.
+     * @param isSourceTemporary Pass the ownership of the file to the SDK, that will DELETE it when the upload finishes.
+     * This parameter is intended to automatically delete temporary files that are only created to be uploaded.
+     * Use this parameter with caution. Set it to true only if you are sure about what are you doing.
+     */
+    public void startUploadWithTopPriority(String localPath, MegaNode parent, String appData, boolean isSourceTemporary){
+        megaApi.startUploadWithTopPriority(localPath, parent, appData, isSourceTemporary);
+    }
+
+    /**
      * Download a file from MEGA.
      * 
      * @param node
@@ -4328,6 +4963,38 @@ public class MegaApiJava {
      */
     public void startDownload(MegaNode node, String localPath) {
         megaApi.startDownload(node, localPath);
+    }
+
+    /**
+     * Download a file or a folder from MEGA, saving custom app data during the transfer
+     * @param node MegaNode that identifies the file or folder
+     * @param localPath Destination path for the file or folder
+     * If this path is a local folder, it must end with a '\' or '/' character and the file name
+     * in MEGA will be used to store a file inside that folder. If the path doesn't finish with
+     * one of these characters, the file will be downloaded to a file in that path.
+     * @param appData Custom app data to save in the MegaTransfer object
+     * The data in this parameter can be accessed using MegaTransfer::getAppData in callbacks
+     * related to the transfer.
+     * @param listener MegaTransferListener to track this transfer
+     */
+    public void startDownloadWithData(MegaNode node, String localPath, String appData, MegaTransferListenerInterface listener){
+        megaApi.startDownloadWithData(node, localPath, appData, createDelegateTransferListener(listener));
+    }
+
+    /**
+     * Download a file or a folder from MEGA, putting the transfer on top of the download queue.
+     * @param node MegaNode that identifies the file or folder
+     * @param localPath Destination path for the file or folder
+     * If this path is a local folder, it must end with a '\' or '/' character and the file name
+     * in MEGA will be used to store a file inside that folder. If the path doesn't finish with
+     * one of these characters, the file will be downloaded to a file in that path.
+     * @param appData Custom app data to save in the MegaTransfer object
+     * The data in this parameter can be accessed using MegaTransfer::getAppData in callbacks
+     * related to the transfer.
+     * @param listener MegaTransferListener to track this transfer
+     */
+    public void startDownloadWithTopPriority(MegaNode node, String localPath, String appData, MegaTransferListenerInterface listener){
+        megaApi.startDownloadWithTopPriority(node, localPath, appData, createDelegateTransferListener(listener));
     }
 
     /**
@@ -5523,7 +6190,27 @@ public class MegaApiJava {
     public MegaUser getContact(String email) {
         return megaApi.getContact(email);
     }
-    
+
+    /**
+     * Get all MegaUserAlerts for the logged in user
+     *
+     * You take the ownership of the returned value
+     *
+     * @return List of MegaUserAlert objects
+     */
+    public ArrayList<MegaUserAlert> getUserAlerts(){
+        return userAlertListToArray(megaApi.getUserAlerts());
+    }
+
+    /**
+     * Get the number of unread user alerts for the logged in user
+     *
+     * @return Number of unread user alerts
+     */
+    public int getNumUnreadUserAlerts(){
+        return megaApi.getNumUnreadUserAlerts();
+    }
+
     /**
      * Get a list with all inbound shares from one MegaUser.
      * 
@@ -6017,6 +6704,60 @@ public class MegaApiJava {
      * Search nodes containing a search string in their name.
      * <p>
      * The search is case-insensitive.
+     *
+     * @param parent
+     *            The parent node of the tree to explore.
+     * @param searchString
+     *            Search string. The search is case-insensitive.
+     * @param recursive
+     *            true if you want to search recursively in the node tree.
+     *            false if you want to search in the children of the node only.
+     *
+     * @param order Order for the returned list
+     * Valid values for this parameter are:
+     * - MegaApi::ORDER_NONE = 0
+     *  Undefined order
+     *
+     *  - MegaApi::ORDER_DEFAULT_ASC = 1
+     *  Folders first in alphabetical order, then files in the same order
+     *
+     *  - MegaApi::ORDER_DEFAULT_DESC = 2
+     *  Files first in reverse alphabetical order, then folders in the same order
+     *
+     *  - MegaApi::ORDER_SIZE_ASC = 3
+     *  Sort by size, ascending
+     *
+     *  - MegaApi::ORDER_SIZE_DESC = 4
+     *  Sort by size, descending
+     *
+     *  - MegaApi::ORDER_CREATION_ASC = 5
+     *  Sort by creation time in MEGA, ascending
+     *
+     *  - MegaApi::ORDER_CREATION_DESC = 6
+     *  Sort by creation time in MEGA, descending
+     *
+     *  - MegaApi::ORDER_MODIFICATION_ASC = 7
+     *  Sort by modification time of the original file, ascending
+     *
+     *  - MegaApi::ORDER_MODIFICATION_DESC = 8
+     *  Sort by modification time of the original file, descending
+     *
+     *  - MegaApi::ORDER_ALPHABETICAL_ASC = 9
+     *  Sort in alphabetical order, ascending
+     *
+     *  - MegaApi::ORDER_ALPHABETICAL_DESC = 10
+     *  Sort in alphabetical order, descending
+     *
+     * @return List of nodes that contain the desired string in their name.
+     */
+    public ArrayList<MegaNode> search(MegaNode parent, String searchString, boolean recursive, int order) {
+        return nodeListToArray(megaApi.search(parent, searchString, recursive, order));
+    }
+
+    /**
+     * Search nodes containing a search string in their name.
+     * <p>
+     * The search is case-insensitive.
      * 
      * @param parent
      *            The parent node of the tree to explore.
@@ -6046,6 +6787,55 @@ public class MegaApiJava {
      */
     public ArrayList<MegaNode> search(MegaNode parent, String searchString) {
         return nodeListToArray(megaApi.search(parent, searchString));
+    }
+
+    /**
+     * Search nodes containing a search string in their name.
+     * <p>
+     * The search is case-insensitive.
+     *
+     * @param searchString
+     *            Search string. The search is case-insensitive.
+     *
+     * @param order Order for the returned list
+     * Valid values for this parameter are:
+     * - MegaApi::ORDER_NONE = 0
+     *  Undefined order
+     *
+     *  - MegaApi::ORDER_DEFAULT_ASC = 1
+     *  Folders first in alphabetical order, then files in the same order
+     *
+     *  - MegaApi::ORDER_DEFAULT_DESC = 2
+     *  Files first in reverse alphabetical order, then folders in the same order
+     *
+     *  - MegaApi::ORDER_SIZE_ASC = 3
+     *  Sort by size, ascending
+     *
+     *  - MegaApi::ORDER_SIZE_DESC = 4
+     *  Sort by size, descending
+     *
+     *  - MegaApi::ORDER_CREATION_ASC = 5
+     *  Sort by creation time in MEGA, ascending
+     *
+     *  - MegaApi::ORDER_CREATION_DESC = 6
+     *  Sort by creation time in MEGA, descending
+     *
+     *  - MegaApi::ORDER_MODIFICATION_ASC = 7
+     *  Sort by modification time of the original file, ascending
+     *
+     *  - MegaApi::ORDER_MODIFICATION_DESC = 8
+     *  Sort by modification time of the original file, descending
+     *
+     *  - MegaApi::ORDER_ALPHABETICAL_ASC = 9
+     *  Sort in alphabetical order, ascending
+     *
+     *  - MegaApi::ORDER_ALPHABETICAL_DESC = 10
+     *  Sort in alphabetical order, descending
+     *
+     * @return List of nodes that contain the desired string in their name.
+     */
+    public ArrayList<MegaNode> search(String searchString, int order) {
+        return nodeListToArray(megaApi.search(searchString, order));
     }
 
     /**
@@ -7124,6 +7914,20 @@ public class MegaApiJava {
         ArrayList<MegaUser> result = new ArrayList<MegaUser>(userList.size());
         for (int i = 0; i < userList.size(); i++) {
             result.add(userList.get(i).copy());
+        }
+
+        return result;
+    }
+
+    static ArrayList<MegaUserAlert> userAlertListToArray(MegaUserAlertList userAlertList){
+
+        if (userAlertList == null){
+            return null;
+        }
+
+        ArrayList<MegaUserAlert> result = new ArrayList<MegaUserAlert>(userAlertList.size());
+        for (int i = 0; i < userAlertList.size(); i++){
+            result.add(userAlertList.get(i).copy());
         }
 
         return result;
